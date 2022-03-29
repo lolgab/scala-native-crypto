@@ -13,7 +13,7 @@ val scala213 = "2.13.8"
 val scala3 = "3.1.1"
 val scalaVersions = Seq(scala212, scala213, scala3)
 
-trait Shared extends CrossScalaModule /* with ScalafixModule */ with ScalaNativeModule {
+trait Shared extends CrossScalaModule with ScalafixModule with ScalaNativeModule {
   def organization = "com.github.lolgab"
   def scalaNativeVersion = "0.4.4"
 
@@ -22,9 +22,9 @@ trait Shared extends CrossScalaModule /* with ScalafixModule */ with ScalaNative
   def scalafixIvyDeps = Agg(ivy"com.github.liancheng::organize-imports:0.6.0")
 }
 
-trait Test extends TestModule.Munit {
+trait Test extends TestModule.Utest {
   override def ivyDeps = super.ivyDeps() ++ Agg(
-    ivy"org.scalameta::munit::0.7.29"
+    ivy"com.lihaoyi::utest::0.7.11"
   )
 }
 
@@ -45,12 +45,6 @@ trait Publish extends PublishModule {
 object `scala-native-crypto` extends Cross[ScalaNativeCryptoModule](scalaVersions: _*)
 class ScalaNativeCryptoModule(val crossScalaVersion: String) extends Shared with Publish {
   def scalaNativeVersion = "0.4.4"
-  def nativeLinkingOptions = super.nativeLinkingOptions() ++ {
-    System.getProperty("os.name") match {
-      case "Mac OS X" => Seq("-L/usr/local/opt/openssl@1.1/lib")
-      case _ => Seq()
-    }
-  }
 }
 
 object tests extends Module {
@@ -62,6 +56,12 @@ object tests extends Module {
   object native extends Cross[TestsNativeModule](scalaVersions: _*)
   class TestsNativeModule(val crossScalaVersion: String) extends CrossScalaModule with Shared with Test with TestScalaNativeModule {
     override def moduleDeps = super.moduleDeps ++ Seq(`scala-native-crypto`(crossScalaVersion))
-    override def millSourcePath = super.millSourcePath / os.up 
+    override def millSourcePath = super.millSourcePath / os.up
+    override def nativeLinkingOptions = super.nativeLinkingOptions() ++ {
+      System.getProperty("os.name") match {
+        case "Mac OS X" => Seq("-L/usr/local/opt/openssl@1.1/lib")
+        case _ => Seq()
+      }
+    }
   }
 }
