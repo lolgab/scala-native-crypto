@@ -124,6 +124,10 @@ object MessageDigestSuite extends TestSuite {
     }
 
     test("isEqual") {
+      locally {
+        val array: Array[Byte] = Array(1,2,3)
+        MessageDigest.isEqual(array, array) ==> true
+      }
       MessageDigest.isEqual(null, null) ==> true
       MessageDigest.isEqual(null, Array()) ==> false
       MessageDigest.isEqual(Array(), null) ==> false
