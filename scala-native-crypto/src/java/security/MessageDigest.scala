@@ -44,6 +44,7 @@ object MessageDigest {
       var i = 0
       while (i < digestALength) {
         if (digestA(i) != digestBToCompare(i)) result = false
+        i += 1
       }
       result
     }
