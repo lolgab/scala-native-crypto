@@ -25,9 +25,6 @@ abstract class MessageDigest(algorithm: String) extends MessageDigestSpi {
 }
 
 object MessageDigest {
-  def isEqual(digestA: Array[Byte], digestB: Array[Byte]): Boolean =
-    true
-
   def getInstance(algorithm: String): MessageDigest = {
     val impl = algorithm.toUpperCase() match {
       case "MD5"                    => MD5Impl
