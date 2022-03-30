@@ -1,6 +1,6 @@
 # scala-native-crypto
 
-java.security Scala Native implementation based on OpenSSL
+`java.security` Scala Native implementation based on OpenSSL
 
 ## Getting started
 
@@ -34,6 +34,7 @@ And you need to have `libcrypto.[so|dylib]` in your linking path.
 
 In Ubuntu it works out of the box since openssl is installed in the main
 lib directory.
+
 In Mac OS X you will need to add the path via `nativeLinkingOptions`.
 
 On SBT:
