@@ -25,8 +25,29 @@ abstract class MessageDigest(algorithm: String) extends MessageDigestSpi {
 }
 
 object MessageDigest {
-  def isEqual(digestA: Array[Byte], digestB: Array[Byte]): Boolean =
-    true
+  def isEqual(digestA: Array[Byte], digestB: Array[Byte]): Boolean = {
+    if (digestA eq digestB) true
+    else if (digestA == null || digestB == null) false
+    else {
+      val digestALength = digestA.length
+      val digestBLength = digestB.length
+
+      // If the two arrays have different lengths we compare digestA with
+      // itself just to be timing-safe but we always return false
+      val digestBToCompare =
+        if (digestALength == digestBLength) digestB
+        else digestA
+
+      // If digestA and digestB have different lengths we return always false
+      var result = digestALength == digestBLength
+
+      var i = 0
+      while (i < digestALength) {
+        if (digestA(i) != digestBToCompare(i)) result = false
+      }
+      result
+    }
+  }
 
   def getInstance(algorithm: String): MessageDigest = {
     val impl = algorithm.toUpperCase() match {
