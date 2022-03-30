@@ -134,6 +134,7 @@ object MessageDigestSuite extends TestSuite {
       MessageDigest.isEqual(Array(1, 2, 3), Array(1, 2)) ==> false
       MessageDigest.isEqual(Array(1, 2), Array(1, 2, 3)) ==> false
       MessageDigest.isEqual(Array(1, 2, 3), Array(1, 2, 3)) ==> true
+      MessageDigest.isEqual(Array(1, 2, 3, 4), Array(1, 2, 3, 3)) ==> false
     }
 
   }
