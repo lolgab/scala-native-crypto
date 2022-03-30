@@ -34,7 +34,7 @@ trait Publish extends PublishModule {
       description = "Scala Native java.security implementation based on OpenSSL",
       organization = "com.github.lolgab",
       url = "https://github.com/lolgab/scala-native-crypto",
-      licenses = Seq(License.MIT),
+      licenses = Seq(License.`Apache-2.0`),
       versionControl = VersionControl.github(owner = "lolgab", repo = "scala-native-crypto"),
       developers = Seq(
         Developer("lolgab", "Lorenzo Gabriele", "https://github.com/lolgab")
