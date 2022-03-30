@@ -1,6 +1,5 @@
 package java.security
 
-import scala.scalanative.libc.stdlib
 import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._
 import scala.scalanative.unsigned._
@@ -25,8 +24,31 @@ abstract class MessageDigest(algorithm: String) extends MessageDigestSpi {
 }
 
 object MessageDigest {
-  def isEqual(digestA: Array[Byte], digestB: Array[Byte]): Boolean =
-    true
+  def isEqual(digestA: Array[Byte], digestB: Array[Byte]): Boolean = {
+    if (digestA eq digestB) true
+    else if (digestA == null || digestB == null) false
+    else {
+      val digestALength = digestA.length
+
+      // If digestA and digestB have different lengths we return always false
+      val sameLength = digestALength == digestB.length
+
+      // If the two arrays have different lengths we compare digestA with
+      // itself just to be timing-safe but we always return false
+      val digestBToCompare = if (sameLength) digestB else digestA
+
+      val digestAPtr = digestA.asInstanceOf[ByteArray].at(0)
+      val digestBPtr = digestBToCompare.asInstanceOf[ByteArray].at(0)
+
+      val sameBytes = crypto.CRYPTO_memcmp(
+        digestAPtr,
+        digestBPtr,
+        digestALength.toULong
+      ) == 0
+
+      sameLength && sameBytes
+    }
+  }
 
   def getInstance(algorithm: String): MessageDigest = {
     val impl = algorithm.toUpperCase() match {
@@ -48,6 +70,8 @@ object MessageDigest {
 @link("crypto")
 @extern
 private object crypto {
+  def CRYPTO_memcmp(a: Ptr[Byte], b: Ptr[Byte], len: CSize): CInt = extern
+
   def MD5_Init(c: Ptr[Byte]): CInt = extern
   def MD5_Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt = extern
   def MD5_Final(md: CString, c: Ptr[Byte]): CInt = extern
