@@ -13,7 +13,8 @@ val scala213 = "2.13.8"
 val scala3 = "3.1.3"
 val scalaVersions = Seq(scala212, scala213, scala3)
 
-trait Shared extends CrossScalaModule with ScalafixModule with ScalaNativeModule {
+// Disabled ScalafixModule since it adds SemanticDB files to artifacts
+trait Shared extends CrossScalaModule /* with ScalafixModule */ with ScalaNativeModule {
   def organization = "com.github.lolgab"
   def scalaNativeVersion = "0.4.7"
 
