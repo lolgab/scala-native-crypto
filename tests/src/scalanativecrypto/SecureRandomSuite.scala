@@ -28,5 +28,14 @@ object SecureRandomSuite extends TestSuite {
 
       assert(uuid1 != uuid2)
     }
+
+    test("basicNextIntTest") {
+      val random = new SecureRandom()
+      var or = 0
+      for (_ <- 0 until 100) {
+        or |= random.nextInt()
+      }
+      assert(or != 0)
+    }
   }
 }
