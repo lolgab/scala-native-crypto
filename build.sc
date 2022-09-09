@@ -15,7 +15,7 @@ val scalaVersions = Seq(scala212, scala213, scala3)
 
 trait Shared extends CrossScalaModule with ScalafixModule with ScalaNativeModule {
   def organization = "com.github.lolgab"
-  def scalaNativeVersion = "0.4.4"
+  def scalaNativeVersion = "0.4.7"
 
   def scalacOptions = super.scalacOptions() ++ (if (isScala3(crossScalaVersion)) Seq() else Seq("-Ywarn-unused"))
 
