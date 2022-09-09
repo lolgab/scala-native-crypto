@@ -1,19 +1,20 @@
 import mill._, mill.scalalib._, mill.scalanativelib._, mill.scalanativelib.api._
 import mill.scalalib.api.ZincWorkerUtil.isScala3
 import mill.scalalib.publish._
-import $ivy.`com.goyeau::mill-scalafix::0.2.8`
+import $ivy.`com.goyeau::mill-scalafix::0.2.10`
 import com.goyeau.mill.scalafix.ScalafixModule
-import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.1.4`
+import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.2.0`
 import de.tobiasroeser.mill.vcs.version.VcsVersion
 import $ivy.`com.lihaoyi::mill-contrib-buildinfo:`
 import mill.contrib.buildinfo.BuildInfo
 
-val scala212 = "2.12.14"
+val scala212 = "2.12.16"
 val scala213 = "2.13.8"
-val scala3 = "3.1.1"
+val scala3 = "3.1.3"
 val scalaVersions = Seq(scala212, scala213, scala3)
 
-trait Shared extends CrossScalaModule with ScalafixModule with ScalaNativeModule {
+// Disabled ScalafixModule since it adds SemanticDB files to artifacts
+trait Shared extends CrossScalaModule /* with ScalafixModule */ with ScalaNativeModule {
   def organization = "com.github.lolgab"
   def scalaNativeVersion = "0.4.7"
 
@@ -24,7 +25,7 @@ trait Shared extends CrossScalaModule with ScalafixModule with ScalaNativeModule
 
 trait Test extends TestModule.Utest {
   override def ivyDeps = super.ivyDeps() ++ Agg(
-    ivy"com.lihaoyi::utest::0.7.11"
+    ivy"com.lihaoyi::utest::0.8.1"
   )
 }
 
@@ -43,9 +44,7 @@ trait Publish extends PublishModule {
   def publishVersion = VcsVersion.vcsState().format()
 }
 object `scala-native-crypto` extends Cross[ScalaNativeCryptoModule](scalaVersions: _*)
-class ScalaNativeCryptoModule(val crossScalaVersion: String) extends Shared with Publish {
-  def scalaNativeVersion = "0.4.4"
-}
+class ScalaNativeCryptoModule(val crossScalaVersion: String) extends Shared with Publish
 
 object tests extends Module {
   object jvm extends Cross[TestsJvmModule](scalaVersions: _*)

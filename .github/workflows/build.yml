@@ -43,9 +43,9 @@ jobs:
       run: 
         ./mill --no-server --disable-ticker -j 0 mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
         # ./mill -j 0 mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll --sources buildSources
-    - name: Check scalafix
-      run: 
-        ./mill --no-server --disable-ticker -j 0 __.fix --check
+    # - name: Check scalafix
+    #   run: 
+    #     ./mill --no-server --disable-ticker -j 0 __.fix --check
     - name: Compile
       run: 
         ./mill --no-server --disable-ticker -j 0 __.compile

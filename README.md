@@ -52,3 +52,4 @@ def nativeLinkingOptions = super.nativeLinkingOptions() ++ Seq("-L/usr/local/opt
 ## Implemented classes
 
 - `java.security.MessageDigest`
+- `java.security.SecureRandom`
