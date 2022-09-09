@@ -15,6 +15,7 @@ class SecureRandom() extends java.util.Random(0L) {
       case _ =>
         Zone { implicit z =>
           val buffer = alloc[Byte](len)
+          nextBytes(buffer, len)
           var i = 0
           while (i < len) {
             bytes(i) = buffer(i)
