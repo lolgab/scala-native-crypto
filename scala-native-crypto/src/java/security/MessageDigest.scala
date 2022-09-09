@@ -45,6 +45,8 @@ object MessageDigest {
 @link("crypto")
 @extern
 private object crypto {
+  def RAND_bytes(buf: Ptr[Byte], num: CInt): CInt = extern
+
   def MD5_Init(c: Ptr[Byte]): CInt = extern
   def MD5_Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt = extern
   def MD5_Final(md: CString, c: Ptr[Byte]): CInt = extern
