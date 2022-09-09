@@ -9,21 +9,7 @@ class SecureRandom() extends java.util.Random(0L) {
 
   override def nextBytes(bytes: Array[Byte]): Unit = {
     val len = bytes.length
-    (bytes: Any) match {
-      case ba: ByteArray =>
-        nextBytes(ba.at(0), len)
-      case _ =>
-        Zone { implicit z =>
-          val buffer = alloc[Byte](len)
-          nextBytes(buffer, len)
-          var i = 0
-          while (i < len) {
-            bytes(i) = buffer(i)
-            i += 1
-          }
-        }
-    }
-
+    nextBytes(bytes.asInstanceOf[ByteArray].at(0), len)
   }
 
   private def nextBytes(bytes: Ptr[Byte], len: Int): Unit = {
