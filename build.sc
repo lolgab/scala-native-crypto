@@ -8,8 +8,8 @@ import de.tobiasroeser.mill.vcs.version.VcsVersion
 import $ivy.`com.lihaoyi::mill-contrib-buildinfo:`
 import mill.contrib.buildinfo.BuildInfo
 
-val scala212 = "2.12.16"
-val scala213 = "2.13.8"
+val scala212 = "2.12.19"
+val scala213 = "2.13.14"
 val scala3 = "3.3.3"
 val scalaVersions = Seq(scala212, scala213, scala3)
 
