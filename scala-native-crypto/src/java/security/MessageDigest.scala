@@ -1,6 +1,5 @@
 package java.security
 
-import scala.scalanative.libc.stdlib
 import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._
 import scala.scalanative.unsigned._
@@ -74,7 +73,7 @@ private object crypto {
 
 private abstract class AlgoImpl {
   def Init(c: Ptr[Byte]): CInt
-  def Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt = extern
+  def Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt
   def Final(res: Ptr[Byte], c: Ptr[Byte]): CInt
   // def CTXSize: Int
   def digestLength: Int
@@ -158,7 +157,7 @@ private final class CryptoMessageDigest(algorithm: String, algoImpl: AlgoImpl)
   override def engineUpdate(input: Byte): Unit = {
     val buf = stackalloc[Byte]()
     !buf = input
-    if (algoImpl.Update(c, buf, 1.toULong) != 1) {
+    if (algoImpl.Update(c, buf, 1.toCSize) != 1) {
       throw new DigestException("Failed to update digest")
     }
   }
@@ -171,7 +170,7 @@ private final class CryptoMessageDigest(algorithm: String, algoImpl: AlgoImpl)
         algoImpl.Update(
           c,
           input.asInstanceOf[ByteArray].at(offset),
-          len.toULong
+          len.toCSize
         ) != 1
       ) {
         throw new DigestException("Failed to update digest")

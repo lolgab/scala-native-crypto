@@ -12,33 +12,16 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v2
-    - name: Mill cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.mill
-        key: mill-${{ hashFiles('.mill-version') }}
-    - name: Ivy cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/coursier
-        key: ivy-${{ hashFiles('build.sc') }}
-        restore-keys: |
-          ivy-${{ hashFiles('build.sc') }}
-          ivy
-    - name: Compilation cache
-      uses: actions/cache@v2
-      with:
-        path: ./out
-        key: out
+    - uses: actions/checkout@v3 
     - name: Install Dependencies
       run: sudo apt-get update && sudo apt-get install -y libssl-dev
-    - uses: actions/setup-java@v1
+    - uses: actions/setup-java@v3
       with:
         java-version: '8'
-        architecture: x64
+        architecture: 'x64'
+        distribution: 'temurin'
     - name: Check formatting
       run: 
         ./mill --no-server --disable-ticker -j 0 mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
@@ -55,7 +38,7 @@ jobs:
   publish-sonatype:
     if: github.repository == 'lolgab/scala-native-crypto' && contains(github.ref, 'refs/tags/')
     needs: build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
       SONATYPE_PGP_PRIVATE_KEY: ${{ secrets.SONATYPE_PGP_PRIVATE_KEY }}
       SONATYPE_PGP_PRIVATE_KEY_PASSWORD: ${{ secrets.SONATYPE_PGP_PRIVATE_KEY_PASSWORD }}
@@ -65,29 +48,14 @@ jobs:
       LC_MESSAGES: "en_US.UTF-8"
       LC_ALL: "en_US.UTF-8"
     steps:
-      - uses: actions/checkout@v2
-      - name: Mill cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.mill
-          key: mill-${{ hashFiles('.mill-version') }}
-      - name: Ivy cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/coursier
-          key: ivy-${{ hashFiles('build.sc') }}
-          restore-keys: |
-            ivy-${{ hashFiles('build.sc') }}
-            ivy
-      - name: Compilation cache
-        uses: actions/cache@v2
-        with:
-          path: ./out
-          key: out
-      - uses: actions/setup-java@v1
+      - uses: actions/checkout@v3 
+      - name: Install Dependencies
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev
+      - uses: actions/setup-java@v3
         with:
           java-version: '8'
-          architecture: x64
+          architecture: 'x64'
+          distribution: 'temurin'
       - name: Publish to Maven Central
         run: |
           if [[ $(git tag --points-at HEAD) != '' ]]; then
