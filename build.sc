@@ -43,7 +43,9 @@ trait Publish extends PublishModule {
     )
   def publishVersion = VcsVersion.vcsState().format()
 }
-object `scala-native-crypto` extends Cross[ScalaNativeCryptoModule](scalaVersions)
+object `scala-native-crypto` extends Cross[ScalaNativeCryptoModule](scalaVersions) {
+  def scalacOptions = super.scalacOptions() ++ Seq("-P:scalanative:genStaticForwardersForNonTopLevelObjects")
+}
 trait ScalaNativeCryptoModule extends Shared with Publish
 
 object tests extends Module {
