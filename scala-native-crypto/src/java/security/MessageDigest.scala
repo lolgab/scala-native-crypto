@@ -1,8 +1,11 @@
 package java.security
 
+import scala.scalanative.meta.LinktimeInfo
 import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._
 import scala.scalanative.unsigned._
+
+import java.lang.ref.WeakReference
 
 abstract class MessageDigest(algorithm: String) extends MessageDigestSpi {
   def digest(): Array[Byte] = engineDigest()
@@ -25,139 +28,99 @@ abstract class MessageDigest(algorithm: String) extends MessageDigestSpi {
 
 object MessageDigest {
   def getInstance(algorithm: String): MessageDigest = {
-    val impl = algorithm.toUpperCase() match {
-      case "MD5"                    => MD5Impl
-      case "SHA-1" | "SHA" | "SHA1" => SHA1Impl
-      case "SHA-224"                => SHA224Impl
-      case "SHA-256"                => SHA256Impl
-      case "SHA-384"                => SHA384Impl
-      case "SHA-512"                => SHA512Impl
+    val (name, length) = algorithm.toUpperCase() match {
+      case "MD5"                    => (c"MD5", 16)
+      case "SHA-1" | "SHA" | "SHA1" => (c"SHA-1", 20)
+      case "SHA-224"                => (c"SHA-224", 28)
+      case "SHA-256"                => (c"SHA-256", 32)
+      case "SHA-384"                => (c"SHA-384", 48)
+      case "SHA-512"                => (c"SHA-512", 64)
       case _ =>
         throw new NoSuchAlgorithmException(
           s"$algorithm MessageDigest not available"
         )
     }
-    new CryptoMessageDigest(algorithm, impl)
+    new CryptoMessageDigest(algorithm, name, length)
   }
 }
 
 @link("crypto")
 @extern
 private object crypto {
+  type EVP_MD_* = CVoidPtr
+  type EVP_MD_CTX_* = CVoidPtr
+
   def RAND_bytes(buf: Ptr[Byte], num: CInt): CInt = extern
 
-  def MD5_Init(c: Ptr[Byte]): CInt = extern
-  def MD5_Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt = extern
-  def MD5_Final(md: CString, c: Ptr[Byte]): CInt = extern
+  def EVP_get_digestbyname(name: CString): EVP_MD_* = extern
+  def EVP_MD_CTX_new(): EVP_MD_CTX_* = extern
+  def EVP_MD_CTX_free(ctx: EVP_MD_CTX_*): Unit = extern
+  def EVP_MD_CTX_reset(ctx: EVP_MD_CTX_*): Unit = extern
 
-  def SHA1_Init(c: Ptr[Byte]): CInt = extern
-  def SHA1_Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt = extern
-  def SHA1_Final(md: CString, c: Ptr[Byte]): CInt = extern
-
-  def SHA224_Init(c: Ptr[Byte]): CInt = extern
-  def SHA224_Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt = extern
-  def SHA224_Final(md: CString, c: Ptr[Byte]): CInt = extern
-
-  def SHA256_Init(c: Ptr[Byte]): CInt = extern
-  def SHA256_Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt = extern
-  def SHA256_Final(md: CString, c: Ptr[Byte]): CInt = extern
-
-  def SHA384_Init(c: Ptr[Byte]): CInt = extern
-  def SHA384_Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt = extern
-  def SHA384_Final(md: CString, c: Ptr[Byte]): CInt = extern
-
-  def SHA512_Init(c: Ptr[Byte]): CInt = extern
-  def SHA512_Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt = extern
-  def SHA512_Final(md: CString, c: Ptr[Byte]): CInt = extern
+  def EVP_DigestInit(ctx: EVP_MD_CTX_*, tpe: EVP_MD_*): CInt = extern
+  def EVP_DigestUpdate(ctx: EVP_MD_CTX_*, d: Ptr[Byte], cnt: CSize): CInt =
+    extern
+  def EVP_DigestFinal(ctx: EVP_MD_CTX_*, md: Ptr[Byte], s: Ptr[Int]): CInt =
+    extern
 }
 
-private abstract class AlgoImpl {
-  def Init(c: Ptr[Byte]): CInt
-  def Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt
-  def Final(res: Ptr[Byte], c: Ptr[Byte]): CInt
-  // def CTXSize: Int
-  def digestLength: Int
-}
-private object MD5Impl extends AlgoImpl {
-  override def Init(c: Ptr[Byte]): CInt = crypto.MD5_Init(c)
-  override def Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt =
-    crypto.MD5_Update(c, data, len)
-  override def Final(res: Ptr[Byte], c: Ptr[Byte]): CInt =
-    crypto.MD5_Final(res, c)
-  // override def CTXSize: Int      = 92
-  override def digestLength: Int = 16
-}
-private object SHA1Impl extends AlgoImpl {
-  override def Init(c: Ptr[Byte]): CInt = crypto.SHA1_Init(c)
-  override def Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt =
-    crypto.SHA1_Update(c, data, len)
-  override def Final(res: Ptr[Byte], c: Ptr[Byte]): CInt =
-    crypto.SHA1_Final(res, c)
-  // override def CTXSize: Int      = 96
-  override def digestLength: Int = 20
-}
-private object SHA224Impl extends AlgoImpl {
-  override def Init(c: Ptr[Byte]): CInt = crypto.SHA224_Init(c)
-  override def Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt =
-    crypto.SHA224_Update(c, data, len)
-  override def Final(res: Ptr[Byte], c: Ptr[Byte]): CInt =
-    crypto.SHA224_Final(res, c)
-  // override def CTXSize: Int      = 112
-  override def digestLength: Int = 28
-}
-private object SHA256Impl extends AlgoImpl {
-  override def Init(c: Ptr[Byte]): CInt = crypto.SHA256_Init(c)
-  override def Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt =
-    crypto.SHA256_Update(c, data, len)
-  override def Final(res: Ptr[Byte], c: Ptr[Byte]): CInt =
-    crypto.SHA256_Final(res, c)
-  // override def CTXSize: Int      = 112
-  override def digestLength: Int = 32
-}
-private object SHA384Impl extends AlgoImpl {
-  override def Init(c: Ptr[Byte]): CInt = crypto.SHA384_Init(c)
-  override def Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt =
-    crypto.SHA384_Update(c, data, len)
-  override def Final(res: Ptr[Byte], c: Ptr[Byte]): CInt =
-    crypto.SHA384_Final(res, c)
-  // override def CTXSize: Int      = 216
-  override def digestLength: Int = 48
-}
-private object SHA512Impl extends AlgoImpl {
-  override def Init(c: Ptr[Byte]): CInt = crypto.SHA512_Init(c)
-  override def Update(c: Ptr[Byte], data: Ptr[Byte], len: CSize): CInt =
-    crypto.SHA512_Update(c, data, len)
-  override def Final(res: Ptr[Byte], c: Ptr[Byte]): CInt =
-    crypto.SHA512_Final(res, c)
-  // override def CTXSize: Int      = 216
-  override def digestLength: Int = 64
+private final class CtxFinalizer(
+    weakRef: WeakReference[_ >: Null <: AnyRef],
+    ctx: crypto.EVP_MD_CTX_*
+) {
+  ScalaNativeCryptoUtils.setWeakReferenceHandler(weakRef, apply)
+
+  def apply(): Unit = {
+    crypto.EVP_MD_CTX_free(ctx)
+  }
 }
 
-private final class CryptoMessageDigest(algorithm: String, algoImpl: AlgoImpl)
-    extends MessageDigest(algorithm) {
-  // Array with length equals to sizeof(Algo_CTX)
-  private val c = // We use a number big enough so it can store any CTX
-    new Array[Byte]( /* algoImpl.CTXSize */ 450).asInstanceOf[ByteArray].at(0)
-  engineReset()
+private final class CryptoMessageDigest(
+    algorithm: String,
+    name: CString,
+    length: Int
+) extends MessageDigest(algorithm) {
+  val ctx = crypto.EVP_MD_CTX_new()
+  val md = crypto.EVP_get_digestbyname(name)
+  val wr = new WeakReference(this)
 
-  override def engineGetDigestLength(): Int = algoImpl.digestLength
+  if (LinktimeInfo.isWeakReferenceSupported) { new CtxFinalizer(wr, ctx) }
+  else {
+    System.err.println(
+      "[java.security.MessageDigest] OpenSSL context finalization is not supported. Consider using immix or commix GC, otherwise this will leak memory."
+    )
+  }
+
+  initDigest()
+
+  override def engineGetDigestLength(): Int = length
   override def engineDigest(): Array[Byte] = {
-    val result = new Array[Byte](algoImpl.digestLength)
-    if (algoImpl.Final(result.asInstanceOf[ByteArray].at(0), c) != 1) {
+    val result = new Array[Byte](length)
+    val lengthPtr = stackalloc[Int]()
+    if (
+      crypto.EVP_DigestFinal(
+        ctx,
+        result.asInstanceOf[ByteArray].at(0),
+        lengthPtr
+      ) != 1
+    ) {
       throw new DigestException("Failed to finalize digest")
     }
-    engineReset()
     result
   }
   override def engineReset(): Unit = {
-    if (algoImpl.Init(c) != 1) {
+    crypto.EVP_MD_CTX_reset(ctx)
+    initDigest()
+  }
+  private def initDigest() = {
+    if (crypto.EVP_DigestInit(ctx, md) != 1) {
       throw new DigestException("Failed to initialize digest")
     }
   }
   override def engineUpdate(input: Byte): Unit = {
     val buf = stackalloc[Byte]()
     !buf = input
-    if (algoImpl.Update(c, buf, 1.toCSize) != 1) {
+    if (crypto.EVP_DigestUpdate(ctx, buf, 1.toCSize) != 1) {
       throw new DigestException("Failed to update digest")
     }
   }
@@ -167,8 +130,8 @@ private final class CryptoMessageDigest(algorithm: String, algoImpl: AlgoImpl)
     }
     if (len > 0) {
       if (
-        algoImpl.Update(
-          c,
+        crypto.EVP_DigestUpdate(
+          ctx,
           input.asInstanceOf[ByteArray].at(offset),
           len.toCSize
         ) != 1
