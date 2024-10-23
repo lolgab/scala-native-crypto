@@ -44,7 +44,12 @@ trait Publish extends PublishModule {
   def publishVersion = VcsVersion.vcsState().format()
 }
 object `scala-native-crypto` extends Cross[ScalaNativeCryptoModule](scalaVersions)
-trait ScalaNativeCryptoModule extends Shared with Publish
+trait ScalaNativeCryptoModule extends Shared with Publish {
+  def compileModuleDeps = Seq(`scala-native-crypto-javalib-shims`())
+}
+
+object `scala-native-crypto-javalib-shims` extends Cross[ScalaNativeCryptoJavalibShimsModule](scalaVersions)
+trait ScalaNativeCryptoJavalibShimsModule extends Shared with Publish
 
 object tests extends Module {
   object jvm extends Cross[TestsJvmModule](scalaVersions)

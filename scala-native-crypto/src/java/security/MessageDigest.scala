@@ -5,7 +5,7 @@ import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._
 import scala.scalanative.unsigned._
 
-import java.lang.ref.WeakReference
+import java.lang.ref.{WeakReference, WeakReferenceRegistry}
 
 abstract class MessageDigest(algorithm: String) extends MessageDigestSpi {
   def digest(): Array[Byte] = engineDigest()
@@ -68,7 +68,7 @@ private final class CtxFinalizer(
     weakRef: WeakReference[_ >: Null <: AnyRef],
     ctx: crypto.EVP_MD_CTX_*
 ) {
-  ScalaNativeCryptoUtils.setWeakReferenceHandler(weakRef, apply)
+  WeakReferenceRegistry.addHandler(weakRef, apply)
 
   def apply(): Unit = {
     crypto.EVP_MD_CTX_free(ctx)
@@ -84,7 +84,9 @@ private final class CryptoMessageDigest(
   val md = crypto.EVP_get_digestbyname(name)
   val wr = new WeakReference(this)
 
-  if (LinktimeInfo.isWeakReferenceSupported) { new CtxFinalizer(wr, ctx) }
+  if (LinktimeInfo.isWeakReferenceSupported) {
+    new CtxFinalizer(wr, ctx)
+  }
   else {
     System.err.println(
       "[java.security.MessageDigest] OpenSSL context finalization is not supported. Consider using immix or commix GC, otherwise this will leak memory."
