@@ -8,15 +8,15 @@ import de.tobiasroeser.mill.vcs.version.VcsVersion
 import $ivy.`com.lihaoyi::mill-contrib-buildinfo:`
 import mill.contrib.buildinfo.BuildInfo
 
-val scala212 = "2.12.19"
-val scala213 = "2.13.14"
-val scala3 = "3.3.3"
+val scala212 = "2.12.20"
+val scala213 = "2.13.15"
+val scala3 = "3.3.4"
 val scalaVersions = Seq(scala212, scala213, scala3)
 
 // Disabled ScalafixModule since it adds SemanticDB files to artifacts
 trait Shared extends CrossScalaModule /* with ScalafixModule */ with ScalaNativeModule {
   def organization = "com.github.lolgab"
-  def scalaNativeVersion = "0.5.1"
+  def scalaNativeVersion = "0.5.5"
 
   def scalacOptions = super.scalacOptions() ++ (if (isScala3(crossScalaVersion)) Seq() else Seq("-Ywarn-unused"))
 
@@ -44,7 +44,12 @@ trait Publish extends PublishModule {
   def publishVersion = VcsVersion.vcsState().format()
 }
 object `scala-native-crypto` extends Cross[ScalaNativeCryptoModule](scalaVersions)
-trait ScalaNativeCryptoModule extends Shared with Publish
+trait ScalaNativeCryptoModule extends Shared with Publish {
+  def compileModuleDeps = Seq(`scala-native-crypto-javalib-shims`())
+}
+
+object `scala-native-crypto-javalib-shims` extends Cross[ScalaNativeCryptoJavalibShimsModule](scalaVersions)
+trait ScalaNativeCryptoJavalibShimsModule extends Shared with Publish
 
 object tests extends Module {
   object jvm extends Cross[TestsJvmModule](scalaVersions)
