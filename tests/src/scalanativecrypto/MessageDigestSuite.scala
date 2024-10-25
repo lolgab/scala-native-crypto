@@ -19,6 +19,12 @@ object MessageDigestSuite extends TestSuite {
   }
 
   val tests = Tests {
+    test("memoryLeak") {
+      // tests that we can construct many instances without
+      // double free crashes due to bad finalizer
+      for (i <- 0 to 100) { MessageDigest.getInstance("MD5") }
+      ()
+    }
     test("basicMd5DigestTest") {
       checkStringResult(
         "MD5",
