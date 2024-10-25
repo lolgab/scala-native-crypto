@@ -65,13 +65,16 @@ private object crypto {
 }
 
 private final class CtxFinalizer(
-    weakRef: WeakReference[_ >: Null <: AnyRef],
-    ctx: crypto.EVP_MD_CTX_*
+    weakRef: WeakReference[_],
+    private var ctx: crypto.EVP_MD_CTX_*
 ) {
   WeakReferenceRegistry.addHandler(weakRef, apply)
 
   def apply(): Unit = {
-    crypto.EVP_MD_CTX_free(ctx)
+    if (ctx != null) {
+      crypto.EVP_MD_CTX_free(ctx)
+      ctx = null
+    }
   }
 }
 
@@ -82,12 +85,11 @@ private final class CryptoMessageDigest(
 ) extends MessageDigest(algorithm) {
   val ctx = crypto.EVP_MD_CTX_new()
   val md = crypto.EVP_get_digestbyname(name)
-  val wr = new WeakReference(this)
 
   if (LinktimeInfo.isWeakReferenceSupported) {
+    val wr = new WeakReference(this)
     new CtxFinalizer(wr, ctx)
-  }
-  else {
+  } else {
     System.err.println(
       "[java.security.MessageDigest] OpenSSL context finalization is not supported. Consider using immix or commix GC, otherwise this will leak memory."
     )
