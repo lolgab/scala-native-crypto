@@ -62,6 +62,21 @@ object `scala-native-crypto-javalib-shims`
     extends Cross[ScalaNativeCryptoJavalibShimsModule](scalaVersions)
 trait ScalaNativeCryptoJavalibShimsModule extends Shared with Publish
 
+def jwtScalaSources = T {
+  val dest = T.dest
+  os.proc(
+    "git",
+    "clone",
+    "--branch",
+    "v10.0.2",
+    "--depth",
+    "1",
+    "https://github.com/jwt-scala/jwt-scala.git",
+    dest
+  ).call()
+  PathRef(dest)
+}
+
 object tests extends Module {
   object jvm extends Cross[TestsJvmModule](scalaVersions)
   trait TestsJvmModule extends CrossScalaModule with Test {
@@ -77,11 +92,38 @@ object tests extends Module {
     override def moduleDeps =
       super.moduleDeps ++ Seq(`scala-native-crypto`(crossScalaVersion))
     override def millSourcePath = super.millSourcePath / os.up
-    override def nativeLinkingOptions = super.nativeLinkingOptions() ++ {
-      System.getProperty("os.name") match {
-        case "Mac OS X" => Seq("-L/usr/local/opt/openssl@1.1/lib")
-        case _          => Seq()
-      }
-    }
+  }
+}
+
+object `jwt-scala-tests` extends Module {
+  object jvm extends Cross[TestsJvmModule](scala3)
+  trait TestsJvmModule extends CrossScalaModule with Test {
+    override def millSourcePath = super.millSourcePath / os.up
+  }
+
+  object native extends Cross[TestsNativeModule](scala3)
+  trait TestsNativeModule
+      extends CrossScalaModule
+      with Shared
+      with Test
+      with TestScalaNativeModule {
+    override def moduleDeps =
+      super.moduleDeps ++ Seq(`scala-native-crypto`(crossScalaVersion))
+    override def millSourcePath = super.millSourcePath / os.up
+    override def sources = super.sources() ++ Seq(
+      PathRef(
+        jwtScalaSources().path / "core" / "shared" / "src" / "main" / "scala"
+      ),
+      PathRef(
+        jwtScalaSources().path / "json" / "upickle" / "shared" / "src" / "main" / "scala"
+      ),
+      PathRef(
+        jwtScalaSources().path / "json" / "common" / "src" / "main" / "scala"
+      )
+    )
+    override def ivyDeps = super.ivyDeps() ++ Agg(
+      ivy"io.github.cquiroz::scala-java-time::2.6.0",
+      ivy"com.lihaoyi::upickle::3.3.1"
+    )
   }
 }
