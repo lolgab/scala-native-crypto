@@ -24,20 +24,20 @@ jobs:
         distribution: 'temurin'
     - name: Check formatting
       run: 
-        ./mill --no-server --disable-ticker -j 0 mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
-        # ./mill -j 0 mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll --sources buildSources
+        ./mill --no-server --disable-ticker mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
+        # ./mill mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll --sources buildSources
     # - name: Check scalafix
     #   run: 
-    #     ./mill --no-server --disable-ticker -j 0 __.fix --check
+    #     ./mill --no-server --disable-ticker __.fix --check
     - name: Compile
       run: 
-        ./mill --no-server --disable-ticker -j 0 __.compile
+        ./mill --no-server --disable-ticker __.compile
     - name: Test
       run:
-        ./mill --no-server --disable-ticker -j 0 __.test
+        ./mill --no-server --disable-ticker __.test
     - name: Test publishArtifacts
       run:
-        ./mill --no-server --disable-ticker -j 0 show __.publishArtifacts
+        ./mill --no-server --disable-ticker show __.publishArtifacts
   publish-sonatype:
     if: github.repository == 'lolgab/scala-native-crypto' && contains(github.ref, 'refs/tags/')
     needs: build

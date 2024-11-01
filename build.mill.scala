@@ -1,3 +1,5 @@
+package build
+
 import mill._, mill.scalalib._, mill.scalanativelib._, mill.scalanativelib.api._
 import mill.scalalib.api.ZincWorkerUtil.isScala3
 import mill.scalalib.publish._
@@ -62,8 +64,8 @@ object `scala-native-crypto-javalib-shims`
     extends Cross[ScalaNativeCryptoJavalibShimsModule](scalaVersions)
 trait ScalaNativeCryptoJavalibShimsModule extends Shared
 
-def jwtScalaSources = T {
-  val dest = T.dest
+def jwtScalaSources = Task {
+  val dest = Task.dest
   os.proc(
     "git",
     "clone",
