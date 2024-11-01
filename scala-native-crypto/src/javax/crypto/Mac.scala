@@ -38,8 +38,10 @@ class Mac private (algorithm: String, name: CString, length: Int) {
     val keyArray = keySpec.getEncoded()
     val keyPtr = keyArray.at(0)
 
-    // Choose algorithm (only SHA-256 is implemented here)
     val md = crypto.EVP_get_digestbyname(name)
+    if (md == null) {
+      throw new RuntimeException(s"Failed to get algorithm $algorithm")
+    }
 
     // Initialize the HMAC context with key and algorithm
     if (crypto.HMAC_Init_ex(ctx, keyPtr, keyArray.length, md, null) != 1) {
@@ -72,8 +74,9 @@ class Mac private (algorithm: String, name: CString, length: Int) {
     val resultLen = stackalloc[Int]()
 
     // Finalize and obtain the HMAC result
-    if (crypto.HMAC_Final(ctx, result, resultLen) != 1)
+    if (crypto.HMAC_Final(ctx, result, resultLen) != 1) {
       throw new RuntimeException("Failed to finalize HMAC computation")
+    }
 
     // Convert result to Scala Array[Byte]
     val len = (!resultLen).toInt

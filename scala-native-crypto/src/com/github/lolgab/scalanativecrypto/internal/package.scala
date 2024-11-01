@@ -50,11 +50,11 @@ object Utils {
   def getAlgorithmNameAndLength(algorithm: String, prefix: String) = {
     algorithm.toUpperCase().stripPrefix(prefix) match {
       case "MD5"                    => (c"MD5", 16)
-      case "SHA-1" | "SHA" | "SHA1" => (c"SHA-1", 20)
-      case "SHA-224" | "SHA224"     => (c"SHA-224", 28)
-      case "SHA-256" | "SHA256"     => (c"SHA-256", 32)
-      case "SHA-384" | "SHA384"     => (c"SHA-384", 48)
-      case "SHA-512" | "SHA512"     => (c"SHA-512", 64)
+      case "SHA-1" | "SHA" | "SHA1" => (c"SHA1", 20)
+      case "SHA-224" | "SHA224"     => (c"SHA224", 28)
+      case "SHA-256" | "SHA256"     => (c"SHA256", 32)
+      case "SHA-384" | "SHA384"     => (c"SHA384", 48)
+      case "SHA-512" | "SHA512"     => (c"SHA512", 64)
       case _ =>
         throw new NoSuchAlgorithmException(
           s"$algorithm MessageDigest not available"
