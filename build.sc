@@ -96,20 +96,7 @@ object tests extends Module {
 }
 
 object `jwt-scala-tests` extends Module {
-  object jvm extends Cross[TestsJvmModule](scala3)
-  trait TestsJvmModule extends CrossScalaModule with Test {
-    override def millSourcePath = super.millSourcePath / os.up
-  }
-
-  object native extends Cross[TestsNativeModule](scala3)
-  trait TestsNativeModule
-      extends CrossScalaModule
-      with Shared
-      with Test
-      with TestScalaNativeModule {
-    override def moduleDeps =
-      super.moduleDeps ++ Seq(`scala-native-crypto`(crossScalaVersion))
-    override def millSourcePath = super.millSourcePath / os.up
+  trait SharedJwtScalaTestsModule extends ScalaModule {
     override def generatedSources = super.generatedSources() ++ Seq(
       PathRef(
         jwtScalaSources().path / "core" / "shared" / "src" / "main" / "scala"
@@ -122,8 +109,31 @@ object `jwt-scala-tests` extends Module {
       )
     )
     override def ivyDeps = super.ivyDeps() ++ Agg(
-      ivy"io.github.cquiroz::scala-java-time::2.6.0",
       ivy"com.lihaoyi::upickle::3.3.1"
+    )
+  }
+
+  object jvm extends Cross[JwtScalaTestsJvmModule](scala3)
+  trait JwtScalaTestsJvmModule
+      extends CrossScalaModule
+      with SharedJwtScalaTestsModule
+      with Test {
+    override def millSourcePath = super.millSourcePath / os.up
+  }
+
+  object native extends Cross[JwtScalaTestsNativeModule](scala3)
+  trait JwtScalaTestsNativeModule
+      extends CrossScalaModule
+      with SharedJwtScalaTestsModule
+      with Shared
+      with Test
+      with TestScalaNativeModule {
+    override def moduleDeps =
+      super.moduleDeps ++ Seq(`scala-native-crypto`(crossScalaVersion))
+    override def millSourcePath = super.millSourcePath / os.up
+
+    override def ivyDeps = super.ivyDeps() ++ Agg(
+      ivy"io.github.cquiroz::scala-java-time::2.6.0"
     )
   }
 }
