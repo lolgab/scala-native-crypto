@@ -35,6 +35,9 @@ jobs:
     - name: Test
       run:
         ./mill --no-server --disable-ticker -j 0 __.test
+    - name: Test publishArtifacts
+      run:
+        ./mill --no-server --disable-ticker -j 0 show __.publishArtifacts
   publish-sonatype:
     if: github.repository == 'lolgab/scala-native-crypto' && contains(github.ref, 'refs/tags/')
     needs: build
