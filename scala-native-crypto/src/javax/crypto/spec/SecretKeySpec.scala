@@ -1,6 +1,7 @@
 package javax.crypto.spec
 
 import javax.crypto.SecretKey
+import java.security.spec.KeySpec
 
 class SecretKeySpec(key: Array[Byte], algorithm: String)
     extends KeySpec
