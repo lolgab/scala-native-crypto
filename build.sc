@@ -110,7 +110,7 @@ object `jwt-scala-tests` extends Module {
     override def moduleDeps =
       super.moduleDeps ++ Seq(`scala-native-crypto`(crossScalaVersion))
     override def millSourcePath = super.millSourcePath / os.up
-    override def sources = super.sources() ++ Seq(
+    override def generatedSources = super.generatedSources() ++ Seq(
       PathRef(
         jwtScalaSources().path / "core" / "shared" / "src" / "main" / "scala"
       ),
