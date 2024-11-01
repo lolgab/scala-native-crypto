@@ -1,11 +1,13 @@
 package java.security
 
+import com.github.lolgab.scalanativecrypto.internal._
 import scala.scalanative.meta.LinktimeInfo
 import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._
 import scala.scalanative.unsigned._
 
 import java.lang.ref.{WeakReference, WeakReferenceRegistry}
+import java.com.github.lolgab.scalanativecrypto.internal.CtxFinalizer
 
 abstract class MessageDigest(algorithm: String) extends MessageDigestSpi {
   def digest(): Array[Byte] = engineDigest()
@@ -28,53 +30,8 @@ abstract class MessageDigest(algorithm: String) extends MessageDigestSpi {
 
 object MessageDigest {
   def getInstance(algorithm: String): MessageDigest = {
-    val (name, length) = algorithm.toUpperCase() match {
-      case "MD5"                    => (c"MD5", 16)
-      case "SHA-1" | "SHA" | "SHA1" => (c"SHA-1", 20)
-      case "SHA-224"                => (c"SHA-224", 28)
-      case "SHA-256"                => (c"SHA-256", 32)
-      case "SHA-384"                => (c"SHA-384", 48)
-      case "SHA-512"                => (c"SHA-512", 64)
-      case _ =>
-        throw new NoSuchAlgorithmException(
-          s"$algorithm MessageDigest not available"
-        )
-    }
+    val (name, length) = Utils.getAlgorithmNameAndLength(algorithm, prefix = "")
     new CryptoMessageDigest(algorithm, name, length)
-  }
-}
-
-@link("crypto")
-@extern
-private object crypto {
-  type EVP_MD_* = CVoidPtr
-  type EVP_MD_CTX_* = CVoidPtr
-
-  def RAND_bytes(buf: Ptr[Byte], num: CInt): CInt = extern
-
-  def EVP_get_digestbyname(name: CString): EVP_MD_* = extern
-  def EVP_MD_CTX_new(): EVP_MD_CTX_* = extern
-  def EVP_MD_CTX_free(ctx: EVP_MD_CTX_*): Unit = extern
-  def EVP_MD_CTX_reset(ctx: EVP_MD_CTX_*): Unit = extern
-
-  def EVP_DigestInit(ctx: EVP_MD_CTX_*, tpe: EVP_MD_*): CInt = extern
-  def EVP_DigestUpdate(ctx: EVP_MD_CTX_*, d: Ptr[Byte], cnt: CSize): CInt =
-    extern
-  def EVP_DigestFinal(ctx: EVP_MD_CTX_*, md: Ptr[Byte], s: Ptr[Int]): CInt =
-    extern
-}
-
-private final class CtxFinalizer(
-    weakRef: WeakReference[_],
-    private var ctx: crypto.EVP_MD_CTX_*
-) {
-  WeakReferenceRegistry.addHandler(weakRef, apply)
-
-  def apply(): Unit = {
-    if (ctx != null) {
-      crypto.EVP_MD_CTX_free(ctx)
-      ctx = null
-    }
   }
 }
 
@@ -88,7 +45,7 @@ private final class CryptoMessageDigest(
 
   if (LinktimeInfo.isWeakReferenceSupported) {
     val wr = new WeakReference(this)
-    new CtxFinalizer(wr, ctx)
+    new CtxFinalizer(wr, ctx, crypto.EVP_MD_CTX_free(_))
   } else {
     System.err.println(
       "[java.security.MessageDigest] OpenSSL context finalization is not supported. Consider using immix or commix GC, otherwise this will leak memory."

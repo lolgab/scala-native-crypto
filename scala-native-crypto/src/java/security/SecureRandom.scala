@@ -1,5 +1,7 @@
 package java.security
 
+import com.github.lolgab.scalanativecrypto.internal._
+
 import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._
 

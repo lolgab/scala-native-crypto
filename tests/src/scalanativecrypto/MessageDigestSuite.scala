@@ -3,6 +3,7 @@ package scalanativecrypto
 import utest._
 
 import java.security._
+import javax.crypto.spec._
 
 /** Tests for [[MessageDigest]] class fields and methods
   */
@@ -22,7 +23,7 @@ object MessageDigestSuite extends TestSuite {
     test("memoryLeak") {
       // tests that we can construct many instances without
       // double free crashes due to bad finalizer
-      for (i <- 0 to 100) { MessageDigest.getInstance("MD5") }
+      for (_ <- 0 to 100) { MessageDigest.getInstance("MD5") }
       ()
     }
     test("basicMd5DigestTest") {
@@ -129,5 +130,25 @@ object MessageDigestSuite extends TestSuite {
       )
     }
 
+    test("SecretKeySpec") {
+      test("null key") {
+        val ex = intercept[IllegalArgumentException] {
+          new SecretKeySpec(null, "")
+        }
+        ex.getMessage() ==> "Missing argument"
+      }
+      test("null algorithm") {
+        val ex = intercept[IllegalArgumentException] {
+          new SecretKeySpec(Array.emptyByteArray, null)
+        }
+        ex.getMessage() ==> "Missing argument"
+      }
+      test("empty key") {
+        val ex = intercept[IllegalArgumentException] {
+          new SecretKeySpec(Array.emptyByteArray, "")
+        }
+        ex.getMessage() ==> "Empty key"
+      }
+    }
   }
 }
