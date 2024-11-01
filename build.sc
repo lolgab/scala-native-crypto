@@ -60,7 +60,7 @@ trait ScalaNativeCryptoModule extends Shared with Publish {
 
 object `scala-native-crypto-javalib-shims`
     extends Cross[ScalaNativeCryptoJavalibShimsModule](scalaVersions)
-trait ScalaNativeCryptoJavalibShimsModule extends Shared with Publish
+trait ScalaNativeCryptoJavalibShimsModule extends Shared
 
 def jwtScalaSources = T {
   val dest = T.dest
