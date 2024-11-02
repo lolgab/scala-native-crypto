@@ -3,7 +3,8 @@ package build
 import mill._, mill.scalalib._, mill.scalanativelib._, mill.scalanativelib.api._
 import mill.scalalib.api.ZincWorkerUtil.isScala3
 import mill.scalalib.publish._
-import $ivy.`com.goyeau::mill-scalafix::0.3.2`
+import mill.util.Jvm
+import $ivy.`com.goyeau::mill-scalafix::0.4.2`
 import com.goyeau.mill.scalafix.ScalafixModule
 import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.4.0`
 import de.tobiasroeser.mill.vcs.version.VcsVersion
@@ -15,9 +16,9 @@ val scala213 = "2.13.15"
 val scala3 = "3.3.4"
 val scalaVersions = Seq(scala212, scala213, scala3)
 
-// Disabled ScalafixModule since it adds SemanticDB files to artifacts
 trait Shared
-    extends CrossScalaModule /* with ScalafixModule */
+    extends CrossScalaModule
+    with ScalafixModule
     with ScalaNativeModule {
   def organization = "com.github.lolgab"
   def scalaNativeVersion = "0.5.5"
@@ -58,6 +59,18 @@ trait ScalaNativeCryptoModule extends Shared with Publish {
   def scalacOptions = super.scalacOptions() ++ Seq(
     "-P:scalanative:genStaticForwardersForNonTopLevelObjects"
   )
+  // Remove class and tasty files
+  override def jar = Task {
+    Jvm.createJar(
+      localClasspath().map(_.path).filter(os.exists),
+      manifest(),
+      (_, file) =>
+        file.ext match {
+          case "class" | "tasty" => false
+          case _ => true
+        }
+    )
+  }
 }
 
 object `scala-native-crypto-javalib-shims`

@@ -1,7 +1,7 @@
 package com.github.lolgab.scalanativecrypto.internal
 
-import scala.scalanative.unsafe._
 import java.security.NoSuchAlgorithmException
+import scala.scalanative.unsafe._
 
 @link("crypto")
 @extern

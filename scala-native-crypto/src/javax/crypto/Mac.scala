@@ -1,14 +1,14 @@
 package javax.crypto
 
-import com.github.lolgab.scalanativecrypto.internal._
 import com.github.lolgab.scalanativecrypto.internal.Constants._
-import scala.scalanative.unsafe._
+import com.github.lolgab.scalanativecrypto.internal._
+
+import java.com.github.lolgab.scalanativecrypto.internal.CtxFinalizer
+import java.lang.ref.WeakReference
 import java.security
 import javax.crypto.spec.SecretKeySpec
 import scala.scalanative.meta.LinktimeInfo
-
-import java.lang.ref.WeakReference
-import java.com.github.lolgab.scalanativecrypto.internal.CtxFinalizer
+import scala.scalanative.unsafe._
 
 class Mac private (algorithm: String, name: CString, length: Int) {
   private val ctx: crypto.HMAC_CTX_* = crypto.HMAC_CTX_new()

@@ -1,9 +1,13 @@
 package scalanativecrypto
 
+import pdi.jwt.JwtAlgorithm
+import pdi.jwt.JwtClaim
+import pdi.jwt.JwtUpickle
 import utest._
-import pdi.jwt.{JwtUpickle, JwtAlgorithm, JwtClaim}
+
 import java.time.Instant
-import scala.util.{Failure, Success}
+import scala.util.Failure
+import scala.util.Success
 
 object JwtExampleSuite extends TestSuite {
 
