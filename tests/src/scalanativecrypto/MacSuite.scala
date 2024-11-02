@@ -2,9 +2,9 @@ package scalanativecrypto
 
 import utest._
 
+import java.util.Base64
 import javax.crypto._
 import javax.crypto.spec._
-import java.util.Base64
 
 object MacSuite extends TestSuite {
   val tests = Tests {
