@@ -47,7 +47,10 @@ object Constants {
   val EVP_MAX_MD_SIZE: Int = 64
 }
 object Utils {
-  def getAlgorithmNameAndLength(algorithm: String, prefix: String) = {
+  def getAlgorithmNameAndLength(
+      algorithm: String,
+      prefix: String
+  ): (CString, CInt) = {
     algorithm.toUpperCase().stripPrefix(prefix) match {
       case "MD5"                    => (c"MD5", 16)
       case "SHA-1" | "SHA" | "SHA1" => (c"SHA1", 20)
@@ -55,6 +58,10 @@ object Utils {
       case "SHA-256" | "SHA256"     => (c"SHA256", 32)
       case "SHA-384" | "SHA384"     => (c"SHA384", 48)
       case "SHA-512" | "SHA512"     => (c"SHA512", 64)
+      case "SHA3-224"               => (c"SHA3-224", 28)
+      case "SHA3-256"               => (c"SHA3-256", 32)
+      case "SHA3-384"               => (c"SHA3-384", 48)
+      case "SHA3-512"               => (c"SHA3-512", 64)
       case _ =>
         throw new NoSuchAlgorithmException(
           s"$algorithm MessageDigest not available"
