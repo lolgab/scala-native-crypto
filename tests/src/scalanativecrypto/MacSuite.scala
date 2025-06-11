@@ -7,7 +7,12 @@ import javax.crypto._
 import javax.crypto.spec._
 
 object MacSuite extends TestSuite {
-  val tests = Tests {
+  val javaVersion = java.lang.Double.parseDouble(
+    System.getProperty("java.specification.version")
+  )
+  val isScalaNative = System.getProperty("java.vm.name") == "Scala Native"
+
+  val mainTests = Tests {
     test("HmacSHA256") {
       val data = "Hello, World!"
       val secretKey = "my_secret_key"
@@ -34,7 +39,9 @@ object MacSuite extends TestSuite {
       )
       assert(e.getMessage == "MAC not initialized")
     }
+  }
 
+  val java16Tests = Tests {
     test("HmacSHA3-256") {
       val data = "Hello, World!"
       val secretKey = "my_secret_key"
@@ -62,4 +69,7 @@ object MacSuite extends TestSuite {
       assert(e.getMessage == "MAC not initialized")
     }
   }
+  val tests =
+    if (javaVersion >= 16 || isScalaNative) mainTests ++ java16Tests
+    else mainTests
 }
