@@ -13,13 +13,20 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        java:
+          - '11'
+          - '17'
+          - '21'
+    name: Build and Test with Java ${{ matrix.java }}
     steps:
     - uses: actions/checkout@v3 
     - name: Install Dependencies
       run: sudo apt-get update && sudo apt-get install -y libssl-dev
     - uses: actions/setup-java@v3
       with:
-        java-version: '11'
+        java-version: '${{ matrix.java }}'
         architecture: 'x64'
         distribution: 'temurin'
     - name: Check formatting
