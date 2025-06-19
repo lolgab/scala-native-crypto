@@ -1,7 +1,7 @@
 package build
 
 import mill._, mill.scalalib._, mill.scalanativelib._, mill.scalanativelib.api._
-import mill.scalalib.api.ZincWorkerUtil.isScala3
+import mill.scalalib.api.JvmWorkerUtil.isScala3
 import mill.scalalib.publish._
 import mill.util.Jvm
 import $ivy.`com.goyeau::mill-scalafix::0.4.2`
