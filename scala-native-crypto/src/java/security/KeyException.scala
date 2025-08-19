@@ -6,7 +6,3 @@ class KeyException(message: String, cause: Throwable)
   def this(msg: String) = this(msg, null)
   def this(cause: Throwable) = this(null, cause)
 }
-
-object KeyException {
-  private final val serialVersionUID = -7483676942812432108L
-}

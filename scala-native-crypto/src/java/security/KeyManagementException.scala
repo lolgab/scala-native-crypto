@@ -7,7 +7,3 @@ class KeyManagementException(message: String, cause: Throwable)
   def this(msg: String) = this(msg, null)
   def this(cause: Throwable) = this(null, cause)
 }
-
-object KeyManagementException {
-  private final val serialVersionUID = 947674216157062695L;
-}
