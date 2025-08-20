@@ -9,7 +9,3 @@ class SSLException(message: String, cause: Throwable)
   def this(reason: String) = this(reason, null)
   def this(cause: Throwable) = this(null, cause)
 }
-
-object SSLException {
-  private final val serialVersionUID = 4511006460650708967L;
-}
