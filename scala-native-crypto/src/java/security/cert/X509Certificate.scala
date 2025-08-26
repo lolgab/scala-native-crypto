@@ -5,7 +5,7 @@ import java.util.Date
 import java.util.{List => JList}
 import java.util.Collection
 
-import java.security.{DEREncodable, PublicKey, Provider}
+import java.security.DEREncodable
 import javax.security.auth.x500.X500Principal
 
 // ref: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html
@@ -59,5 +59,6 @@ abstract class X509Certificate(certType: String)
 
   def getVersion(): Int
 
-  def verify(key: PublicKey, sigProvider: Provider): Unit
+  // declared in Certificate
+  // def verify(key: PublicKey, sigProvider: Provider): Unit
 }

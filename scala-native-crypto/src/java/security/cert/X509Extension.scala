@@ -2,12 +2,13 @@ package java.security.cert
 
 import java.util.{Set => JSet}
 
+// ref: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Extension.html
 trait X509Extension {
-  def hasUnsupportedCriticalExtension(): Boolean
-
   def getCriticalExtensionOIDs(): JSet[String]
+
+  def getExtensionValue(oid: String): Array[Byte]
 
   def getNonCriticalExtensionOIDs(): JSet[String]
 
-  def getExtensionValue(oid: String): Array[Byte]
+  def hasUnsupportedCriticalExtension(): Boolean
 }
