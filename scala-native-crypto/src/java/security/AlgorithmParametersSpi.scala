@@ -1,6 +1,5 @@
 package java.security
 
-import java.io.*
 import java.security.spec.AlgorithmParameterSpec
 import java.security.spec.InvalidParameterSpecException
 

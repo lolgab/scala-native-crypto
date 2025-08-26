@@ -4,14 +4,33 @@ import java.io.IOException
 import java.security.spec.AlgorithmParameterSpec
 import java.security.spec.InvalidParameterSpecException
 import java.util.Objects.requireNonNull
-
 import java.util.concurrent.atomic.AtomicBoolean
 
+// NOTE:
+//
+// There is no `paramSpi` in the constructor.
+//
+// All documentated methods of `AlgorithmParametersSpi` have been marked as `protected`,
+// so they are not callable from `AlgorithmParameters`
+//
+// If you do follow the official doc that passing `paramSpi` to the constructor, you will get compile error
+//
+// ```
+// ...
+// [error] protected method engineInit can only be accessed from class AlgorithmParametersSpi in package java.security or one of its subclasses.
+// ...
+// ```
+//
+// AlgorithmParameters's constructor is `protected`, so it's fine and safe to violate the doc here.
+//
+// References:
+//  - https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/AlgorithmParameters.html
+//  - https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/AlgorithmParametersSpi.html
 class AlgorithmParameters protected (
-    paramSpi: AlgorithmParametersSpi,
+    // paramSpi: AlgorithmParametersSpi,
     provider: Provider,
     algorithm: String
-) {
+) extends AlgorithmParametersSpi {
 
   private val _initialized: AtomicBoolean = AtomicBoolean(false)
 
@@ -23,7 +42,7 @@ class AlgorithmParameters protected (
     if (_initialized.get())
       throw InvalidParameterSpecException("already initialized")
 
-    paramSpi.engineInit(paramSpec)
+    engineInit(paramSpec)
 
     _initialized.compareAndSet(false, true)
   }
@@ -31,7 +50,7 @@ class AlgorithmParameters protected (
   final def init(params: Array[Byte]): Unit = {
     if (_initialized.get()) throw IOException("already initialized")
 
-    paramSpi.engineInit(params)
+    engineInit(params)
 
     _initialized.compareAndSet(false, true)
   }
@@ -39,7 +58,7 @@ class AlgorithmParameters protected (
   final def init(params: Array[Byte], format: String): Unit = {
     if (_initialized.get()) throw IOException("already initialized")
 
-    paramSpi.engineInit(params, format)
+    engineInit(params, format)
 
     _initialized.compareAndSet(false, true)
   }
@@ -50,24 +69,24 @@ class AlgorithmParameters protected (
     if (!_initialized.get())
       throw InvalidParameterSpecException("not initialized")
 
-    paramSpi.engineGetParameterSpec(paramSpec)
+    engineGetParameterSpec(paramSpec)
   }
 
   final def getEncoded(): Array[Byte] = {
     if (!_initialized.get()) throw IOException("not initialized")
 
-    paramSpi.engineGetEncoded()
+    engineGetEncoded()
   }
 
   final def getEncoded(format: String): Array[Byte] = {
     if (!_initialized.get()) throw IOException("not initialized")
 
-    paramSpi.engineGetEncoded(format)
+    engineGetEncoded(format)
   }
 
   final override def toString(): String = {
     if (!_initialized.get()) ""
-    else paramSpi.engineToString()
+    else engineToString()
   }
 }
 

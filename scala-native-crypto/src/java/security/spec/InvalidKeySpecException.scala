@@ -1,7 +1,5 @@
 package java.security.spec
 
-package java.security.spec;
-
 import java.security.GeneralSecurityException
 
 class InvalidKeySpecException(msg: String, cause: Throwable)
