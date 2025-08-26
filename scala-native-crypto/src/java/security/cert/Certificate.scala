@@ -1,7 +1,7 @@
 package java.security.cert
 
-import java.io.{ByteArrayInputStream, Serializable}
-import java.io.{NotSerializableException}
+import java.io.ByteArrayInputStream
+import java.io.NotSerializableException
 import java.security.{Provider, PublicKey}
 
 // ref: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html

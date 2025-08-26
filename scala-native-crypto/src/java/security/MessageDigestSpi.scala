@@ -5,8 +5,7 @@ package java.security
 import java.nio.ByteBuffer
 
 abstract class MessageDigestSpi {
-  protected def engineGetDigestLength(): Int =
-    0
+  protected def engineGetDigestLength(): Int = 0
 
   protected def engineUpdate(input: Byte): Unit
 

@@ -1,0 +1,12 @@
+package java.security.spec
+
+package java.security.spec;
+
+import java.security.GeneralSecurityException
+
+class InvalidKeySpecException(msg: String, cause: Throwable)
+    extends GeneralSecurityException(msg, cause) {
+  def this() = this(null, null)
+  def this(msg: String) = this(msg)
+  def this(cause: Throwable) = this(cause)
+}
