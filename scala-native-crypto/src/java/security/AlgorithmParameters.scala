@@ -79,6 +79,8 @@ class AlgorithmParameters protected (
   }
 
   final def getEncoded(format: String): Array[Byte] = {
+    requireNonNull(format)
+    require(format.nonEmpty)
     if (!_initialized.get()) throw IOException("not initialized")
 
     engineGetEncoded(format)
@@ -93,14 +95,16 @@ class AlgorithmParameters protected (
 object AlgorithmParameters {
 
   def getInstance(algorithm: String): AlgorithmParameters = {
-    requireNonNull(algorithm, "null algorithm name")
+    requireNonNull(algorithm)
+    require(algorithm.nonEmpty)
 
     ???
   }
 
   def getInstance(algorithm: String, provider: String): AlgorithmParameters = {
-    requireNonNull(algorithm, "null algorithm name")
-    requireNonNull(provider, "null provider")
+    requireNonNull(algorithm)
+    requireNonNull(provider)
+    require(algorithm.nonEmpty)
     require(provider.nonEmpty)
 
     ???
@@ -110,8 +114,9 @@ object AlgorithmParameters {
       algorithm: String,
       provider: Provider
   ): AlgorithmParameters = {
-    requireNonNull(algorithm, "null algorithm name")
-    requireNonNull(provider, "null provider")
+    requireNonNull(algorithm)
+    requireNonNull(provider)
+    require(algorithm.nonEmpty)
 
     ???
   }

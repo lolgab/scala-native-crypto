@@ -40,4 +40,8 @@ class SecretKeySpec(
   override def hashCode(): Int =
     algorithm.hashCode() ^ Arrays.hashCode(key)
 
+  def destroy(): Unit = ???
+
+  def isDestroyed(): Boolean = ???
+
 }

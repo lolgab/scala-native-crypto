@@ -144,7 +144,7 @@ abstract class Signature protected (algorithm: String) extends SignatureSpi {
     }
 
     val x509cert = certificate.asInstanceOf[X509Certificate]
-    val publicKey = x509cert.getPublicKey
+    val publicKey = x509cert.getPublicKey()
     if (publicKey == null) {
       throw new InvalidKeyException("Null public key in certificate")
     }

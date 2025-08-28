@@ -270,11 +270,7 @@ object KeyStore {
       requireNonNull(protectionParameter)
       require(keyStore._initialized.get())
 
-      new Builder {
-        def getKeyStore(): KeyStore = keyStore
-        def getProtectionParameter(alias: String): ProtectionParameter =
-          protectionParameter
-      }
+      ???
     }
 
     def newInstance(
@@ -379,7 +375,7 @@ object KeyStore {
     }
 
     def destroy(): Unit = {
-      Array.fill(_password, ' ')
+      Arrays.fill(_password, ' ')
       destroyed.compareAndSet(false, true)
     }
 
@@ -426,7 +422,7 @@ object KeyStore {
     def getAttributes(): JSet[Entry.Attribute] = _attributes
 
     override def toString(): String = {
-      val perCert = _chain.map(_.toString()).mkString('\n')
+      val perCert = _chain.map(_.toString()).mkString("\n")
       s"Private key entry and certificate chain with ${_chain.length} elements:\n${perCert}"
     }
   }

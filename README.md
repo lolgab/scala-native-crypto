@@ -21,11 +21,13 @@ def ivyDeps = super.ivyDeps() ++ Agg(ivy"com.github.lolgab::scala-native-crypto:
 You need also to install OpenSSL:
 
 On Ubuntu:
+
 ```
 sudo apt install libssl-dev
 ```
 
 On Mac OS X (with Homebrew):
+
 ```
 brew install openssl
 ```
