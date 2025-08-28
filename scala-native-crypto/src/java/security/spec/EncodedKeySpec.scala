@@ -6,7 +6,10 @@ abstract class EncodedKeySpec protected (
     algorithm: String
 ) extends KeySpec {
 
-  require(algorithm != null && algorithm.nonEmpty)
+  require(
+    algorithm == null || algorithm.nonEmpty,
+    "algorithm could be null otherwise cannot be empty if not null"
+  )
   private lazy val _encodedKey = encodedKey.clone()
 
   def this(encodedKey: Array[Byte]) = this(encodedKey, null)

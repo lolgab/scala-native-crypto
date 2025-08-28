@@ -11,7 +11,10 @@ class KeyFactory protected (
 ) {
   requireNonNull(provider)
   requireNonNull(algorithm)
-  require(algorithm != null && algorithm.nonEmpty)
+  require(
+    algorithm == null || algorithm.nonEmpty,
+    "algorithm could be null otherwise cannot be empty if not null"
+  )
 
   final def generatePrivate(is: KeySpec): PrivateKey = {
     ???
