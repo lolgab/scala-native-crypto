@@ -10,18 +10,17 @@ import java.io.{
   FileInputStream
 }
 
-import java.security.cert.{Certificate, X509Certificate, CertificateException}
+import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
 import java.security.{NoSuchAlgorithmException, NoSuchProviderException}
-import java.util.{Date, Enumeration, Objects, Collections, LinkedHashSet}
+import java.util.{Arrays, Collections, Date, Enumeration}
 import java.util.{Set => JSet, Map => JMap}
 import java.util.Objects.requireNonNull
+import java.util.concurrent.atomic.AtomicBoolean
 
 import javax.crypto.SecretKey
-import javax.security.auth.{Destroyable, DestroyFailedException}
+import javax.security.auth.{Destroyable}
 import javax.security.auth.callback.CallbackHandler
-import java.util.concurrent.atomic.AtomicBoolean
-import scala.collection.View.Collect
 
 // ref: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyStore.html
 class KeyStore(
@@ -240,8 +239,9 @@ object KeyStore {
   }
 
   def getDefaultType(): String = {
-    val kstype = Security.getProperty(KEYSTORE_TYPE)
-    if (kstype == null) "pkcs12" else kstype
+    // val kstype = Security.getProperty(KEYSTORE_TYPE)
+    // if (kstype == null) "pkcs12" else kstype
+    ???
   }
 
   def getInstance(file: File, password: Array[Char]): KeyStore = {

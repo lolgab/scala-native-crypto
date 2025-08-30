@@ -1,22 +1,14 @@
 package java.security
 
-import java.io.*
 import java.nio.ByteBuffer
 import java.security.cert.Certificate
 import java.security.cert.X509Certificate
 import java.security.spec.AlgorithmParameterSpec
 import java.util.Objects.requireNonNull
-import java.util.concurrent.ConcurrentHashMap
 
-import java.security.Provider.Service
 import javax.crypto.Cipher
-import javax.crypto.IllegalBlockSizeException
-import javax.crypto.BadPaddingException
-import javax.crypto.NoSuchPaddingException
 
-// import jdk.internal.access.JavaSecuritySignatureAccess
-// import jdk.internal.access.SharedSecrets
-
+// ref: https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/Signature.html
 abstract class Signature protected (algorithm: String) extends SignatureSpi {
 
   @volatile private var _provider: Provider = null
@@ -136,7 +128,10 @@ abstract class Signature protected (algorithm: String) extends SignatureSpi {
     else throw new CloneNotSupportedException()
   }
 
+  //
   // Private helpers
+  //
+
   private def getPublicKeyFromCert(certificate: Certificate): PublicKey = {
     requireNonNull(certificate)
     if (!certificate.isInstanceOf[X509Certificate]) {

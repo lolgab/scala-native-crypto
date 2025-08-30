@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 // References:
 //  - https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/AlgorithmParameters.html
 //  - https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/AlgorithmParametersSpi.html
-class AlgorithmParameters protected (
+abstract class AlgorithmParameters protected (
     // paramSpi: AlgorithmParametersSpi,
     provider: Provider,
     algorithm: String
