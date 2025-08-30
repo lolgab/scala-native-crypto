@@ -32,7 +32,7 @@ abstract class AlgorithmParameters protected (
     algorithm: String
 ) extends AlgorithmParametersSpi {
 
-  private val _initialized: AtomicBoolean = AtomicBoolean(false)
+  private val _initialized: AtomicBoolean = new AtomicBoolean(false)
 
   final def getAlgorithm(): String = algorithm
 
@@ -40,7 +40,7 @@ abstract class AlgorithmParameters protected (
 
   final def init(paramSpec: AlgorithmParameterSpec): Unit = {
     if (_initialized.get())
-      throw InvalidParameterSpecException("already initialized")
+      throw new InvalidParameterSpecException("already initialized")
 
     engineInit(paramSpec)
 
@@ -48,7 +48,7 @@ abstract class AlgorithmParameters protected (
   }
 
   final def init(params: Array[Byte]): Unit = {
-    if (_initialized.get()) throw IOException("already initialized")
+    if (_initialized.get()) throw new IOException("already initialized")
 
     engineInit(params)
 
@@ -56,7 +56,7 @@ abstract class AlgorithmParameters protected (
   }
 
   final def init(params: Array[Byte], format: String): Unit = {
-    if (_initialized.get()) throw IOException("already initialized")
+    if (_initialized.get()) throw new IOException("already initialized")
 
     engineInit(params, format)
 
@@ -67,13 +67,13 @@ abstract class AlgorithmParameters protected (
       paramSpec: Class[T]
   ): T = {
     if (!_initialized.get())
-      throw InvalidParameterSpecException("not initialized")
+      throw new InvalidParameterSpecException("not initialized")
 
     engineGetParameterSpec(paramSpec)
   }
 
   final def getEncoded(): Array[Byte] = {
-    if (!_initialized.get()) throw IOException("not initialized")
+    if (!_initialized.get()) throw new IOException("not initialized")
 
     engineGetEncoded()
   }
@@ -81,7 +81,7 @@ abstract class AlgorithmParameters protected (
   final def getEncoded(format: String): Array[Byte] = {
     requireNonNull(format)
     require(format.nonEmpty)
-    if (!_initialized.get()) throw IOException("not initialized")
+    if (!_initialized.get()) throw new IOException("not initialized")
 
     engineGetEncoded(format)
   }

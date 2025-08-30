@@ -67,7 +67,7 @@ trait ScalaNativeCryptoModule extends Shared with Publish {
       (_, file) =>
         file.ext match {
           case "class" | "tasty" => false
-          case _ => true
+          case _                 => true
         }
     )
   }

@@ -10,7 +10,7 @@ abstract class SignatureSpi {
 
   override def clone(): Object =
     if (this.isInstanceOf[Cloneable]) super.clone()
-    else throw CloneNotSupportedException()
+    else throw new CloneNotSupportedException()
 
   // @deprecated
   // protected def engineGetParameter(param: String): Object
@@ -44,9 +44,9 @@ abstract class SignatureSpi {
     val sig = engineSign()
 
     if (len < sig.length)
-      throw SignatureException("partial signatures not returned")
+      throw new SignatureException("partial signatures not returned")
     if ((outbuf.length - offset) < sig.length)
-      throw SignatureException(
+      throw new SignatureException(
         "insufficient space in the output buffer to store the signature"
       )
 
@@ -62,27 +62,11 @@ abstract class SignatureSpi {
     if (!input.hasRemaining) return
 
     try {
-      //   if (input.hasArray) {
-      //     val b = input.array
-      //     val ofs = input.arrayOffset
-      //     val pos = input.position
-      //     val lim = input.limit
-      //     engineUpdate(b, ofs + pos, lim - pos)
-      //     input.position(lim)
-      //   } else {
-      //     var len = input.remaining
-      //     val b = new Array[Byte](Math.min(len, 4096))
-      //     while (len > 0) {
-      //       val chunk = Math.min(len, b.length)
-      //       input.get(b, 0, chunk)
-      //       engineUpdate(b, 0, chunk)
-      //       len -= chunk
-      //     }
-      //   }
+
       ???
     } catch {
       case exc: Exception =>
-        throw SignatureException(
+        throw new SignatureException(
           "this signature algorithm is unable to process the input data provided",
           exc
         )

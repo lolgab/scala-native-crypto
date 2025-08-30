@@ -146,7 +146,7 @@ object Security {
   // Private implementation details
   //
 
-  private val ReservedKeys = JSet.of("include")
+  private val ReservedKeys = JSet.of[String]("include")
 
   private val _providers: ListBuffer[Provider] = ListBuffer()
 

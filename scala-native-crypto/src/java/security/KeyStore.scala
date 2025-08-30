@@ -358,7 +358,7 @@ object KeyStore {
     )
 
     private lazy val _password: Array[Char] = password.clone()
-    private val destroyed: AtomicBoolean = AtomicBoolean(false)
+    private val destroyed: AtomicBoolean = new AtomicBoolean(false)
 
     def this(password: Array[Char]) = {
       this(password, null, null)
