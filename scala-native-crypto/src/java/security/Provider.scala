@@ -1,17 +1,8 @@
 package java.security
 
-import java.io.{InputStream, ObjectInputStream}
-import java.io.IOException
-import java.util.Properties
 import java.util.{Map => JMap, Set => JSet, List => JList}
-import java.util.{Collections, HashMap, ArrayList, LinkedHashSet, Enumeration}
+import java.util.{Collections, Properties}
 import java.util.Objects.requireNonNull
-import java.util.concurrent.ConcurrentHashMap
-import java.util.regex.Pattern
-import java.util.function.{BiConsumer, BiFunction, Function}
-import java.security.cert.CertStoreParameters
-import scala.scalanative.libc.stdatomic.AtomicBool
-import java.util.Collection
 
 // Refs:
 // 1. https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/Provider.html
@@ -27,31 +18,32 @@ abstract class Provider(
   requireNonNull(info)
   require(name.nonEmpty && versionStr.nonEmpty && info.nonEmpty)
 
-  private val version: Double = Provider.parseVersionStr(versionStr)
   // @volatile protected val defaults = _
 
   // @deprecated since JDK 9
   // def this(name: String, version: Double, info: String)
 
   // @since JDK 9
-  def configure(configArg: String): Provider =
-    throw new UnsupportedOperationException("configure is not supported")
+  def configure(configArg: String): Provider
 
-  def isConfigured(): Boolean = true
+  // @since JDK 9
+  def isConfigured(): Boolean
 
-  def getName(): String = name
+  def getName(): String
 
   // @deprecated since JDK 9
   // def getVersion(): Double = version
 
   // @since JDK 9
-  def getVersionStr(): String = versionStr
+  def getVersionStr(): String
 
-  def getInfo(): String = info
+  def getInfo(): String
 
   override def toString(): String = s"${name} version ${versionStr}"
 
-  def getService(svcType: String, algorithm: String): Provider.Service
+  def load(input: InputStream): Unit
+
+  def getService(`type`: String, algorithm: String): Provider.Service
 
   def getServices(): JSet[Provider.Service]
 
@@ -59,36 +51,40 @@ abstract class Provider(
 
   protected def removeService(s: Provider.Service): Unit
 
-  //
-  // Private methods
-  //
-
 }
 
 object Provider {
-  private val versionStrPattern = Pattern.compile("^[0-9]+(\\.[0-9]+)*")
-  private def parseVersionStr(vs: String): Double = {
-    if (vs == null) return 0.0
-    val s = vs.trim()
-    if (versionStrPattern.matcher(s).lookingAt() == false) return 0.0
 
-    val arr = s.split('.')
-    arr.length match {
-      case 0 => s.toDouble
-      case 1 => arr(0).toDouble
-      case _ => s"${arr(0)}.${arr(1)}".toDouble
+  private case class ServiceKey(`type`: String, algorithm: String) {
+    requireNonNull(`type`)
+    requireNonNull(algorithm)
+    require(`type`.nonEmpty && algorithm.nonEmpty)
+
+    override def toString(): String = s"${`type`}.${algorithm}"
+
+    // should be case insensitive
+    override def hashCode(): Int =
+      31 * `type`.toUpperCase().hashCode() + algorithm.toUpperCase().hashCode()
+
+    override def equals(obj: Any): Boolean = {
+      if (this eq obj.asInstanceOf[AnyRef]) return true
+      if (!obj.isInstanceOf[ServiceKey]) return false
+
+      val other = obj.asInstanceOf[ServiceKey]
+
+      `type`.equalsIgnoreCase(other.`type`) &&
+      algorithm.equalsIgnoreCase(other.algorithm)
     }
   }
 
   class Service(
-      provider: Provider,
-      svcType: String,
-      algorithm: String,
-      className: String,
-      aliases: JList[String],
-      attributes: JMap[String, String]
+      private val provider: Provider,
+      private val svcType: String,
+      private val algorithm: String,
+      private val className: String,
+      private val aliases: JList[String],
+      private val attributes: JMap[String, String]
   ) {
-
     requireNonNull(provider)
     requireNonNull(svcType)
     requireNonNull(algorithm)
@@ -123,12 +119,12 @@ object Provider {
     override def toString(): String = {
       val aliasStr =
         if (svcAliases.isEmpty) ""
-        else s"\r\n  aliases: ${svcAliases}"
+        else s"  aliases: ${svcAliases}\r\n"
       val attrStr =
         if (serviceAttributes.isEmpty) ""
-        else s"\r\n  attributes: ${serviceAttributes}"
+        else s"  attributes: ${serviceAttributes}\r\n"
 
-      s"${provider.getName()}: ${svcType}.${algorithm} -> ${className}${aliasStr}${attrStr}\r\n"
+      s"${provider.getName()}: ${svcType}.${algorithm} -> ${className}\r\n${aliasStr}${attrStr}"
     }
   }
 }
