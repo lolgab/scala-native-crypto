@@ -1,14 +1,8 @@
 package javax.crypto
 
-import java.nio.{ByteBuffer, ReadOnlyBufferException}
+import java.nio.ByteBuffer
 
-import java.security.{
-  AlgorithmParameters,
-  ExemptionMechanism,
-  Key,
-  SecureRandom
-}
-import java.security.Provider.Service
+import java.security.{AlgorithmParameters, Key, SecureRandom, Provider}
 import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
 import java.util.{List => JList, Map => JMap, Set => JSet}
@@ -31,7 +25,8 @@ class Cipher protected (
 
   def getParameters(): AlgorithmParameters = ???
 
-  def getExemptionMechanism(): ExemptionMechanism = ???
+  // not supported yet
+  // def getExemptionMechanism(): ExemptionMechanism = ???
 
   def init(opmode: Int, key: Key): Unit = ???
 
