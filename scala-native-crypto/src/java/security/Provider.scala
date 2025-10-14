@@ -1,12 +1,14 @@
 package java.security
 
+import java.io.InputStream
 import java.util.{Map => JMap, Set => JSet, List => JList}
 import java.util.{Collections, Properties}
 import java.util.Objects.requireNonNull
 
-// Refs:
-// 1. https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/Provider.html
-// 2. https://docs.oracle.com/en/java/javase/24/security/howtoimplaprovider.html
+/// Refs:
+///
+/// 1. https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/Provider.html
+/// 2. https://docs.oracle.com/en/java/javase/24/security/howtoimplaprovider.html\
 abstract class Provider(
     private val name: String,
     private val versionStr: String,
@@ -21,7 +23,9 @@ abstract class Provider(
   // @volatile protected val defaults = _
 
   // @deprecated since JDK 9
-  // def this(name: String, version: Double, info: String)
+  // @deprecated("Use `Provider(String, String, String)` instead instead", "JDK 9")
+  // def this(name: String, version: Double, info: String) =
+  //   this(name, version.toString, info)
 
   // @since JDK 9
   def configure(configArg: String): Provider
@@ -41,7 +45,12 @@ abstract class Provider(
 
   override def toString(): String = s"${name} version ${versionStr}"
 
-  def load(input: InputStream): Unit
+  /// May doesn't make sense for Scala Native,
+  /// which cann't load classes dynamically in runtime
+  override def load(input: InputStream): Unit =
+    throw new UnsupportedOperationException(
+      "load is not supported"
+    )
 
   def getService(`type`: String, algorithm: String): Provider.Service
 
@@ -54,28 +63,6 @@ abstract class Provider(
 }
 
 object Provider {
-
-  private case class ServiceKey(`type`: String, algorithm: String) {
-    requireNonNull(`type`)
-    requireNonNull(algorithm)
-    require(`type`.nonEmpty && algorithm.nonEmpty)
-
-    override def toString(): String = s"${`type`}.${algorithm}"
-
-    // should be case insensitive
-    override def hashCode(): Int =
-      31 * `type`.toUpperCase().hashCode() + algorithm.toUpperCase().hashCode()
-
-    override def equals(obj: Any): Boolean = {
-      if (this eq obj.asInstanceOf[AnyRef]) return true
-      if (!obj.isInstanceOf[ServiceKey]) return false
-
-      val other = obj.asInstanceOf[ServiceKey]
-
-      `type`.equalsIgnoreCase(other.`type`) &&
-      algorithm.equalsIgnoreCase(other.algorithm)
-    }
-  }
 
   class Service(
       private val provider: Provider,
