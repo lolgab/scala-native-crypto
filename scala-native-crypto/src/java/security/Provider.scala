@@ -7,8 +7,8 @@ import java.util.Objects.requireNonNull
 
 /// Refs:
 ///
-/// 1. https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/Provider.html
-/// 2. https://docs.oracle.com/en/java/javase/24/security/howtoimplaprovider.html\
+/// 1. https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Provider.html
+/// 2. https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html
 abstract class Provider(
     private val name: String,
     private val versionStr: String,

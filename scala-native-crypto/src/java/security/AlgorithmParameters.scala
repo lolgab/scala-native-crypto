@@ -24,8 +24,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 // AlgorithmParameters's constructor is `protected`, so it's fine and safe to violate the doc here.
 //
 // References:
-//  - https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/AlgorithmParameters.html
-//  - https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/AlgorithmParametersSpi.html
+//  - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/AlgorithmParameters.html
+//  - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/AlgorithmParametersSpi.html
 abstract class AlgorithmParameters protected (
     // paramSpi: AlgorithmParametersSpi,
     provider: Provider,

@@ -3,7 +3,7 @@ package java.security
 import java.security.spec.AlgorithmParameterSpec
 import java.security.spec.InvalidParameterSpecException
 
-// ref: https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/AlgorithmParametersSpi.html
+// ref: https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/AlgorithmParametersSpi.html
 abstract class AlgorithmParametersSpi {
   protected def engineInit(paramSpec: AlgorithmParameterSpec): Unit = ???
 

@@ -8,7 +8,7 @@ import java.util.Objects.requireNonNull
 
 import javax.crypto.Cipher
 
-// ref: https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/Signature.html
+// ref: https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Signature.html
 abstract class Signature protected (algorithm: String) extends SignatureSpi {
 
   @volatile private var _provider: Provider = null

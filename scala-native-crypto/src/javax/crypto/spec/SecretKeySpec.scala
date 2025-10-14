@@ -5,7 +5,7 @@ import java.util.Objects.requireNonNull
 import java.util.Arrays
 import javax.crypto.SecretKey
 
-// ref: https://docs.oracle.com/en/java/javase/24/docs/api/java.base/javax/crypto/spec/SecretKeySpec.html
+// ref: https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/spec/SecretKeySpec.html
 class SecretKeySpec(
     private val key: Array[Byte],
     private val offset: Int,

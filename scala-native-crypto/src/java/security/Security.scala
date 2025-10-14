@@ -9,8 +9,8 @@ import scala.collection.mutable.HashMap
 
 /// Refs:
 ///
-/// - https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/Security.html
-/// - https://docs.oracle.com/en/java/javase/24/security/howtoimplaprovider.html
+/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Security.html
+/// - https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html
 object Security {
 
   @deprecated

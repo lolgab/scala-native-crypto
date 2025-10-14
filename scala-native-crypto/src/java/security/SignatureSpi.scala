@@ -3,7 +3,7 @@ package java.security
 import java.nio.ByteBuffer
 import java.security.spec.AlgorithmParameterSpec
 
-// ref: https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/SignatureSpi.html
+// ref: https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/SignatureSpi.html
 abstract class SignatureSpi {
 
   @volatile protected var appRandom: SecureRandom = null
@@ -17,8 +17,6 @@ abstract class SignatureSpi {
 
   protected def engineGetParameters(): AlgorithmParameters = ???
 
-  protected def engineInitSign(privateKey: PrivateKey): Unit
-
   protected def engineInitSign(
       privateKey: PrivateKey,
       random: SecureRandom
@@ -26,6 +24,8 @@ abstract class SignatureSpi {
     appRandom = random
     engineInitSign(privateKey)
   }
+
+  protected def engineInitSign(privateKey: PrivateKey): Unit
 
   protected def engineInitVerify(publicKey: PublicKey): Unit
 
@@ -62,7 +62,23 @@ abstract class SignatureSpi {
     if (!input.hasRemaining) return
 
     try {
-
+      // if (input.hasArray) {
+      //   val b = input.array()
+      //   val offset = input.arrayOffset()
+      //   val pos = input.position
+      //   val limit = input.limit
+      //   engineUpdate(b, offset + pos, limit - pos)
+      //   input.position(limit)
+      // } else {
+      //   var len = input.remaining
+      //   val b = new Array[Byte](Math.min(len, 4096))
+      //   while (len > 0) {
+      //     val chunk = Math.min(len, b.length)
+      //     input.get(b, 0, chunk)
+      //     engineUpdate(b, 0, chunk)
+      //     len -= chunk
+      //   }
+      // }
       ???
     } catch {
       case exc: Exception =>
