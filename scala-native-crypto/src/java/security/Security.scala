@@ -4,17 +4,20 @@ import java.util.{Collections, HashSet}
 import java.util.{Map => JMap, Set => JSet}
 import java.util.Objects.requireNonNull
 
-import scala.util.Properties
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.HashMap
 
 /// Refs:
 ///
 /// - https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/Security.html
+/// - https://docs.oracle.com/en/java/javase/24/security/howtoimplaprovider.html
 object Security {
 
-  // @deprecated
-  // def getAlgorithmProperty(algName: String, propName: String): String
+  @deprecated
+  def getAlgorithmProperty(algName: String, propName: String): String =
+    throw new UnsupportedOperationException(
+      "getAlgorithmProperty is not supported"
+    )
 
   def insertProviderAt(provider: Provider, position: Int): Int = {
     requireNonNull(provider, "provider must not be null")
@@ -96,15 +99,32 @@ object Security {
       throw new InvalidParameterException(s"Invalid filter format: '${filter}'")
   }
 
+  /// Notes: (from JDK doc)
+  ///
+  /// The selection criteria are represented by a map. Each map entry represents
+  /// a selection criterion. A provider is selected iff it satisfies all
+  /// selection criteria.
+  ///
+  /// Majorly use to test if a provider satisfies the criteria.
+  ///
+  /// 1. `<crypto_service>.<algorithm_or_type>`
+  /// 2. `<crypto_service>.<algorithm_or_type> <attribute_name>:<attribute_value>`
   def getProviders(filter: JMap[String, String]): Array[Provider] = {
-    val allProviders = getProviders()
-    val entries = filter.entrySet()
+    val providers = getProviders()
+    if (providers.length == 0) return null
 
-    if (allProviders == null || allProviders.length == 0) return null
-    if (entries == null) return allProviders
+    val entries = filter.entrySet()
     if (entries.isEmpty) return null
 
-    ???
+    val criteria = entries
+      .toArray()
+      .map { e =>
+        val entry = e.asInstanceOf[JMap.Entry[String, String]]
+        Criterion(entry.getKey(), entry.getValue())
+      }
+      .toList
+
+    providers.filter(p => criteria.forall(c => c.test(p)))
   }
 
   def getProperty(key: String): String = {
@@ -147,13 +167,100 @@ object Security {
   //
 
   private val ReservedKeys = JSet.of[String]("include")
-
   private val _providers: ListBuffer[Provider] = ListBuffer()
-
   private val _props: HashMap[String, String] = HashMap()
 
-  // private case class ProviderEntry(name: String, provider: Provider)
+  private case class Criterion(
+      serviceName: String,
+      algorithmName: String,
+      attrName: String,
+      attrValue: String
+  ) {
+    requireNonNull(serviceName)
+    requireNonNull(algorithmName)
+    require(serviceName.nonEmpty && algorithmName.nonEmpty)
+    requireNonNull(attrName)
+    requireNonNull(attrValue)
 
-  // private case class Criteria(key: String, value: String) { ??? }
+    def test(provider: Provider): Boolean = {
+      // FIXME: not fullly correct since we ignore alias here
+      // TODO: check alias from service.getAliases() and getProviderProperty()
 
+      val service = provider.getService(serviceName, algorithmName)
+      if (service == null) return false
+      if (attrName.isEmpty) return true // no attribute to match
+
+      val v = service.getAttribute(attrName)
+      if (v == null) return false
+
+      if (attrName.equalsIgnoreCase("KeySize")) {
+        try {
+          val keySize = v.toInt
+          val requiredSize = attrValue.toInt
+          return keySize >= requiredSize
+        } catch {
+          case _: NumberFormatException => return false
+        }
+      } else if (
+        attrName.equalsIgnoreCase("SupportedKeyClasses") ||
+        attrName.equalsIgnoreCase("SupportedKeyFormats") ||
+        attrName.equalsIgnoreCase("SupportedPaddings") ||
+        attrName.equalsIgnoreCase("SupportedModes")
+      ) {
+        val values = v.split("|").map(_.trim())
+        values.exists(_.equalsIgnoreCase(attrValue))
+      } else {
+        return v.equalsIgnoreCase(attrValue)
+      }
+    }
+  }
+  private object Criterion {
+    def apply(key: String, value: String): Criterion = {
+      // Since it's private, we can assume key and value are non-null and trimmed.
+
+      val keyParts = key.split(".")
+      if (keyParts.length != 2)
+        throw new InvalidParameterException(s"Invalid filter key: '${key}'")
+
+      val serviceName = keyParts(0).trim()
+      val algorithmName = keyParts(1).trim()
+
+      if (value.isEmpty) {
+        Criterion(
+          serviceName,
+          algorithmName,
+          "",
+          ""
+        )
+      } else {
+
+        val colonIdx = value.indexOf(':')
+
+        if (colonIdx <= 0 || colonIdx >= value.length - 1) {
+          // in case the format
+          // is <crypto_service>.<algorithm_or_type> <attribute_name>
+          Criterion(
+            serviceName,
+            algorithmName,
+            value,
+            ""
+          )
+        } else {
+          val atrrName = value.substring(0, colonIdx).trim()
+          val attrValue = value.substring(colonIdx + 1).trim()
+          if (atrrName.isEmpty || attrValue.isEmpty)
+            throw new InvalidParameterException(
+              s"Invalid filter attribute: '${value}'"
+            )
+
+          Criterion(
+            serviceName,
+            algorithmName,
+            atrrName,
+            attrValue
+          )
+        }
+      }
+    }
+  }
 }
