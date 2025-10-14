@@ -8,11 +8,15 @@ import java.util.Objects.requireNonNull
 
 import javax.crypto.Cipher
 
-// ref: https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Signature.html
+/// Refs:
+///
+/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Signature.html
 abstract class Signature protected (algorithm: String) extends SignatureSpi {
 
   @volatile private var _provider: Provider = null
 
+  // magic numbers come from
+  // https://docs.oracle.com/en/java/javase/25/docs/api/constant-values.html#java.security
   protected val UNINITIALIZED = 0
   protected val SIGN = 2
   protected val VERIFY = 3
@@ -27,7 +31,17 @@ abstract class Signature protected (algorithm: String) extends SignatureSpi {
   }
 
   final def initVerify(certificate: Certificate): Unit = {
-    engineInitVerify(getPublicKeyFromCert(certificate))
+    requireNonNull(certificate)
+
+    if (!certificate.isInstanceOf[X509Certificate])
+      throw new InvalidKeyException("Only X.509 certificates are supported")
+    val x509cert = certificate.asInstanceOf[X509Certificate]
+
+    val publicKey = x509cert.getPublicKey()
+    if (publicKey == null)
+      throw new InvalidKeyException("Null public key in certificate")
+
+    engineInitVerify(publicKey)
     state = VERIFY
   }
 
@@ -41,10 +55,11 @@ abstract class Signature protected (algorithm: String) extends SignatureSpi {
     state = SIGN
   }
 
-  final def sign(): Array[Byte] = {
-    if (state == SIGN) engineSign()
-    else throw new SignatureException("object not initialized for signing")
-  }
+  final def sign(): Array[Byte] =
+    if (state == SIGN)
+      engineSign()
+    else
+      throw new SignatureException("object not initialized for signing")
 
   final def sign(outbuf: Array[Byte], off: Int, len: Int): Int = {
     requireNonNull(outbuf == null)
@@ -56,10 +71,9 @@ abstract class Signature protected (algorithm: String) extends SignatureSpi {
     engineSign(outbuf, off, len)
   }
 
-  final def verify(sig: Array[Byte]): Boolean = {
+  final def verify(sig: Array[Byte]): Boolean =
     if (state == VERIFY) engineVerify(sig)
     else throw new SignatureException("object not initialized for verification")
-  }
 
   final def verify(sig: Array[Byte], off: Int, len: Int): Boolean = {
     requireNonNull(sig)
@@ -69,13 +83,12 @@ abstract class Signature protected (algorithm: String) extends SignatureSpi {
     else throw new SignatureException("object not initialized for verification")
   }
 
-  final def update(b: Byte): Unit = {
+  final def update(b: Byte): Unit =
     if (state == VERIFY || state == SIGN) engineUpdate(b)
     else
       throw new SignatureException(
         "object not initialized for signature or verification"
       )
-  }
 
   final def update(data: Array[Byte]): Unit = update(data, 0, data.length)
 
@@ -91,15 +104,16 @@ abstract class Signature protected (algorithm: String) extends SignatureSpi {
   }
 
   final def update(data: ByteBuffer): Unit = {
-    if (state != SIGN && state != VERIFY) {
+    requireNonNull(data)
+
+    if (state != SIGN && state != VERIFY)
       throw new SignatureException(
         "object not initialized for signature or verification"
       )
-    }
-    requireNonNull(data)
 
     engineUpdate(data)
   }
+
   final def getAlgorithm(): String = algorithm
 
   override def toString: String = {
@@ -112,40 +126,21 @@ abstract class Signature protected (algorithm: String) extends SignatureSpi {
     s"Signature object: ${algorithm} ${s}"
   }
 
-  // @deprecated
-  // final def setParameter(param: String, value: Object): Unit
+  @deprecated
+  final def setParameter(param: String, value: Object): Unit =
+    throw new UnsupportedOperationException(
+      "setParameter(String, Object) not supported"
+    )
 
   final def setParameter(params: AlgorithmParameterSpec): Unit =
     engineSetParameter(params)
 
   final def getParameters(): AlgorithmParameters = engineGetParameters()
 
-  // @deprecated
-  // private def getProviderName: String =
-
-  override def clone(): Object = {
+  override def clone(): Object =
     if (this.isInstanceOf[Cloneable]) super.clone()
     else throw new CloneNotSupportedException()
-  }
 
-  //
-  // Private helpers
-  //
-
-  private def getPublicKeyFromCert(certificate: Certificate): PublicKey = {
-    requireNonNull(certificate)
-    if (!certificate.isInstanceOf[X509Certificate]) {
-      throw new InvalidKeyException("Only X.509 certificates are supported")
-    }
-
-    val x509cert = certificate.asInstanceOf[X509Certificate]
-    val publicKey = x509cert.getPublicKey()
-    if (publicKey == null) {
-      throw new InvalidKeyException("Null public key in certificate")
-    }
-
-    publicKey
-  }
 }
 
 object Signature {
