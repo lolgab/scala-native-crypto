@@ -5,14 +5,14 @@ import java.util.Date
 import java.util.{List => JList}
 import java.util.Collection
 
-import java.security.DEREncodable
 import javax.security.auth.x500.X500Principal
 
-// ref: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/X509Certificate.html
+/// ## Ref
+///
+/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/X509Certificate.html
 abstract class X509Certificate(certType: String)
     extends Certificate(certType)
-    with X509Extension
-    with DEREncodable {
+    with X509Extension {
   def checkValidity(): Unit
 
   def checkValidity(date: Date): Unit

@@ -127,7 +127,7 @@ object KeyStore {
   //
 
   abstract class Builder protected (ks: KeyStore, pp: ProtectionParameter) {
-    def getKeyStore(): KeyStore = ks
+    final def getKeyStore(): KeyStore = ks
     def getProtectionParameter(alias: String): ProtectionParameter
   }
 
@@ -241,12 +241,12 @@ object KeyStore {
       _password
     }
 
-    def destroy(): Unit = {
+    override def destroy(): Unit = {
       Arrays.fill(_password, ' ')
       destroyed.compareAndSet(false, true)
     }
 
-    def isDestroyed(): Boolean = destroyed.getOpaque()
+    override def isDestroyed(): Boolean = destroyed.getOpaque()
   }
 
   //

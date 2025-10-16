@@ -4,7 +4,7 @@ import java.security.spec.AlgorithmParameterSpec
 
 // ref: https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/AsymmetricKey.html
 // @since JDK 22
-trait AsymmetricKey extends Key with DEREncodable {
+trait AsymmetricKey extends Key {
   // Mark as not implemented yet, subclasses don't need to impl it.
   //
   // Major version is still JDK 11/17/21,

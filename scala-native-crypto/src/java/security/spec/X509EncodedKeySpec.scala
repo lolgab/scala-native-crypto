@@ -1,13 +1,14 @@
 package java.security.spec
 
-import java.security.DEREncodable
-
-// ref: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/spec/X509EncodedKeySpec.html
-// @since JDK 9
+/// @since JDK 9
+///
+/// ## Ref
+///
+/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/spec/X509EncodedKeySpec.html
+///
 class X509EncodedKeySpec(
     encodedKey: Array[Byte],
     algorithm: String
-) extends EncodedKeySpec(encodedKey, algorithm)
-    with DEREncodable {
+) extends EncodedKeySpec(encodedKey, algorithm) {
   final def getFormat(): String = "X.509"
 }
