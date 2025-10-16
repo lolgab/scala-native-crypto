@@ -7,9 +7,7 @@ import java.security.{Provider, PublicKey}
 // ref: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html
 abstract class Certificate protected (certType: String) extends Serializable {
 
-  override def equals(other: Any): Boolean = {
-    ???
-  }
+  override def equals(other: Any): Boolean = ???
 
   def getEncoded(): Array[Byte]
 
@@ -17,13 +15,9 @@ abstract class Certificate protected (certType: String) extends Serializable {
 
   final def getType: String = certType
 
-  override def hashCode(): Int = {
-    ???
-  }
+  override def hashCode(): Int = ???
 
-  override def toString: String = {
-    ???
-  }
+  override def toString: String = ???
 
   def verify(key: PublicKey): Unit
 

@@ -19,51 +19,31 @@ class KeyAgreement protected (
 ) {
   def getAlgorithm(): String = algorithm
 
-  def getProvider(): Provider = {
-    ???
-  }
+  def getProvider(): Provider = ???
 
-  def init(key: Key): Unit = {
-    ???
-  }
+  def init(key: Key): Unit = ???
 
-  def init(key: Key, random: SecureRandom): Unit = {
-    ???
-  }
+  def init(key: Key, random: SecureRandom): Unit = ???
 
-  def init(key: Key, params: AlgorithmParameterSpec): Unit = {
-    ???
-  }
+  def init(key: Key, params: AlgorithmParameterSpec): Unit = ???
 
   def init(
       key: Key,
       params: AlgorithmParameterSpec,
       random: SecureRandom
-  ): Unit = {
-    ???
-  }
+  ): Unit = ???
 
-  def doPhase(key: Key, lastPhase: Boolean): Key = {
-    ???
-  }
+  def doPhase(key: Key, lastPhase: Boolean): Key = ???
 
-  def generateSecret(): Array[Byte] = {
-    ???
-  }
+  def generateSecret(): Array[Byte] = ???
 
-  def generateSecret(sharedSecret: Array[Byte], offset: Int): Int = {
-    ???
-  }
+  def generateSecret(sharedSecret: Array[Byte], offset: Int): Int = ???
 
-  def generateSecret(algorithm: String): SecretKey = {
-    ???
-  }
+  def generateSecret(algorithm: String): SecretKey = ???
 }
 
 object KeyAgreement {
-  def getInstance(algorithm: String): KeyAgreement = {
-    ???
-  }
+  def getInstance(algorithm: String): KeyAgreement = ???
 
   def getInstance(algorithm: String, provider: String): KeyAgreement = ???
 

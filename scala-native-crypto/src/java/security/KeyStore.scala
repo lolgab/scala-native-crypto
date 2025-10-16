@@ -3,18 +3,17 @@ package java.security
 import java.io.{
   InputStream,
   OutputStream,
-  IOException,
-  File,
   DataInputStream,
   BufferedInputStream,
+  File,
   FileInputStream
 }
+import java.io.IOException
 
 import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
 import java.security.{NoSuchAlgorithmException, NoSuchProviderException}
 import java.util.{Arrays, Collections, Date, Enumeration}
-import java.util.{Set => JSet, Map => JMap}
 import java.util.Objects.requireNonNull
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -360,9 +359,7 @@ object KeyStore {
     private lazy val _password: Array[Char] = password.clone()
     private val destroyed: AtomicBoolean = new AtomicBoolean(false)
 
-    def this(password: Array[Char]) = {
-      this(password, null, null)
-    }
+    def this(password: Array[Char]) = this(password, null, null)
 
     def getProtectionAlgorithm(): String = protectionAlgorithm
 

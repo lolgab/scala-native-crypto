@@ -17,21 +17,13 @@ class SecretKeyFactory protected (
 
   def getProvider(): Provider = ???
 
-  def getAlgorithm(): String = {
-    ???
-  }
+  def getAlgorithm(): String = ???
 
-  def generateSecret(keySpec: KeySpec): SecretKey = {
-    ???
-  }
+  def generateSecret(keySpec: KeySpec): SecretKey = ???
 
-  def getKeySpec(key: SecretKey, keySpec: Class[_]): KeySpec = {
-    ???
-  }
+  def getKeySpec(key: SecretKey, keySpec: Class[_]): KeySpec = ???
 
-  def translateKey(key: SecretKey): SecretKey = {
-    ???
-  }
+  def translateKey(key: SecretKey): SecretKey = ???
 }
 
 object SecretKeyFactory {

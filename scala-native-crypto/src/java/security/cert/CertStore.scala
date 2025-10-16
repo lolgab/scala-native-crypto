@@ -18,23 +18,15 @@ abstract class CertStore protected (
     params: CertStoreParameters
 ) {
 
-  def getCertificates(selector: CertSelector): Collection[_ <: Certificate] = {
-    ???
-  }
+  def getCertificates(selector: CertSelector): Collection[_ <: Certificate] = ???
 
   def getCRLs(selector: CRLSelector): Collection[_ <: CRL] = ???
 
-  def getCertStoreParameters(): CertStoreParameters = {
-    ???
-  }
+  def getCertStoreParameters(): CertStoreParameters = ???
 
-  def getType(): String = {
-    ???
-  }
+  def getType(): String = ???
 
-  def getProvider(): Provider = {
-    ???
-  }
+  def getProvider(): Provider = ???
 
 }
 
@@ -43,27 +35,19 @@ object CertStore {
   def getInstance(
       `type`: String,
       params: CertStoreParameters
-  ): CertStore = {
-    ???
-  }
+  ): CertStore = ???
 
   def getInstance(
       `type`: String,
       params: CertStoreParameters,
       provider: String
-  ): CertStore = {
-    ???
-  }
+  ): CertStore = ???
 
   def getInstance(
       `type`: String,
       params: CertStoreParameters,
       provider: Provider
-  ): CertStore = {
-    ???
-  }
+  ): CertStore = ???
 
-  def getDefaultType(): String = {
-    ???
-  }
+  def getDefaultType(): String = ???
 }

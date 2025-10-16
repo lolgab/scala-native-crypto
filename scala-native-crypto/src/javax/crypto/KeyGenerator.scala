@@ -18,56 +18,34 @@ class KeyGenerator protected (
     algorithm: String
 ) {
 
-  def getAlgorithm(): String = {
-    ???
-  }
+  def getAlgorithm(): String = ???
 
-  def getProvider(): Provider = {
-    ???
-  }
+  def getProvider(): Provider = ???
 
-  def init(random: SecureRandom): Unit = {
-    ???
-  }
+  def init(random: SecureRandom): Unit = ???
 
-  def init(params: AlgorithmParameterSpec): Unit = {
-    ???
-  }
+  def init(params: AlgorithmParameterSpec): Unit = ???
 
   def init(
       params: AlgorithmParameterSpec,
       random: SecureRandom
-  ): Unit = {
-    ???
-  }
+  ): Unit = ???
 
-  def init(keysize: Int): Unit = {
-    ???
-  }
+  def init(keysize: Int): Unit = ???
 
-  def init(keysize: Int, random: SecureRandom): Unit = {
-    ???
-  }
+  def init(keysize: Int, random: SecureRandom): Unit = ???
 
-  def generateKey(): SecretKey = {
-    ???
-  }
+  def generateKey(): SecretKey = ???
 }
 
 object KeyGenerator {
 
-  def getInstance(algorithm: String): KeyGenerator = {
-    ???
-  }
+  def getInstance(algorithm: String): KeyGenerator = ???
 
-  def getInstance(algorithm: String, provider: String): KeyGenerator = {
-    ???
-  }
+  def getInstance(algorithm: String, provider: String): KeyGenerator = ???
 
   def getInstance(
       algorithm: String,
       provider: Provider
-  ): KeyGenerator = {
-    ???
-  }
+  ): KeyGenerator = ???
 }

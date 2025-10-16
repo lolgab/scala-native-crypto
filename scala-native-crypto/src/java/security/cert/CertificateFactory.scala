@@ -20,41 +20,25 @@ class CertificateFactory protected (
 
   final def getType(): String = certType
 
-  final def generateCertificate(is: InputStream): Certificate = {
-    ???
-  }
+  final def generateCertificate(is: InputStream): Certificate = ???
 
-  final def getCertPathEncodings(): Iterator[String] = {
-    ???
-  }
+  final def getCertPathEncodings(): Iterator[String] = ???
 
-  final def generateCertPath(is: InputStream): CertPath = {
-    ???
-  }
+  final def generateCertPath(is: InputStream): CertPath = ???
 
-  final def generateCertPath(is: InputStream, encoding: String): CertPath = {
-    ???
-  }
+  final def generateCertPath(is: InputStream, encoding: String): CertPath = ???
 
   final def generateCertPath(
       certificates: JList[? <: Certificate]
-  ): CertPath = {
-    ???
-  }
+  ): CertPath = ???
 
   final def generateCertificates(
       is: InputStream
-  ): Collection[? <: Certificate] = {
-    ???
-  }
+  ): Collection[? <: Certificate] = ???
 
-  final def generateCRL(is: InputStream): CRL = {
-    ???
-  }
+  final def generateCRL(is: InputStream): CRL = ???
 
-  final def generateCRLs(is: InputStream): Collection[? <: CRL] = {
-    ???
-  }
+  final def generateCRLs(is: InputStream): Collection[? <: CRL] = ???
 
 }
 
