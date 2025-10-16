@@ -1,25 +1,15 @@
 package java.security
 
-import java.io.{
-  InputStream,
-  OutputStream,
-  DataInputStream,
-  BufferedInputStream,
-  File,
-  FileInputStream
-}
-import java.io.IOException
-
+import java.io.{InputStream, OutputStream, File}
 import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
-import java.security.{NoSuchAlgorithmException, NoSuchProviderException}
 import java.util.{Arrays, Collections, Date, Enumeration}
 import java.util.{Set => JSet}
 import java.util.Objects.requireNonNull
 import java.util.concurrent.atomic.AtomicBoolean
 
 import javax.crypto.SecretKey
-import javax.security.auth.{Destroyable}
+import javax.security.auth.Destroyable
 import javax.security.auth.callback.CallbackHandler
 
 // ref: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyStore.html
@@ -28,8 +18,6 @@ abstract class KeyStore(
     private val provider: Provider,
     private val ksType: String
 ) {
-
-  private val _initialized: AtomicBoolean = new AtomicBoolean(false)
 
   final def getProvider(): Provider = provider
 
@@ -150,7 +138,6 @@ object KeyStore {
     ): Builder = {
       requireNonNull(keyStore)
       requireNonNull(protectionParameter)
-      require(keyStore._initialized.get())
 
       ???
     }
@@ -249,17 +236,17 @@ object KeyStore {
     def getProtectionParameters(): AlgorithmParameterSpec = protectionParameters
 
     def getPassword(): Array[Char] = {
-      if (destroyed.get())
+      if (destroyed.getOpaque())
         throw new IllegalStateException("password has been cleared")
       _password
     }
 
-    override def destroy(): Unit = {
+    def destroy(): Unit = {
       Arrays.fill(_password, ' ')
       destroyed.compareAndSet(false, true)
     }
 
-    override def isDestroyed(): Boolean = destroyed.getOpaque()
+    def isDestroyed(): Boolean = destroyed.getOpaque()
   }
 
   //

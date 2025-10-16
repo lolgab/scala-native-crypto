@@ -21,7 +21,7 @@ jobs:
           - '21'
     name: Build and Test with Java ${{ matrix.java }}
     steps:
-    - uses: actions/checkout@v3 
+    - uses: actions/checkout@v3
     - name: Install Dependencies
       run: sudo apt-get update && sudo apt-get install -y libssl-dev
     - uses: actions/setup-java@v3
@@ -30,14 +30,14 @@ jobs:
         architecture: 'x64'
         distribution: 'temurin'
     - name: Check formatting
-      run: 
+      run:
         ./mill --no-server mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
         # ./mill mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll --sources buildSources
     # - name: Check scalafix
-    #   run: 
+    #   run:
     #     ./mill --no-server __.fix --check
     - name: Compile
-      run: 
+      run:
         ./mill --no-server __.compile
     - name: Test
       run:
@@ -58,7 +58,7 @@ jobs:
       LC_MESSAGES: "en_US.UTF-8"
       LC_ALL: "en_US.UTF-8"
     steps:
-      - uses: actions/checkout@v3 
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         run: sudo apt-get update && sudo apt-get install -y libssl-dev
       - uses: actions/setup-java@v3

@@ -18,7 +18,8 @@ abstract class CertStore protected (
     params: CertStoreParameters
 ) {
 
-  def getCertificates(selector: CertSelector): Collection[_ <: Certificate] = ???
+  def getCertificates(selector: CertSelector): Collection[_ <: Certificate] =
+    ???
 
   def getCRLs(selector: CRLSelector): Collection[_ <: CRL] = ???
 

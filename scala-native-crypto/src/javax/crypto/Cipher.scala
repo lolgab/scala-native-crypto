@@ -5,21 +5,20 @@ import java.nio.ByteBuffer
 import java.security.{AlgorithmParameters, Key, SecureRandom, Provider}
 import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
-import java.util.{List => JList, Map => JMap, Set => JSet}
 
 /// ## Refs
 ///
 /// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Cipher.html
 ///
-class Cipher protected (
-    private val spi: CipherSpi,
+abstract class Cipher protected (
+    // private val spi: CipherSpi,
     private val provider: Provider,
     private val transformation: String
 ) {
 
-  def getProvider(): Provider = ???
+  final def getProvider(): Provider = provider
 
-  def getAlgorithm(): String = ???
+  final def getAlgorithm(): String = transformation
 
   def getBlockSize(): Int = ???
 

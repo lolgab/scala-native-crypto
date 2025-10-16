@@ -2,12 +2,11 @@ package java.security
 
 import java.util.Objects.requireNonNull
 import java.security.spec.KeySpec
-import java.security.spec.InvalidKeySpecException
 
 /// ## Refs
 ///
 /// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyFactory.html
-class KeyFactory protected (
+abstract class KeyFactory protected (
     private val provider: Provider,
     private val algorithm: String
 ) {
