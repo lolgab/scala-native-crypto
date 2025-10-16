@@ -8,7 +8,7 @@ import java.util.{Collection, Iterator}
 import java.util.{List => JList}
 import java.util.Objects.requireNonNull
 
-// Refs:
+// ## Refs
 //
 // - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertificateFactory.html
 class CertificateFactory protected (

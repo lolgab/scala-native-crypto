@@ -7,6 +7,10 @@ import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
 import java.util.{List => JList, Map => JMap, Set => JSet}
 
+/// ## Refs
+///
+/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Cipher.html
+///
 class Cipher protected (
     private val spi: CipherSpi,
     private val provider: Provider,

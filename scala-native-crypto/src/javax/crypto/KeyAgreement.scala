@@ -9,7 +9,7 @@ import java.security.{
 }
 import java.security.spec.AlgorithmParameterSpec
 
-/// Refs:
+/// ## Refs
 ///
 /// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/KeyAgreement.html
 class KeyAgreement protected (

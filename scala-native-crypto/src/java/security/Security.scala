@@ -7,7 +7,7 @@ import java.util.Objects.requireNonNull
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.HashMap
 
-/// Refs:
+/// ## Refs
 ///
 /// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Security.html
 /// - https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html

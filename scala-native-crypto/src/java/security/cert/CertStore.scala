@@ -8,10 +8,10 @@ import java.security.{
 }
 import java.util.Collection
 
-/// Refs:
+/// ## Refs
 ///
 /// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertStore.html
-class CertStore protected (
+abstract class CertStore protected (
     // storeSpi: CertStoreSpi,
     provider: Provider,
     `type`: String,
