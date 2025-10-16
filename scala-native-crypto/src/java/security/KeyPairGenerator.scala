@@ -5,26 +5,29 @@ import java.security.spec.AlgorithmParameterSpec
 /// ## Refs
 ///
 /// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyPairGenerator.html
-abstract class KeyPairGenerator protected (algorithm: String) {
+abstract class KeyPairGenerator protected (
+    provider: Provider,
+    algorithm: String
+) {
 
-  def getAlgorithm(): String = ???
+  final def getAlgorithm(): String = algorithm
 
-  final def getProvider(): Provider = ???
+  final def getProvider(): Provider = provider
 
-  def initialize(keysize: Int): Unit = ???
+  def initialize(keysize: Int): Unit
 
-  def initialize(keysize: Int, random: SecureRandom): Unit = ???
+  def initialize(keysize: Int, random: SecureRandom): Unit
 
-  def initialize(param: AlgorithmParameterSpec): Unit = ???
+  def initialize(param: AlgorithmParameterSpec): Unit
 
   def initialize(
       param: AlgorithmParameterSpec,
       random: SecureRandom
-  ): Unit = ???
+  ): Unit
 
   final def genKeyPair(): KeyPair = generateKeyPair()
 
-  def generateKeyPair(): KeyPair = ???
+  def generateKeyPair(): KeyPair
 
 }
 
@@ -32,14 +35,8 @@ object KeyPairGenerator {
 
   def getInstance(algorithm: String): KeyPairGenerator = ???
 
-  def getInstance(
-      algorithm: String,
-      provider: String
-  ): KeyPairGenerator = ???
+  def getInstance(algorithm: String, provider: String): KeyPairGenerator = ???
 
-  def getInstance(
-      algorithm: String,
-      provider: Provider
-  ): KeyPairGenerator = ???
+  def getInstance(algorithm: String, provider: Provider): KeyPairGenerator = ???
 
 }

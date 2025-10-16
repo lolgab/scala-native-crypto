@@ -18,30 +18,17 @@ class KeyFactory protected (
     "algorithm could be null otherwise cannot be empty if not null"
   )
 
-  final def generatePrivate(is: KeySpec): PrivateKey = ???
+  def generatePrivate(is: KeySpec): PrivateKey
 
-  final def generatePublic(is: KeySpec): PublicKey = ???
+  def generatePublic(is: KeySpec): PublicKey
 
-  final def getKeySpec[T <: KeySpec](key: Key, spec: Class[T]): T = {
-    requireNonNull(key)
-    requireNonNull(spec)
-    if (!spec.isAssignableFrom(classOf[KeySpec]))
-      throw new InvalidKeySpecException(
-        "Unsupported key specification: " + spec
-      )
-    ???
-  }
+  def getKeySpec[T <: KeySpec](key: Key, spec: Class[T]): T
 
   final def getAlgorithm(): String = algorithm
 
   final def getProvider(): Provider = provider
 
-  final def translateKey(key: Key): Key = {
-    requireNonNull(key)
-    if (key.getAlgorithm() != algorithm)
-      throw new InvalidKeyException("Wrong key type")
-    ???
-  }
+  def translateKey(key: Key): Key
 }
 
 object KeyFactory {

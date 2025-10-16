@@ -14,6 +14,7 @@ import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
 import java.security.{NoSuchAlgorithmException, NoSuchProviderException}
 import java.util.{Arrays, Collections, Date, Enumeration}
+import java.util.{Set => JSet}
 import java.util.Objects.requireNonNull
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -22,8 +23,8 @@ import javax.security.auth.{Destroyable}
 import javax.security.auth.callback.CallbackHandler
 
 // ref: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyStore.html
-class KeyStore(
-    private val ksSpi: KeyStoreSpi,
+abstract class KeyStore(
+    // private val ksSpi: KeyStoreSpi,
     private val provider: Provider,
     private val ksType: String
 ) {
@@ -35,183 +36,69 @@ class KeyStore(
   final def getType(): String = ksType
 
   // @since JDK 18
-  final def getAttributes(alias: String): JSet[KeyStore.Entry.Attribute] = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  def getAttributes(alias: String): JSet[KeyStore.Entry.Attribute]
 
-    ???
-    // an unmodifiable Set of attributes
-  }
+  def getKey(alias: String, password: Array[Char]): Key
 
-  final def getKey(alias: String, password: Array[Char]): Key = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  def getCertificateChain(alias: String): Array[Certificate]
 
-    ???
-  }
+  def getCertificate(alias: String): Certificate
 
-  final def getCertificateChain(alias: String): Array[Certificate] = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  def getCreationDate(alias: String): Date
 
-    ???
-  }
-
-  final def getCertificate(alias: String): Certificate = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
-
-    ???
-  }
-
-  final def getCreationDate(alias: String): Date = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
-
-    ???
-  }
-
-  final def setKeyEntry(
+  def setKeyEntry(
       alias: String,
       key: Key,
       password: Array[Char],
       chain: Array[Certificate]
-  ): Unit = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
-    require(
-      !(key.isInstanceOf[PrivateKey] && (chain == null || chain.length == 0))
-    )
+  ): Unit
 
-    ???
-  }
-
-  final def setKeyEntry(
+  def setKeyEntry(
       alias: String,
       key: Array[Byte],
       chain: Array[Certificate]
-  ): Unit = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  ): Unit
 
-    ???
-  }
+  def setCertificateEntry(alias: String, cert: Certificate): Unit
 
-  final def setCertificateEntry(alias: String, cert: Certificate): Unit = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  def deleteEntry(alias: String): Unit
 
-    ???
-  }
+  def aliases(): Enumeration[String]
 
-  final def deleteEntry(alias: String): Unit = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  def containsAlias(alias: String): Boolean
 
-    ???
-  }
+  def size(): Int
 
-  final def aliases(): Enumeration[String] = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  def isKeyEntry(alias: String): Boolean
 
-    ???
-  }
+  def isCertificateEntry(alias: String): Boolean
 
-  final def containsAlias(alias: String): Boolean = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  def getCertificateAlias(cert: Certificate): String
 
-    ???
-  }
+  def store(stream: OutputStream, password: Array[Char]): Unit
 
-  final def size(): Int = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  def store(param: KeyStore.LoadStoreParameter): Unit
 
-    ???
-  }
+  def load(stream: InputStream, password: Array[Char]): Unit
 
-  final def isKeyEntry(alias: String): Boolean = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  def load(param: KeyStore.LoadStoreParameter): Unit
 
-    ???
-  }
-
-  final def isCertificateEntry(alias: String): Boolean = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
-
-    ???
-  }
-
-  final def getCertificateAlias(cert: Certificate): String = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
-
-    ???
-  }
-
-  final def store(stream: OutputStream, password: Array[Char]): Unit = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
-
-    ???
-  }
-
-  final def store(param: KeyStore.LoadStoreParameter): Unit = {
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
-
-    ???
-  }
-
-  final def load(stream: InputStream, password: Array[Char]): Unit = {
-    ???
-    _initialized.compareAndSet(false, true)
-  }
-
-  final def load(param: KeyStore.LoadStoreParameter): Unit = {
-    ???
-    _initialized.compareAndSet(false, true)
-  }
-
-  final def getEntry(
+  def getEntry(
       alias: String,
       protParam: KeyStore.ProtectionParameter
-  ): KeyStore.Entry = {
-    requireNonNull(alias)
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  ): KeyStore.Entry
 
-    ???
-  }
-
-  final def setEntry(
+  def setEntry(
       alias: String,
       entry: KeyStore.Entry,
       protParam: KeyStore.ProtectionParameter
-  ): Unit = {
-    requireNonNull(alias)
-    requireNonNull(entry)
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  ): Unit
 
-    ???
-  }
-
-  final def entryInstanceOf(
+  def entryInstanceOf(
       alias: String,
       entryClass: Class[_ <: KeyStore.Entry]
-  ): Boolean = {
-    requireNonNull(alias)
-    requireNonNull(entryClass)
-    if (!_initialized.get())
-      throw new KeyStoreException("Uninitialized keystore")
+  ): Boolean
 
-    ???
-  }
 }
 
 object KeyStore {
@@ -243,13 +130,9 @@ object KeyStore {
     ???
   }
 
-  def getInstance(file: File, password: Array[Char]): KeyStore = {
-    ???
-  }
+  def getInstance(file: File, password: Array[Char]): KeyStore = ???
 
-  def getInstance(file: File, param: LoadStoreParameter): KeyStore = {
-    ???
-  }
+  def getInstance(file: File, param: LoadStoreParameter): KeyStore = ???
 
   //
   // Nested class Builder
@@ -371,12 +254,12 @@ object KeyStore {
       _password
     }
 
-    def destroy(): Unit = {
+    override def destroy(): Unit = {
       Arrays.fill(_password, ' ')
       destroyed.compareAndSet(false, true)
     }
 
-    def isDestroyed(): Boolean = destroyed.getOpaque()
+    override def isDestroyed(): Boolean = destroyed.getOpaque()
   }
 
   //

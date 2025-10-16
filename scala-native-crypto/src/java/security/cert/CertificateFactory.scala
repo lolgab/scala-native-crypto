@@ -8,10 +8,10 @@ import java.util.{Collection, Iterator}
 import java.util.{List => JList}
 import java.util.Objects.requireNonNull
 
-// ## Refs
-//
-// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertificateFactory.html
-class CertificateFactory protected (
+/// ## Refs
+///
+/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertificateFactory.html
+abstract class CertificateFactory protected (
     // private val certFactorySpi: CertificateFactorySpi,
     private val provider: Provider,
     private val certType: String
@@ -20,74 +20,38 @@ class CertificateFactory protected (
 
   final def getType(): String = certType
 
-  final def generateCertificate(is: InputStream): Certificate = ???
+  def generateCertificate(is: InputStream): Certificate
 
-  final def getCertPathEncodings(): Iterator[String] = ???
+  def getCertPathEncodings(): Iterator[String]
 
-  final def generateCertPath(is: InputStream): CertPath = ???
+  def generateCertPath(is: InputStream): CertPath
 
-  final def generateCertPath(is: InputStream, encoding: String): CertPath = ???
+  def generateCertPath(is: InputStream, encoding: String): CertPath
 
-  final def generateCertPath(
+  def generateCertPath(
       certificates: JList[? <: Certificate]
-  ): CertPath = ???
+  ): CertPath
 
-  final def generateCertificates(
+  def generateCertificates(
       is: InputStream
-  ): Collection[? <: Certificate] = ???
+  ): Collection[? <: Certificate]
 
-  final def generateCRL(is: InputStream): CRL = ???
+  def generateCRL(is: InputStream): CRL
 
-  final def generateCRLs(is: InputStream): Collection[? <: CRL] = ???
+  def generateCRLs(is: InputStream): Collection[? <: CRL]
 
 }
 
 object CertificateFactory {
-  final def getInstance(certType: String): CertificateFactory = {
-    requireNonNull(certType, "null type name")
-    try {
-      ???
-      //   new CertificateFactory(
-      //     instance.provider,
-      //     certType
-      //   )
-    } catch {
-      case e: NoSuchAlgorithmException =>
-        throw new CertificateException(certType + " not found", e)
-    }
-  }
+  def getInstance(certType: String): CertificateFactory = ???
 
-  final def getInstance(
+  def getInstance(
       certType: String,
       provider: String
-  ): CertificateFactory = {
-    requireNonNull(certType, "null type name")
-    try {
-      ???
-      // new CertificateFactory(
-      //     instance.provider,
-      //     certType
-      // )
-    } catch {
-      case e: NoSuchAlgorithmException =>
-        throw new CertificateException(certType + " not found", e)
-    }
-  }
+  ): CertificateFactory = ???
 
-  final def getInstance(
+  def getInstance(
       certType: String,
       provider: Provider
-  ): CertificateFactory = {
-    requireNonNull(certType, "null type name")
-    try {
-      ???
-      //   new CertificateFactory(
-      //     instance.provider,
-      //     certType
-      //   )
-    } catch {
-      case e: NoSuchAlgorithmException =>
-        throw new CertificateException(certType + " not found", e)
-    }
-  }
+  ): CertificateFactory = ???
 }
