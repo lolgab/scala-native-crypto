@@ -1,6 +1,8 @@
 package java.security
 
-// https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/CryptoPrimitive.html
+/// ## Refs
+///
+/// https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/CryptoPrimitive.html
 sealed abstract class CryptoPrimitive
 object CryptoPrimitive {
 

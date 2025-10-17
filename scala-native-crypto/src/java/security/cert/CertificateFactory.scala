@@ -43,15 +43,39 @@ abstract class CertificateFactory protected (
 }
 
 object CertificateFactory {
-  def getInstance(certType: String): CertificateFactory = ???
+  def getInstance(certType: String): CertificateFactory = {
+    requireNonNull(certType, "null type name")
+    try {
+      ???
+    } catch {
+      case e: NoSuchAlgorithmException =>
+        throw new CertificateException(certType + " not found", e)
+    }
+  }
 
   def getInstance(
       certType: String,
       provider: String
-  ): CertificateFactory = ???
+  ): CertificateFactory = {
+    requireNonNull(certType, "null type name")
+    try {
+      ???
+    } catch {
+      case e: NoSuchAlgorithmException =>
+        throw new CertificateException(certType + " not found", e)
+    }
+  }
 
   def getInstance(
       certType: String,
       provider: Provider
-  ): CertificateFactory = ???
+  ): CertificateFactory = {
+    requireNonNull(certType, "null type name")
+    try {
+      ???
+    } catch {
+      case e: NoSuchAlgorithmException =>
+        throw new CertificateException(certType + " not found", e)
+    }
+  }
 }

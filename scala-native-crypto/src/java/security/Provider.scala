@@ -64,7 +64,7 @@ abstract class Provider(
 
 object Provider {
 
-  class Service(
+  abstract class Service(
       private val provider: Provider,
       private val svcType: String,
       private val algorithm: String,
@@ -99,9 +99,9 @@ object Provider {
       serviceAttributes.get(name)
     }
 
-    def newInstance(constructorParameter: Object): Object = ???
+    def newInstance(constructorParameter: Object): Object
 
-    def supportsParameter(parameter: Object): Boolean = ???
+    def supportsParameter(parameter: Object): Boolean
 
     override def toString(): String = {
       val aliasStr =

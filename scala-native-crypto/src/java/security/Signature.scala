@@ -6,10 +6,16 @@ import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
 import java.util.Objects.requireNonNull
 
+abstract class SignatureSpi
+
 /// ## Refs
 ///
 /// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Signature.html
-abstract class Signature protected (provider: Provider, algorithm: String) {
+abstract class Signature(
+    spi: SignatureSpi,
+    provider: Provider,
+    algorithm: String
+) {
 
   // magic numbers come from
   // https://docs.oracle.com/en/java/javase/25/docs/api/constant-values.html#java.security
@@ -66,10 +72,6 @@ abstract class Signature protected (provider: Provider, algorithm: String) {
   def setParameter(params: AlgorithmParameterSpec): Unit
 
   def getParameters(): AlgorithmParameters
-
-  final override def clone(): Object =
-    if (this.isInstanceOf[Cloneable]) super.clone()
-    else throw new CloneNotSupportedException()
 }
 
 object Signature {
@@ -81,13 +83,8 @@ object Signature {
     ???
   }
 
-  def getInstance(algorithm: String, provider: String): Signature = {
-    requireNonNull(algorithm)
-    requireNonNull(provider)
-    require(algorithm.nonEmpty && provider.nonEmpty)
-
-    ???
-  }
+  def getInstance(algorithm: String, provider: String): Signature =
+    throw new UnsupportedOperationException()
 
   def getInstance(algorithm: String, provider: Provider): Signature = {
     requireNonNull(algorithm)

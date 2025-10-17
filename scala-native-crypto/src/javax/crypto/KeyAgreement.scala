@@ -45,7 +45,8 @@ class KeyAgreement protected (
 object KeyAgreement {
   def getInstance(algorithm: String): KeyAgreement = ???
 
-  def getInstance(algorithm: String, provider: String): KeyAgreement = ???
+  def getInstance(algorithm: String, provider: String): KeyAgreement =
+    throw new UnsupportedOperationException()
 
   def getInstance(algorithm: String, provider: Provider): KeyAgreement = ???
 }

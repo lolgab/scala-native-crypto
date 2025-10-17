@@ -1,23 +1,17 @@
 package javax.crypto
 
 import java.security.Provider
-import java.security.{
-  InvalidKeyException,
-  NoSuchAlgorithmException,
-  NoSuchProviderException
-}
 import java.security.spec.KeySpec
-import java.security.spec.InvalidKeySpecException
 
-class SecretKeyFactory protected (
+abstract class SecretKeyFactory protected (
     // keyFacSpi: SecretKeyFactorySpi,
     provider: Provider,
     algorithm: String
 ) {
 
-  def getProvider(): Provider = ???
+  final def getProvider(): Provider = provider
 
-  def getAlgorithm(): String = ???
+  final def getAlgorithm(): String = algorithm
 
   def generateSecret(keySpec: KeySpec): SecretKey = ???
 
@@ -29,7 +23,8 @@ class SecretKeyFactory protected (
 object SecretKeyFactory {
   def getInstance(algorithm: String): SecretKeyFactory = ???
 
-  def getInstance(algorithm: String, provider: String): SecretKeyFactory = ???
+  def getInstance(algorithm: String, provider: String): SecretKeyFactory =
+    throw new UnsupportedOperationException()
 
   def getInstance(algorithm: String, provider: Provider): SecretKeyFactory = ???
 }

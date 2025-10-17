@@ -3,11 +3,13 @@ package java.security
 import java.security.spec.AlgorithmParameterSpec
 import java.util.Objects.requireNonNull
 
+abstract class AlgorithmParametersSpi
+
 /// References:
 ///
 ///  - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/AlgorithmParameters.html
 abstract class AlgorithmParameters protected (
-    // paramSpi: AlgorithmParametersSpi,
+    paramSpi: AlgorithmParametersSpi,
     provider: Provider,
     algorithm: String
 ) {
@@ -33,21 +35,10 @@ abstract class AlgorithmParameters protected (
 
 object AlgorithmParameters {
 
-  def getInstance(algorithm: String): AlgorithmParameters = {
-    requireNonNull(algorithm)
-    require(algorithm.nonEmpty)
+  def getInstance(algorithm: String): AlgorithmParameters = ???
 
-    ???
-  }
-
-  def getInstance(algorithm: String, provider: String): AlgorithmParameters = {
-    requireNonNull(algorithm)
-    requireNonNull(provider)
-    require(algorithm.nonEmpty)
-    require(provider.nonEmpty)
-
-    ???
-  }
+  def getInstance(algorithm: String, provider: String): AlgorithmParameters =
+    throw new UnsupportedOperationException()
 
   def getInstance(
       algorithm: String,

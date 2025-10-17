@@ -2,8 +2,13 @@ package java.security
 
 import java.security.spec.AlgorithmParameterSpec
 
-// ref: https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/AsymmetricKey.html
-// @since JDK 22
+/// @since JDK 22
+///
+/// ## Refs
+///
+/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/AsymmetricKey.html
+///
+///
 trait AsymmetricKey extends Key {
   // Mark as not implemented yet, subclasses don't need to impl it.
   //

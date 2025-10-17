@@ -214,6 +214,7 @@ object Security {
       }
     }
   }
+
   private object Criterion {
     def apply(key: String, value: String): Criterion = {
       // Since it's private, we can assume key and value are non-null and trimmed.

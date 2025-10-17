@@ -3,10 +3,13 @@ package java.security
 import java.security.spec.AlgorithmParameterSpec
 import java.security.{Provider, SecureRandom}
 
+abstract class KeyPairGeneratorSpi
+
 /// ## Refs
 ///
 /// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyPairGenerator.html
-abstract class KeyPairGenerator protected (
+abstract class KeyPairGenerator(
+    spi: KeyPairGeneratorSpi,
     provider: Provider,
     algorithm: String
 ) {
@@ -36,7 +39,8 @@ object KeyPairGenerator {
 
   def getInstance(algorithm: String): KeyPairGenerator = ???
 
-  def getInstance(algorithm: String, provider: String): KeyPairGenerator = ???
+  def getInstance(algorithm: String, provider: String): KeyPairGenerator =
+    throw new UnsupportedOperationException()
 
   def getInstance(algorithm: String, provider: Provider): KeyPairGenerator = ???
 

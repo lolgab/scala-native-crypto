@@ -1,105 +1,74 @@
 package javax.crypto
 
-import com.github.lolgab.scalanativecrypto.internal.Constants._
-import com.github.lolgab.scalanativecrypto.internal._
+import java.security.{Provider, Key}
+import java.security.NoSuchAlgorithmException
 
-import java.com.github.lolgab.scalanativecrypto.internal.CtxFinalizer
-import java.lang.ref.WeakReference
-import java.security
-import javax.crypto.spec.SecretKeySpec
-import scala.scalanative.meta.LinktimeInfo
-import scala.scalanative.unsafe._
+import java.security.spec.AlgorithmParameterSpec
+import java.nio.ByteBuffer
+import java.util.Objects.requireNonNull
 
-class Mac private (algorithm: String, name: CString, length: Int) {
-  private val ctx: crypto.HMAC_CTX_* = crypto.HMAC_CTX_new()
-  if (ctx == null) {
-    throw new RuntimeException("Failed to create HMAC context")
-  }
+abstract class MacSpi
 
-  private var isInitialized: Boolean = false
+/// ## Refs
+///
+/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Mac.html
+abstract class Mac protected (
+    spi: MacSpi,
+    provider: Provider,
+    algorithm: String
+) extends Cloneable {
 
-  if (LinktimeInfo.isWeakReferenceSupported) {
-    val wr = new WeakReference(this)
-    new CtxFinalizer(wr, ctx, crypto.HMAC_CTX_free(_))
-  } else {
-    System.err.println(
-      "[javax.crypto.Mac] OpenSSL context finalization is not supported. Consider using immix or commix GC, otherwise this will leak memory."
-    )
-  }
+  final def getAlgorithm(): String = algorithm
 
-  // Initialize the Mac instance with the given key
-  def init(key: security.Key): Unit = {
-    val keySpec = key match {
-      case k: SecretKeySpec => k
-      case _                => sys.error("Only SecretKeySpec supported for now")
-    }
+  final def getProvider(): Provider = provider
 
-    // Convert the key to a C pointer
-    val keyArray = keySpec.getEncoded()
-    val keyPtr = keyArray.at(0)
+  def getMacLength(): Int
 
-    val md = crypto.EVP_get_digestbyname(name)
-    if (md == null) {
-      throw new RuntimeException(s"Failed to get algorithm $algorithm")
-    }
+  def init(key: Key): Unit
 
-    // Initialize the HMAC context with key and algorithm
-    if (crypto.HMAC_Init_ex(ctx, keyPtr, keyArray.length, md, null) != 1) {
-      throw new RuntimeException("Failed to initialize HMAC context")
-    }
+  def init(key: Key, params: AlgorithmParameterSpec): Unit = ???
 
-    isInitialized = true
-  }
+  // mark as ??? for compilation now, should be implemented later
+  def update(data: Byte): Unit = ???
 
-  // Update the MAC with more data
-  def update(data: Array[Byte]): Unit = {
-    if (!isInitialized) {
-      throw new IllegalStateException("MAC not initialized")
-    }
-    val dataPtr = data.at(0)
-    if (crypto.HMAC_Update(ctx, dataPtr, data.length) != 1)
-      throw new RuntimeException("Failed to update HMAC with data")
-  }
+  def update(data: Array[Byte]): Unit
 
-  def doFinal(data: Array[Byte]): Array[Byte] = {
-    update(data)
-    doFinal()
-  }
+  def update(data: Array[Byte], offset: Int, len: Int): Unit = ???
 
-  def doFinal(): Array[Byte] = {
-    require(isInitialized, "Mac has not been initialized with a key")
+  def update(data: ByteBuffer): Unit = ???
 
-    // Allocate memory for result and its length
-    val result = stackalloc[Byte](EVP_MAX_MD_SIZE)
-    val resultLen = stackalloc[Int]()
+  def doFinal(): Array[Byte]
 
-    // Finalize and obtain the HMAC result
-    if (crypto.HMAC_Final(ctx, result, resultLen) != 1) {
-      throw new RuntimeException("Failed to finalize HMAC computation")
-    }
+  def doFinal(data: Array[Byte], outOffset: Int): Array[Byte] = ???
 
-    // Convert result to Scala Array[Byte]
-    val len = (!resultLen).toInt
-    val hmacResult = new Array[Byte](len)
-    for (i <- 0 until len) {
-      hmacResult(i) = !(result + i)
-    }
+  def doFinal(data: Array[Byte]): Array[Byte]
 
-    hmacResult
-  }
-
-  def reset(): Unit = {
-    if (ctx != null) {
-      crypto.HMAC_CTX_reset(ctx)
-    }
-  }
+  def reset(): Unit
 }
 
 object Mac {
-  // Factory method to create a Mac instance with the specified algorithm
-  def getInstance(algorithm: String): Mac = {
-    val (name, length) =
-      Utils.getAlgorithmNameAndLength(algorithm, prefix = "HMAC")
-    new Mac(algorithm, name, length)
+  import com.github.lolgab.scalanativecrypto.{OpenSslProvider, JcaService}
+
+  def getInstance(algorithm: String): Mac =
+    getInstance(algorithm, OpenSslProvider.defaultInstance)
+
+  def getInstance(algorithm: String, provider: String): Mac =
+    throw new UnsupportedOperationException()
+
+  def getInstance(algorithm: String, provider: Provider): Mac = {
+    requireNonNull(algorithm)
+    requireNonNull(provider)
+    require(algorithm.nonEmpty)
+
+    val service = provider
+      .getService(JcaService.Mac.name, algorithm)
+    if (service == null)
+      throw new NoSuchAlgorithmException(
+        s"Mac $algorithm not found in provider ${provider.getName}"
+      )
+
+    service
+      .newInstance(null)
+      .asInstanceOf[Mac]
   }
 }

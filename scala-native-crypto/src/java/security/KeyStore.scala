@@ -12,11 +12,15 @@ import javax.crypto.SecretKey
 import javax.security.auth.Destroyable
 import javax.security.auth.callback.CallbackHandler
 
-// ref: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyStore.html
+abstract class KeyStoreSpi
+
+/// ## Refs
+///
+/// - https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyStore.html
 abstract class KeyStore(
-    // private val ksSpi: KeyStoreSpi,
-    private val provider: Provider,
-    private val ksType: String
+    spi: KeyStoreSpi,
+    provider: Provider,
+    ksType: String
 ) {
 
   final def getProvider(): Provider = provider

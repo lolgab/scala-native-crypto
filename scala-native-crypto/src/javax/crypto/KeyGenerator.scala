@@ -42,7 +42,8 @@ object KeyGenerator {
 
   def getInstance(algorithm: String): KeyGenerator = ???
 
-  def getInstance(algorithm: String, provider: String): KeyGenerator = ???
+  def getInstance(algorithm: String, provider: String): KeyGenerator =
+    throw new UnsupportedOperationException()
 
   def getInstance(
       algorithm: String,
