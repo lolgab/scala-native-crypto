@@ -11,6 +11,8 @@ import de.tobiasroeser.mill.vcs.version.VcsVersion
 import $ivy.`com.lihaoyi::mill-contrib-buildinfo:`
 import mill.contrib.buildinfo.BuildInfo
 
+import scala.util.Properties
+
 val scala212 = "2.12.20"
 val scala213 = "2.13.15"
 val scala3 = "3.3.4"
@@ -59,6 +61,27 @@ trait ScalaNativeCryptoModule extends Shared with Publish {
   def scalacOptions = super.scalacOptions() ++ Seq(
     "-P:scalanative:genStaticForwardersForNonTopLevelObjects"
   )
+
+  val osName = {
+    val _osName = Properties.osName.toLowerCase()
+    if (_osName.contains("mac")) "darwin"
+    else if (_osName.contains("windows")) "windows"
+    else "linux"
+  }
+  val archName = Properties.propOrEmpty("os.arch").toLowerCase() match {
+    case "amd64" => "x86_64" // try to follow llvm triple
+    case "arm64" => "aarch64"
+    case s       => s
+  }
+  val openSslIncludePath: String = (osName, archName) match {
+    case ("linux", "x86_64")   => "-I/usr/include/openssl"
+    case ("darwin", "x86_64")  => "-I/usr/local/homebrew/opt/openssl/include"
+    case ("darwin", "aarch64") => "-I/opt/homebrew/opt/openssl/include"
+    case (_, _)                => ""
+  }
+
+  def nativeCompileOptions = super.nativeCompileOptions() ++ Seq(openSslIncludePath)
+
   // Remove class and tasty files
   override def jar = Task {
     Jvm.createJar(
