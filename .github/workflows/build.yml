@@ -9,16 +9,19 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
+
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         java:
           - '11'
           - '17'
           - '21'
+          - '25'
     name: Build and Test with Java ${{ matrix.java }}
     steps:
     - uses: actions/checkout@v3
@@ -48,7 +51,7 @@ jobs:
   publish-sonatype:
     if: github.repository == 'lolgab/scala-native-crypto' && contains(github.ref, 'refs/tags/')
     needs: build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       SONATYPE_PGP_PRIVATE_KEY: ${{ secrets.SONATYPE_PGP_PRIVATE_KEY }}
       SONATYPE_PGP_PRIVATE_KEY_PASSWORD: ${{ secrets.SONATYPE_PGP_PRIVATE_KEY_PASSWORD }}
