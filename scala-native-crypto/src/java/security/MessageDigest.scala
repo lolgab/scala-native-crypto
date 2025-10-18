@@ -60,7 +60,7 @@ object MessageDigest {
     val service = provider.getService(JcaService.MessageDigest.name, algorithm)
     if (service == null)
       throw new NoSuchAlgorithmException(
-        s"Algorithm $algorithm not found in provider ${provider.getName}"
+        s"Algorithm $algorithm not found in provider ${provider.getName()}"
       )
     service.newInstance(null).asInstanceOf[MessageDigest]
   }

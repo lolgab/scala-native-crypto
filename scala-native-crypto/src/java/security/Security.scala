@@ -183,9 +183,6 @@ object Security {
     requireNonNull(attrValue)
 
     def test(provider: Provider): Boolean = {
-      // FIXME: not fullly correct since we ignore alias here
-      // TODO: check alias from service.getAliases() and getProviderProperty()
-
       val service = provider.getService(serviceName, algorithmName)
       if (service == null) return false
       if (attrName.isEmpty) return true // no attribute to match

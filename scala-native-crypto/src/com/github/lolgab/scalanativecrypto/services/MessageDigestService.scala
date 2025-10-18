@@ -2,7 +2,6 @@ package com.github.lolgab.scalanativecrypto.services
 
 import java.security.{Provider, MessageDigest}
 import java.util.{List => JList, Map => JMap}
-import javax.crypto.Mac
 
 import com.github.lolgab.scalanativecrypto.internal.Utils
 import com.github.lolgab.scalanativecrypto.crypto.OpenSslMessageDigest
@@ -15,12 +14,15 @@ class OpenSslMessageDigestSerice private (
     private val attributes: JMap[String, String]
 ) extends Provider.Service(
       provider,
-      JcaService.Mac.name,
+      JcaService.MessageDigest.name,
       algorithm,
       "com.github.lolgab.scalanativecrypto.services.OpenSslMessageDigest",
       aliases,
       attributes
     ) {
+
+  override def supportsParameter(parameter: Object): Boolean =
+    if (parameter == null) true else false
 
   override def newInstance(constructorParameter: Object): MessageDigest = {
     val (name, length) =

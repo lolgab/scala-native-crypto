@@ -1,11 +1,13 @@
 package javax.crypto.spec
 
 import java.security.spec.KeySpec
-import java.util.Objects.requireNonNull
 import java.util.Arrays
 import javax.crypto.SecretKey
+import java.util.concurrent.atomic.AtomicBoolean
 
-// ref: https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/spec/SecretKeySpec.html
+/// ## Refs
+///
+/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/spec/SecretKeySpec.html
 class SecretKeySpec(
     private val key: Array[Byte],
     private val offset: Int,
@@ -14,12 +16,19 @@ class SecretKeySpec(
 ) extends KeySpec
     with SecretKey {
 
-  requireNonNull(key)
-  requireNonNull(algorithm)
-  require(key.nonEmpty && offset >= 0 && len > 0 && offset + len <= key.length)
+  if (key == null || algorithm == null)
+    throw new IllegalArgumentException("Missing argument")
+  if (key.isEmpty)
+    throw new IllegalArgumentException("Empty key")
+  if (offset < 0 || len < 0)
+    throw new ArrayIndexOutOfBoundsException(
+      "offset and length must be non-negative"
+    )
+  require(offset + len <= key.length, "Invalid offset and length combination")
   require(algorithm.nonEmpty)
 
   private lazy val _key: Array[Byte] = key.clone()
+  private val destroyed: AtomicBoolean = new AtomicBoolean(false)
 
   def this(key: Array[Byte], algorithm: String) =
     this(key, 0, key.length, algorithm)
@@ -38,10 +47,11 @@ class SecretKeySpec(
   }
 
   override def hashCode(): Int =
-    algorithm.hashCode() ^ Arrays.hashCode(key)
+    31 * algorithm.hashCode() ^ Arrays.hashCode(key)
 
-  def destroy(): Unit = ???
+  override def destroy(): Unit =
+    if (destroyed.compareAndSet(false, true))
+      Arrays.fill(_key, 0.toByte)
 
-  def isDestroyed(): Boolean = ???
-
+  override def isDestroyed(): Boolean = destroyed.getOpaque()
 }

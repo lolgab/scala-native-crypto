@@ -17,13 +17,18 @@ class OpenSslProvider(
 
   private val initialized: AtomicBoolean = new AtomicBoolean(false)
 
-  private var _entrySet: JSet[JMap.Entry[Object, Object]] = ???
+  // private var _entrySet: JSet[JMap.Entry[Object, Object]] = ???
   private val services: JMap[OpenSslProvider.ServiceKey, Provider.Service] =
     new ConcurrentHashMap()
 
-  override def configure(configArg: String): Provider = ???
+  setup()
 
-  override def isConfigured(): Boolean = ???
+  override def configure(configArg: String): Provider =
+    throw new UnsupportedOperationException(
+      "Dynamic configuration is not supported yet"
+    )
+
+  override def isConfigured(): Boolean = initialized.getOpaque()
 
   override def getName(): String = name
 
@@ -41,7 +46,7 @@ class OpenSslProvider(
       )
 
     services.get(
-      OpenSslProvider.ServiceKey(svc.asInstanceOf[JcaService], algorithm)
+      OpenSslProvider.ServiceKey(svc, algorithm)
     )
   }
 
@@ -50,10 +55,69 @@ class OpenSslProvider(
       services.values().toArray().map(_.asInstanceOf[Provider.Service]): _*
     )
 
-  override protected def putService(s: Provider.Service): Unit = ???
+  override protected def putService(svc: Provider.Service): Unit =
+    services.put(
+      OpenSslProvider.ServiceKey(svc.getType(), svc.getAlgorithm()),
+      svc
+    )
 
-  override protected def removeService(s: Provider.Service): Unit = ???
+  private def putAliasService(svc: Provider.Service, alias: String): Unit =
+    services.put(
+      OpenSslProvider
+        .ServiceKey(svc.getType(), alias, Some(svc.getAlgorithm())),
+      svc
+    )
 
+  override protected def removeService(s: Provider.Service): Unit =
+    services.remove(
+      OpenSslProvider.ServiceKey(s.getType(), s.getAlgorithm())
+    )
+
+  private def setup(): Unit = {
+    if (initialized.compareAndSet(false, true)) {
+
+      // scalafmt: { maxColumn = 300 }
+
+      for (
+        (len, aliases) <- Seq(
+          ("1", JList.of[String]("SHA", "SHA-1")),
+          ("224", JList.of[String]("SHA-224")),
+          ("256", JList.of[String]("SHA-256")),
+          ("384", JList.of[String]("SHA-384")),
+          ("512", JList.of[String]("SHA-512")),
+          ("3-224", JList.of[String]()),
+          ("3-256", JList.of[String]()),
+          ("3-384", JList.of[String]()),
+          ("3-512", JList.of[String]())
+        )
+      ) {
+        val svc = OpenSslMacSerice(this, s"HmacSHA${len}", aliases, JMap.of())
+        putService(svc)
+        aliases.forEach(alias => putAliasService(svc, alias))
+      }
+
+      for (
+        (algo, aliases) <- Seq(
+          ("MD5", JList.of[String]()),
+          ("SHA", JList.of[String]("SHA-1", "SHA1")),
+          ("SHA-224", JList.of[String]("SHA224")),
+          ("SHA-256", JList.of[String]("SHA256")),
+          ("SHA-384", JList.of[String]("SHA384")),
+          ("SHA-512", JList.of[String]("SHA512")),
+          ("SHA3-224", JList.of[String]()),
+          ("SHA3-256", JList.of[String]()),
+          ("SHA3-384", JList.of[String]()),
+          ("SHA3-512", JList.of[String]())
+        )
+      ) {
+        val svc = OpenSslMessageDigestSerice(this, algo, aliases, JMap.of())
+        putService(svc)
+        aliases.forEach(alias => putAliasService(svc, alias))
+      }
+
+      // scalafmt: { maxColumn = 80 }
+    }
+  }
 }
 
 object OpenSslProvider {
@@ -62,26 +126,32 @@ object OpenSslProvider {
 
   def apply(): OpenSslProvider = new OpenSslProvider()
 
-  private case class ServiceKey(svc: JcaService, algorithm: String) {
+  private case class ServiceKey(
+      svc: String,
+      algorithm: String,
+      origAlgorithm: Option[String] = None
+  ) {
     requireNonNull(svc)
     requireNonNull(algorithm)
-    require(svc.name.nonEmpty && algorithm.nonEmpty)
+    require(svc.nonEmpty && algorithm.nonEmpty)
+    require(
+      origAlgorithm.isEmpty || origAlgorithm.get.nonEmpty,
+      "origAlgorithm name for an aliases, if provided, must be non-empty"
+    )
 
-    override def toString(): String = s"${svc.name}.${algorithm}"
+    override def toString(): String = s"${svc}.${algorithm}"
 
     override def hashCode(): Int =
-      31 * svc.name.toUpperCase().hashCode() + algorithm
-        .toUpperCase()
-        .hashCode()
+      31 * svc.toUpperCase().hashCode() + algorithm.toUpperCase().hashCode()
 
     override def equals(obj: Any): Boolean = {
       if (this eq obj.asInstanceOf[AnyRef]) return true
       if (!obj.isInstanceOf[ServiceKey]) return false
 
       val other = obj.asInstanceOf[ServiceKey]
-
-      svc.name.equalsIgnoreCase(other.svc.name) &&
-      algorithm.equalsIgnoreCase(other.algorithm)
+      svc.equalsIgnoreCase(other.svc) && algorithm.equalsIgnoreCase(
+        other.algorithm
+      )
     }
   }
 }

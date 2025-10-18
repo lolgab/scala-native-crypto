@@ -64,7 +64,7 @@ object Mac {
       .getService(JcaService.Mac.name, algorithm)
     if (service == null)
       throw new NoSuchAlgorithmException(
-        s"Mac $algorithm not found in provider ${provider.getName}"
+        s"Mac $algorithm not found in provider ${provider.getName()}"
       )
 
     service

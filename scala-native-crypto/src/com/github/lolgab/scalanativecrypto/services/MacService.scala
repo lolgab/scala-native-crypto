@@ -22,6 +22,10 @@ class OpenSslMacSerice private (
       attributes
     ) {
 
+  override def supportsParameter(parameter: Object): Boolean =
+    if (parameter == null) true
+    else false
+
   override def newInstance(constructorParameter: Object): Mac = {
     val (name, length) =
       Utils.getAlgorithmNameAndLength(algorithm, prefix = "HMAC")

@@ -12,11 +12,11 @@ abstract class EncodedKeySpec protected (
     algorithm == null || algorithm.nonEmpty,
     "algorithm could be null otherwise cannot be empty if not null"
   )
-  private lazy val _encodedKey = encodedKey.clone()
-
   def this(encodedKey: Array[Byte]) = this(encodedKey, null)
 
   final def getAlgorithm(): String = algorithm
+
+  private lazy val _encodedKey = encodedKey.clone()
 
   final def getEncoded(): Array[Byte] = _encodedKey
 

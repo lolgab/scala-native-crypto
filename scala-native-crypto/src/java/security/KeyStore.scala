@@ -245,10 +245,9 @@ object KeyStore {
       _password
     }
 
-    override def destroy(): Unit = {
-      Arrays.fill(_password, ' ')
-      destroyed.compareAndSet(false, true)
-    }
+    override def destroy(): Unit =
+      if (destroyed.compareAndSet(false, true))
+        Arrays.fill(_password, ' ')
 
     override def isDestroyed(): Boolean = destroyed.getOpaque()
   }

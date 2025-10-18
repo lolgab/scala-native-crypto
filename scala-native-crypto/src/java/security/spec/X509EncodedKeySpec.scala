@@ -10,5 +10,7 @@ class X509EncodedKeySpec(
     encodedKey: Array[Byte],
     algorithm: String
 ) extends EncodedKeySpec(encodedKey, algorithm) {
+  def this(encodedKey: Array[Byte]) = this(encodedKey, null)
+
   final def getFormat(): String = "X.509"
 }

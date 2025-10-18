@@ -1,6 +1,5 @@
 package java.security
 
-import java.io.InputStream
 import java.util.{Map => JMap, Set => JSet, List => JList}
 import java.util.{Collections, Properties}
 import java.util.Objects.requireNonNull
@@ -44,13 +43,6 @@ abstract class Provider(
   def getInfo(): String
 
   override def toString(): String = s"${name} version ${versionStr}"
-
-  /// May doesn't make sense for Scala Native,
-  /// which cann't load classes dynamically in runtime
-  override def load(input: InputStream): Unit =
-    throw new UnsupportedOperationException(
-      "load is not supported"
-    )
 
   def getService(`type`: String, algorithm: String): Provider.Service
 
