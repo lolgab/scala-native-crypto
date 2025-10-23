@@ -20,7 +20,7 @@ jobs:
           - "11"
           - "17"
           - "21"
-          # - '25'
+          - "25"
     name: Build and Test with Java ${{ matrix.java }}
     steps:
       - uses: actions/checkout@v5
