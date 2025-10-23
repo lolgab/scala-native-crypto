@@ -40,9 +40,9 @@ class OpenSslProvider(
       svc: String,
       algorithm: String
   ): Provider.Service = {
-    if (!JcaService.allNames.contains(svc.toUpperCase()))
+    if (!JcaService.names.contains(svc.toUpperCase()))
       throw new IllegalArgumentException(
-        s"Unknown service: $svc, use one of ${JcaService.allNames.mkString(", ")}"
+        s"Unknown service: $svc, use one of ${JcaService.names.mkString(", ")}"
       )
 
     services.get(
@@ -75,8 +75,6 @@ class OpenSslProvider(
 
   private def setup(): Unit = {
     if (initialized.compareAndSet(false, true)) {
-
-      // scalafmt: { maxColumn = 300 }
 
       for (
         (len, aliases) <- Seq(
@@ -115,7 +113,6 @@ class OpenSslProvider(
         aliases.forEach(alias => putAliasService(svc, alias))
       }
 
-      // scalafmt: { maxColumn = 80 }
     }
   }
 }

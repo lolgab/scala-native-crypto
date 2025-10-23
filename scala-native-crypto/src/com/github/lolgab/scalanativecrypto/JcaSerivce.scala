@@ -28,7 +28,7 @@ object JcaService {
   val SecureRandom = new JcaService("SecureRandom")
   val Signature = new JcaService("Signature")
 
-  val allNames: Set[String] = Set(
+  val names: Set[String] = Set(
     AlgorithmParameterGenerator.name,
     AlgorithmParameters.name,
     CertificateFactory.name,
