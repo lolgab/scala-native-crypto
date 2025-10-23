@@ -31,7 +31,6 @@ jobs:
           java-version: "${{ matrix.java }}"
           architecture: "x64"
           distribution: "temurin"
-          cache: maven
       - name: Check formatting
         run:
           ./mill --no-server mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
