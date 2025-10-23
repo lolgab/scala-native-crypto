@@ -32,6 +32,12 @@
 
 set -e
 
+if [ "$1" = "--setup-completions" ] ; then
+  # Need to preserve the first position of those listed options
+  MILL_FIRST_ARG=$1
+  shift
+fi
+
 if [ -z "${DEFAULT_MILL_VERSION}" ] ; then
   DEFAULT_MILL_VERSION="0.12.10"
 fi
@@ -57,10 +63,6 @@ MILL_BUILD_SCRIPT=""
 
 if [ -f "build.mill" ] ; then
   MILL_BUILD_SCRIPT="build.mill"
-elif [ -f "build.mill.scala" ] ; then
-  MILL_BUILD_SCRIPT="build.mill.scala"
-elif [ -f "build.sc" ] ; then
-  MILL_BUILD_SCRIPT="build.sc"
 fi
 
 # Please note, that if a MILL_VERSION is already set in the environment,
@@ -309,7 +311,7 @@ if [ -z "$MILL_MAIN_CLI" ] ; then
 fi
 
 MILL_FIRST_ARG=""
-if [ "$1" = "--bsp" ] || [ "$1" = "-i" ] || [ "$1" = "--interactive" ] || [ "$1" = "--no-server" ] || [ "$1" = "--no-daemon" ] || [ "$1" = "--repl" ] || [ "$1" = "--help" ] ; then
+if [ "$1" = "--bsp" ] || [ "${1#"-i"}" != "$1" ] || [ "$1" = "--interactive" ] || [ "$1" = "--no-server" ] || [ "$1" = "--no-daemon" ] || [ "$1" = "--repl" ] || [ "$1" = "--help" ] ; then
   # Need to preserve the first position of those listed options
   MILL_FIRST_ARG=$1
   shift
