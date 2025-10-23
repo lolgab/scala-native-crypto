@@ -31,7 +31,7 @@ class SecretKeySpec(
   private val destroyed: AtomicBoolean = new AtomicBoolean(false)
 
   def this(key: Array[Byte], algorithm: String) =
-    this(key, 0, key.length, algorithm)
+    this(key, 0, if (key == null) 0 else key.length, algorithm)
 
   def getAlgorithm(): String = algorithm
 
