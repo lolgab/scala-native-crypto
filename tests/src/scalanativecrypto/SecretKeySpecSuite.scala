@@ -2,7 +2,6 @@ package scalanativecrypto
 
 import utest._
 
-import java.security._
 import javax.crypto.spec._
 
 /** Tests for [[MessageDigest]] class fields and methods

@@ -4,7 +4,6 @@ import com.github.lolgab.scalanativecrypto.internal._
 
 import java.com.github.lolgab.scalanativecrypto.internal.CtxFinalizer
 import java.lang.ref.WeakReference
-import java.lang.ref.WeakReferenceRegistry
 import scala.scalanative.meta.LinktimeInfo
 import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._
