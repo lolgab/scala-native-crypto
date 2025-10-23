@@ -42,7 +42,7 @@ jobs:
       - name: Compile
         run: ./mill --no-server __.compile
       - name: Test
-        run: ./mill --no-server __.testLocal
+        run: ./mill --no-server __.test
       - name: Test publishArtifacts
         run: ./mill --no-server show __.publishArtifacts
 
