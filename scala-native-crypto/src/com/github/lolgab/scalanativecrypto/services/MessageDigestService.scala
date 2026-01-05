@@ -7,7 +7,7 @@ import com.github.lolgab.scalanativecrypto.internal.Utils
 import com.github.lolgab.scalanativecrypto.crypto.OpenSslMessageDigest
 import com.github.lolgab.scalanativecrypto.JcaService
 
-class OpenSslMessageDigestSerice private (
+class OpenSslMessageDigestService private (
     private val provider: Provider,
     private val algorithm: String,
     private val aliases: JList[String],
@@ -38,13 +38,13 @@ class OpenSslMessageDigestSerice private (
 
 }
 
-object OpenSslMessageDigestSerice {
+object OpenSslMessageDigestService {
   def apply(
       provider: Provider,
       algorithm: String,
       aliases: JList[String],
       attributes: JMap[String, String]
-  ): OpenSslMessageDigestSerice = new OpenSslMessageDigestSerice(
+  ): OpenSslMessageDigestService = new OpenSslMessageDigestService(
     provider,
     algorithm,
     aliases,

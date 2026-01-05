@@ -8,7 +8,7 @@ import com.github.lolgab.scalanativecrypto.internal.Utils
 import com.github.lolgab.scalanativecrypto.crypto.OpenSslMac
 import com.github.lolgab.scalanativecrypto.JcaService
 
-class OpenSslMacSerice private (
+class OpenSslMacService private (
     private val provider: Provider,
     private val algorithm: String,
     private val aliases: JList[String],
@@ -17,7 +17,7 @@ class OpenSslMacSerice private (
       provider,
       JcaService.Mac.name,
       algorithm,
-      "com.github.lolgab.scalanativecrypto.services.OpenSslMacSerice",
+      "com.github.lolgab.scalanativecrypto.services.OpenSslMacService",
       aliases,
       attributes
     ) {
@@ -40,13 +40,13 @@ class OpenSslMacSerice private (
 
 }
 
-object OpenSslMacSerice {
+object OpenSslMacService {
   def apply(
       provider: Provider,
       algorithm: String,
       aliases: JList[String],
       attributes: JMap[String, String]
-  ): OpenSslMacSerice = new OpenSslMacSerice(
+  ): OpenSslMacService = new OpenSslMacService(
     provider,
     algorithm,
     aliases,

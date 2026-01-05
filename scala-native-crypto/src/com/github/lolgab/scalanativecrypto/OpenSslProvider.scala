@@ -89,7 +89,7 @@ class OpenSslProvider(
           ("3-512", JList.of[String]())
         )
       ) {
-        val svc = OpenSslMacSerice(this, s"HmacSHA${len}", aliases, JMap.of())
+        val svc = OpenSslMacService(this, s"HmacSHA${len}", aliases, JMap.of())
         putService(svc)
         aliases.forEach(alias => putAliasService(svc, alias))
       }
@@ -108,7 +108,7 @@ class OpenSslProvider(
           ("SHA3-512", JList.of[String]())
         )
       ) {
-        val svc = OpenSslMessageDigestSerice(this, algo, aliases, JMap.of())
+        val svc = OpenSslMessageDigestService(this, algo, aliases, JMap.of())
         putService(svc)
         aliases.forEach(alias => putAliasService(svc, alias))
       }
