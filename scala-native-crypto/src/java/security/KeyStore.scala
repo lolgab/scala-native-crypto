@@ -12,7 +12,7 @@ import javax.crypto.SecretKey
 import javax.security.auth.Destroyable
 import javax.security.auth.callback.CallbackHandler
 
-abstract class KeyStoreSpi
+abstract class KeyStoreSpi {}
 
 /**
  * Refs:

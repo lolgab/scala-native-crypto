@@ -3,7 +3,7 @@ package java.security
 import java.util.Objects.requireNonNull
 import java.security.spec.KeySpec
 
-abstract class KeyFactorySpi
+abstract class KeyFactorySpi {}
 
 /**
  * Refs:

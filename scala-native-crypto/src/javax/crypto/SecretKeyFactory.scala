@@ -3,8 +3,10 @@ package javax.crypto
 import java.security.Provider
 import java.security.spec.KeySpec
 
+abstract class SecretKeyFactorySpi {}
+
 abstract class SecretKeyFactory protected (
-    // keyFacSpi: SecretKeyFactorySpi,
+    spi: SecretKeyFactorySpi,
     provider: Provider,
     algorithm: String
 ) {

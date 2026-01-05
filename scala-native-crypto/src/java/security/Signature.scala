@@ -6,7 +6,7 @@ import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
 import java.util.Objects.requireNonNull
 
-abstract class SignatureSpi
+abstract class SignatureSpi {}
 
 /**
  * Refs:

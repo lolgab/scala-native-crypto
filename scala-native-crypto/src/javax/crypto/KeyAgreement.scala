@@ -11,7 +11,7 @@ abstract class KeyAgreementSpi {}
  *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/KeyAgreement.html
  */
 class KeyAgreement protected (
-    keyAgreeSpi: KeyAgreementSpi,
+    spi: KeyAgreementSpi,
     provider: Provider,
     algorithm: String
 ) {

@@ -6,15 +6,17 @@ import java.util.{Collection, Iterator}
 import java.util.{List => JList}
 import java.util.Objects.requireNonNull
 
+abstract class CertificateFactorySpi {}
+
 /**
  * Refs:
  *
  *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertificateFactory.html
  */
 abstract class CertificateFactory protected (
-    // private val certFactorySpi: CertificateFactorySpi,
-    private val provider: Provider,
-    private val certType: String
+    spi: CertificateFactorySpi,
+    provider: Provider,
+    certType: String
 ) {
   final def getProvider(): Provider = provider
 

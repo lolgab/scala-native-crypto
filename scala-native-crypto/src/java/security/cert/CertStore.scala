@@ -16,7 +16,7 @@ abstract class CertStoreSpi {}
  *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertStore.html
  */
 abstract class CertStore protected (
-    storeSpi: CertStoreSpi,
+    spi: CertStoreSpi,
     provider: Provider,
     `type`: String,
     params: CertStoreParameters

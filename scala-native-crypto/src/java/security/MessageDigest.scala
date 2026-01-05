@@ -3,7 +3,7 @@ package java.security
 import java.security.Provider
 import java.util.Objects.requireNonNull
 
-abstract class MessageDigestSpi
+abstract class MessageDigestSpi {}
 
 /**
  * Refs:

@@ -3,7 +3,7 @@ package java.security
 import java.security.spec.AlgorithmParameterSpec
 import java.security.{Provider, SecureRandom}
 
-abstract class KeyPairGeneratorSpi
+abstract class KeyPairGeneratorSpi {}
 
 /**
  * Refs:

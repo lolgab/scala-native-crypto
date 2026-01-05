@@ -3,7 +3,7 @@ package java.security
 import java.security.spec.AlgorithmParameterSpec
 import java.util.Objects.requireNonNull
 
-abstract class AlgorithmParametersSpi
+abstract class AlgorithmParametersSpi {}
 
 /**
  * References:
@@ -11,7 +11,7 @@ abstract class AlgorithmParametersSpi
  *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/AlgorithmParameters.html
  */
 abstract class AlgorithmParameters protected (
-    paramSpi: AlgorithmParametersSpi,
+    spi: AlgorithmParametersSpi,
     provider: Provider,
     algorithm: String
 ) {
