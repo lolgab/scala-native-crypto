@@ -1,19 +1,17 @@
 package javax.crypto
 
 import java.security.{Provider, SecureRandom}
-import java.security.{
-  InvalidAlgorithmParameterException,
-  InvalidParameterException,
-  NoSuchAlgorithmException,
-  NoSuchProviderException
-}
 import java.security.spec.AlgorithmParameterSpec
 
-// ## Refs
-//
-// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/KeyGenerator.html
+abstract class KeyGeneratorSpi {}
+
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/KeyGenerator.html
+ */
 class KeyGenerator protected (
-    // keyGenSpi: KeyGeneratorSpi,
+    keyGenSpi: KeyGeneratorSpi,
     provider: Provider,
     algorithm: String
 ) {

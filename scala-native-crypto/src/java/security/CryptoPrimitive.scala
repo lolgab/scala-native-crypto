@@ -2,9 +2,11 @@ package java.security
 
 import java.lang._Enum
 
-/// ## Refs
-///
-/// https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/CryptoPrimitive.html
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/CryptoPrimitive.html
+ */
 sealed class CryptoPrimitive private (name: String, ordinal: Int)
     extends _Enum[CryptoPrimitive](name, ordinal)
 object CryptoPrimitive {

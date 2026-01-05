@@ -7,11 +7,13 @@ import java.security.spec.AlgorithmParameterSpec
 import java.nio.ByteBuffer
 import java.util.Objects.requireNonNull
 
-abstract class MacSpi
+abstract class MacSpi {}
 
-/// ## Refs
-///
-/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Mac.html
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Mac.html
+ */
 abstract class Mac protected (
     spi: MacSpi,
     provider: Provider,

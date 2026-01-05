@@ -4,10 +4,12 @@ import java.util.{Map => JMap, Set => JSet, List => JList}
 import java.util.{Collections, Properties}
 import java.util.Objects.requireNonNull
 
-/// ## Refs
-///
-/// 1. https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Provider.html
-/// 2. https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Provider.html
+ *   - https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html
+ */
 abstract class Provider(
     private val name: String,
     private val versionStr: String,

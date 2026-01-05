@@ -5,9 +5,11 @@ import java.util.Objects.requireNonNull
 
 abstract class MessageDigestSpi
 
-/// ## Refs
-///
-/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/MessageDigest.html
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/MessageDigest.html
+ */
 abstract class MessageDigest(
     spi: MessageDigestSpi,
     provider: Provider,

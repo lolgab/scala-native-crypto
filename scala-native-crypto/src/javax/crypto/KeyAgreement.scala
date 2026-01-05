@@ -1,19 +1,17 @@
 package javax.crypto
 
 import java.security.{Key, Provider, SecureRandom}
-import java.security.{
-  InvalidAlgorithmParameterException,
-  InvalidKeyException,
-  NoSuchAlgorithmException,
-  NoSuchProviderException
-}
 import java.security.spec.AlgorithmParameterSpec
 
-/// ## Refs
-///
-/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/KeyAgreement.html
+abstract class KeyAgreementSpi {}
+
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/KeyAgreement.html
+ */
 class KeyAgreement protected (
-    // keyAgreeSpi: KeyAgreementSpi,
+    keyAgreeSpi: KeyAgreementSpi,
     provider: Provider,
     algorithm: String
 ) {

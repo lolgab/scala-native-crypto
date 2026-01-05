@@ -2,15 +2,15 @@ package java.security.cert
 
 import java.io.InputStream
 import java.security.Provider
-import java.security.NoSuchAlgorithmException
-import java.security.cert.CertificateException
 import java.util.{Collection, Iterator}
 import java.util.{List => JList}
 import java.util.Objects.requireNonNull
 
-/// ## Refs
-///
-/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertificateFactory.html
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertificateFactory.html
+ */
 abstract class CertificateFactory protected (
     // private val certFactorySpi: CertificateFactorySpi,
     private val provider: Provider,
@@ -45,12 +45,7 @@ abstract class CertificateFactory protected (
 object CertificateFactory {
   def getInstance(certType: String): CertificateFactory = {
     requireNonNull(certType, "null type name")
-    try {
-      ???
-    } catch {
-      case e: NoSuchAlgorithmException =>
-        throw new CertificateException(certType + " not found", e)
-    }
+    ???
   }
 
   def getInstance(
@@ -58,12 +53,7 @@ object CertificateFactory {
       provider: String
   ): CertificateFactory = {
     requireNonNull(certType, "null type name")
-    try {
-      ???
-    } catch {
-      case e: NoSuchAlgorithmException =>
-        throw new CertificateException(certType + " not found", e)
-    }
+    ???
   }
 
   def getInstance(
@@ -71,11 +61,6 @@ object CertificateFactory {
       provider: Provider
   ): CertificateFactory = {
     requireNonNull(certType, "null type name")
-    try {
-      ???
-    } catch {
-      case e: NoSuchAlgorithmException =>
-        throw new CertificateException(certType + " not found", e)
-    }
+    ???
   }
 }

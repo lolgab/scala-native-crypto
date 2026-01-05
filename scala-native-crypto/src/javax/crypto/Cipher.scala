@@ -6,10 +6,11 @@ import java.security.{AlgorithmParameters, Key, SecureRandom, Provider}
 import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
 
-/// ## Refs
-///
-/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Cipher.html
-///
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Cipher.html
+ */
 abstract class Cipher protected (
     // private val spi: CipherSpi,
     private val provider: Provider,

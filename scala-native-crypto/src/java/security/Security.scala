@@ -7,10 +7,12 @@ import java.util.Objects.requireNonNull
 import scala.collection.mutable.ListBuffer
 import scala.collection.mutable.HashMap
 
-/// ## Refs
-///
-/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Security.html
-/// - https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Security.html
+ *   - https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html
+ */
 object Security {
 
   @deprecated
@@ -66,19 +68,24 @@ object Security {
   def getProvider(name: String): Provider =
     _providers.find(_.getName() == name).orNull
 
-  /// According to JDK doc:
-  ///
-  /// The selection criterion must be specified in one of the following two formats:
-  ///
-  /// - `<crypto_service>.<algorithm_or_type>`
-  ///   The cryptographic service name must not contain any dots.
-  ///   For example, "CertificateFactory.X.509" would be satisfied by any provider
-  ///   that supplied a CertificateFactory implementation for X.509 certificates.
-  /// - `<crypto_service>.<algorithm_or_type> <attribute_name>:<attribute_value>`
-  ///   The cryptographic service name must not contain any dots.
-  ///   There must be one or more space characters between the <algorithm_or_type> and the <attribute_name>.
-  ///   For example, "Signature.SHA1withDSA KeySize:1024" would be satisfied by
-  ///   any provider that implemented the SHA1withDSA signature algorithm with a keysize of 1024 (or larger).
+  /**
+   * According to JDK doc:
+   *
+   * The selection criterion must be specified in one of the following two
+   * formats:
+   *
+   *   - `<crypto_service>.<algorithm_or_type>` The cryptographic service name
+   *     must not contain any dots. For example, "CertificateFactory.X.509"
+   *     would be satisfied by any provider that supplied a CertificateFactory
+   *     implementation for X.509 certificates.
+   *   - `<crypto_service>.<algorithm_or_type>
+   *     <attribute_name>:<attribute_value>` The cryptographic service name must
+   *     not contain any dots. There must be one or more space characters
+   *     between the <algorithm_or_type> and the <attribute_name>. For example,
+   *     "Signature.SHA1withDSA KeySize:1024" would be satisfied by any provider
+   *     that implemented the SHA1withDSA signature algorithm with a keysize of
+   *     1024 (or larger).
+   */
   def getProviders(filter: String): Array[Provider] = {
     requireNonNull(filter)
     require(filter.nonEmpty)
@@ -99,16 +106,19 @@ object Security {
       throw new InvalidParameterException(s"Invalid filter format: '${filter}'")
   }
 
-  /// Notes: (from JDK doc)
-  ///
-  /// The selection criteria are represented by a map. Each map entry represents
-  /// a selection criterion. A provider is selected iff it satisfies all
-  /// selection criteria.
-  ///
-  /// Majorly use to test if a provider satisfies the criteria.
-  ///
-  /// 1. `<crypto_service>.<algorithm_or_type>`
-  /// 2. `<crypto_service>.<algorithm_or_type> <attribute_name>:<attribute_value>`
+  /**
+   * Notes: (from JDK doc)
+   *
+   * The selection criteria are represented by a map. Each map entry represents
+   * a selection criterion. A provider is selected iff it satisfies all
+   * selection criteria.
+   *
+   * Majorly use to test if a provider satisfies the criteria.
+   *
+   *   - `<crypto_service>.<algorithm_or_type>`
+   *   - `<crypto_service>.<algorithm_or_type>
+   *     <attribute_name>:<attribute_value>`
+   */
   def getProviders(filter: JMap[String, String]): Array[Provider] = {
     val providers = getProviders()
     if (providers.length == 0) return null

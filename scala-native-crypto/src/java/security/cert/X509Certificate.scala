@@ -7,9 +7,11 @@ import java.util.Collection
 
 import javax.security.auth.x500.X500Principal
 
-/// ## Ref
-///
-/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/X509Certificate.html
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/X509Certificate.html
+ */
 abstract class X509Certificate(certType: String)
     extends Certificate(certType)
     with X509Extension {

@@ -1,8 +1,10 @@
 package java.security.spec
 
-/// ## Refs
-///
-/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/spec/PKCS8EncodedKeySpec.html
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/spec/PKCS8EncodedKeySpec.html
+ */
 class PKCS8EncodedKeySpec(
     encodedKey: Array[Byte],
     algorithm: String

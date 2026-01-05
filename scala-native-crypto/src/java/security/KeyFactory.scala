@@ -5,9 +5,11 @@ import java.security.spec.KeySpec
 
 abstract class KeyFactorySpi
 
-/// ## Refs
-///
-/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyFactory.html
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyFactory.html
+ */
 abstract class KeyFactory protected (
     spi: KeyFactorySpi,
     provider: Provider,

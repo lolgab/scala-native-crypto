@@ -8,11 +8,15 @@ import java.security.{
 }
 import java.util.Collection
 
-/// ## Refs
-///
-/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertStore.html
+abstract class CertStoreSpi {}
+
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertStore.html
+ */
 abstract class CertStore protected (
-    // storeSpi: CertStoreSpi,
+    storeSpi: CertStoreSpi,
     provider: Provider,
     `type`: String,
     params: CertStoreParameters
@@ -21,13 +25,17 @@ abstract class CertStore protected (
   def getCertificates(selector: CertSelector): Collection[_ <: Certificate] =
     ???
 
-  def getCRLs(selector: CRLSelector): Collection[_ <: CRL] = ???
+  def getCRLs(selector: CRLSelector): Collection[_ <: CRL] =
+    ???
 
-  def getCertStoreParameters(): CertStoreParameters = ???
+  def getCertStoreParameters(): CertStoreParameters =
+    ???
 
-  def getType(): String = ???
+  def getType(): String =
+    ???
 
-  def getProvider(): Provider = ???
+  def getProvider(): Provider =
+    ???
 
 }
 
@@ -51,4 +59,5 @@ object CertStore {
   ): CertStore = ???
 
   def getDefaultType(): String = ???
+
 }

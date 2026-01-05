@@ -5,9 +5,11 @@ import java.security.{Provider, SecureRandom}
 
 abstract class KeyPairGeneratorSpi
 
-/// ## Refs
-///
-/// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyPairGenerator.html
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyPairGenerator.html
+ */
 abstract class KeyPairGenerator(
     spi: KeyPairGeneratorSpi,
     provider: Provider,
