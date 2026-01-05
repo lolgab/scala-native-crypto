@@ -5,8 +5,9 @@ import utest._
 import java.security._
 import java.util.UUID
 
-/** Tests for [[SecureRandom]
-  */
+/**
+ * Tests for [[SecureRandom]
+ */
 object SecureRandomSuite extends TestSuite {
 
   val tests = Tests {

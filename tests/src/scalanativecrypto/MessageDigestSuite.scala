@@ -5,8 +5,9 @@ import utest._
 import java.security._
 import javax.crypto.spec._
 
-/** Tests for [[MessageDigest]] class fields and methods
-  */
+/**
+ * Tests for [[MessageDigest]] class fields and methods
+ */
 object MessageDigestSuite extends TestSuite {
   private def checkStringResult(
       algorithm: String,
