@@ -1,11 +1,13 @@
 package java.security
 
+import java.util.Random
+
 import com.github.lolgab.scalanativecrypto.internal._
 
 import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._
 
-class SecureRandom() extends java.util.Random(0L) {
+class SecureRandom() extends Random(0L) {
 
   override def setSeed(x: Long): Unit = ()
 

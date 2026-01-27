@@ -1,3 +1,3 @@
 package java.security.spec
 
-trait KeySpec
+trait KeySpec {}

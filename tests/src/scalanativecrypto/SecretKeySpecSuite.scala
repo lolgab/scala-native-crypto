@@ -4,8 +4,9 @@ import utest._
 
 import javax.crypto.spec._
 
-/** Tests for [[MessageDigest]] class fields and methods
-  */
+/**
+ * Tests for [[MessageDigest]] class fields and methods
+ */
 object SecretKeySpecSuite extends TestSuite {
   val tests = Tests {
     test("SecretKeySpec") {

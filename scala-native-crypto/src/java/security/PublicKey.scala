@@ -1,3 +1,8 @@
 package java.security
 
-trait PublicKey extends Key
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/PublicKey.html
+ */
+trait PublicKey extends AsymmetricKey {}
