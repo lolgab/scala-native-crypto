@@ -3,7 +3,6 @@ package com.github.lolgab.scalanativecrypto.crypto
 import com.github.lolgab.scalanativecrypto.internal._
 import java.com.github.lolgab.scalanativecrypto.internal.CtxFinalizer
 
-import java.lang.ref.WeakReference
 import java.security.{MessageDigest, Provider}
 import java.security.DigestException
 
@@ -23,8 +22,7 @@ final class OpenSslMessageDigest protected[scalanativecrypto] (
   val md = crypto.EVP_get_digestbyname(name)
 
   if (LinktimeInfo.isWeakReferenceSupported) {
-    val wr = new WeakReference(this)
-    new CtxFinalizer(wr, ctx, crypto.EVP_MD_CTX_free(_))
+    CtxFinalizer.register_EVP_MD_CTX(this, ctx)
   } else {
     System.err.println(
       "[java.security.MessageDigest] OpenSSL context finalization is not supported. Consider using immix or commix GC, otherwise this will leak memory."

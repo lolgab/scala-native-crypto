@@ -183,19 +183,19 @@ object MessageDigestSuite extends TestSuite {
 
     test("SecretKeySpec") {
       test("null key") {
-        val ex = intercept[IllegalArgumentException] {
+        val ex = assertThrows[IllegalArgumentException] {
           new SecretKeySpec(null, "")
         }
         ex.getMessage() ==> "Missing argument"
       }
       test("null algorithm") {
-        val ex = intercept[IllegalArgumentException] {
+        val ex = assertThrows[IllegalArgumentException] {
           new SecretKeySpec(Array.emptyByteArray, null)
         }
         ex.getMessage() ==> "Missing argument"
       }
       test("empty key") {
-        val ex = intercept[IllegalArgumentException] {
+        val ex = assertThrows[IllegalArgumentException] {
           new SecretKeySpec(Array.emptyByteArray, "")
         }
         ex.getMessage() ==> "Empty key"

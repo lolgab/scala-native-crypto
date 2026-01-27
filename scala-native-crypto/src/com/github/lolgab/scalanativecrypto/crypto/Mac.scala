@@ -4,7 +4,6 @@ import com.github.lolgab.scalanativecrypto.internal.Constants._
 import com.github.lolgab.scalanativecrypto.internal._
 import java.com.github.lolgab.scalanativecrypto.internal.CtxFinalizer
 
-import java.lang.ref.WeakReference
 import java.security.{Provider, Key}
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -27,8 +26,7 @@ final class OpenSslMac protected[scalanativecrypto] (
   private var isInitialized: Boolean = false
 
   if (LinktimeInfo.isWeakReferenceSupported) {
-    val wr = new WeakReference(this)
-    new CtxFinalizer(wr, ctx, crypto.HMAC_CTX_free(_))
+    CtxFinalizer.register_HMAC_CTX(this, ctx)
   } else {
     System.err.println(
       "[javax.crypto.Mac] OpenSSL context finalization is not supported. Consider using immix or commix GC, otherwise this will leak memory."
