@@ -21,15 +21,15 @@ jobs:
           - "17"
           - "21"
           - "25"
-    name: Build and Test with Java ${{ matrix.java }}
+    name: "Build and Test with Java ${{ matrix.java }}"
     steps:
       - uses: actions/checkout@v5
+      - uses: coursier/cache-action@v7
       - name: Install Dependencies
         run: sudo apt-get update && sudo apt-get install -y libssl-dev
-      - uses: coursier/cache-action@v7
       - uses: coursier/setup-action@v2
         with:
-          jvm: temurin:1.${{ matrix.java }}
+          jvm: "temurin:1.${{ matrix.java }}"
           apps: mill
       - name: Check formatting
         run:
@@ -59,9 +59,9 @@ jobs:
       LC_ALL: "en_US.UTF-8"
     steps:
       - uses: actions/checkout@v5
+      - uses: coursier/cache-action@v7
       - name: Install Dependencies
         run: sudo apt-get update && sudo apt-get install -y libssl-dev
-      - uses: coursier/cache-action@v7
       - uses: coursier/setup-action@v2
         with:
           jvm: temurin:1.${{ matrix.java }}
