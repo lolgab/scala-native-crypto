@@ -1,11 +1,9 @@
 package java.security.cert
 
+import java.security.InvalidAlgorithmParameterException
+import java.security.NoSuchAlgorithmException
+import java.security.NoSuchProviderException
 import java.security.Provider
-import java.security.{
-  InvalidAlgorithmParameterException,
-  NoSuchAlgorithmException,
-  NoSuchProviderException
-}
 import java.util.Collection
 
 abstract class CertStoreSpi {}

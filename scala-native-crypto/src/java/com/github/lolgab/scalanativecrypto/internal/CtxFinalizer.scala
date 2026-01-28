@@ -1,6 +1,7 @@
 package java.com.github.lolgab.scalanativecrypto.internal
 
 import com.github.lolgab.scalanativecrypto.internal.crypto
+
 import java.lang.ref.Cleaner
 
 object CtxFinalizer {

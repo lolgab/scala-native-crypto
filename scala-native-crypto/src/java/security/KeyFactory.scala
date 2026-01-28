@@ -1,7 +1,7 @@
 package java.security
 
-import java.util.Objects.requireNonNull
 import java.security.spec.KeySpec
+import java.util.Objects.requireNonNull
 
 abstract class KeyFactorySpi {}
 

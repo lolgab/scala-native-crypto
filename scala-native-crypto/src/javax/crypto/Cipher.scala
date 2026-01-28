@@ -1,8 +1,10 @@
 package javax.crypto
 
 import java.nio.ByteBuffer
-
-import java.security.{AlgorithmParameters, Key, SecureRandom, Provider}
+import java.security.AlgorithmParameters
+import java.security.Key
+import java.security.Provider
+import java.security.SecureRandom
 import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
 

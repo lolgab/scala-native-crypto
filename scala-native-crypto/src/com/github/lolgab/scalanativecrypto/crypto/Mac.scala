@@ -2,12 +2,12 @@ package com.github.lolgab.scalanativecrypto.crypto
 
 import com.github.lolgab.scalanativecrypto.internal.Constants._
 import com.github.lolgab.scalanativecrypto.internal._
-import java.com.github.lolgab.scalanativecrypto.internal.CtxFinalizer
 
-import java.security.{Provider, Key}
+import java.com.github.lolgab.scalanativecrypto.internal.CtxFinalizer
+import java.security.Key
+import java.security.Provider
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
-
 import scala.scalanative.meta.LinktimeInfo
 import scala.scalanative.unsafe._
 

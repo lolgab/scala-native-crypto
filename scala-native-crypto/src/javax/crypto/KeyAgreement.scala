@@ -1,6 +1,8 @@
 package javax.crypto
 
-import java.security.{Key, Provider, SecureRandom}
+import java.security.Key
+import java.security.Provider
+import java.security.SecureRandom
 import java.security.spec.AlgorithmParameterSpec
 
 abstract class KeyAgreementSpi {}

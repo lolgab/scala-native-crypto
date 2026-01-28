@@ -2,8 +2,8 @@ package javax.crypto.spec
 
 import java.security.spec.KeySpec
 import java.util.Arrays
-import javax.crypto.SecretKey
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.crypto.SecretKey
 
 /**
  * Refs:

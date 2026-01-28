@@ -1,12 +1,13 @@
 package com.github.lolgab.scalanativecrypto.services
 
-import java.security.Provider
-import java.util.{List => JList, Map => JMap}
-import javax.crypto.Mac
-
-import com.github.lolgab.scalanativecrypto.internal.Utils
-import com.github.lolgab.scalanativecrypto.crypto.OpenSslMac
 import com.github.lolgab.scalanativecrypto.JcaService
+import com.github.lolgab.scalanativecrypto.crypto.OpenSslMac
+import com.github.lolgab.scalanativecrypto.internal.Utils
+
+import java.security.Provider
+import java.util.{List => JList}
+import java.util.{Map => JMap}
+import javax.crypto.Mac
 
 class OpenSslMacService private (
     private val provider: Provider,

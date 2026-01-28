@@ -1,6 +1,7 @@
 package javax.crypto
 
-import java.security.{Provider, SecureRandom}
+import java.security.Provider
+import java.security.SecureRandom
 import java.security.spec.AlgorithmParameterSpec
 
 abstract class KeyGeneratorSpi {}

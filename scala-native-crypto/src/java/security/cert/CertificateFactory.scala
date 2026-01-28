@@ -2,9 +2,10 @@ package java.security.cert
 
 import java.io.InputStream
 import java.security.Provider
-import java.util.{Collection, Iterator}
-import java.util.{List => JList}
+import java.util.Collection
+import java.util.Iterator
 import java.util.Objects.requireNonNull
+import java.util.{List => JList}
 
 abstract class CertificateFactorySpi {}
 

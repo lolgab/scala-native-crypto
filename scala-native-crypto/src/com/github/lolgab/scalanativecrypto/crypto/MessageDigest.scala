@@ -1,11 +1,11 @@
 package com.github.lolgab.scalanativecrypto.crypto
 
 import com.github.lolgab.scalanativecrypto.internal._
+
 import java.com.github.lolgab.scalanativecrypto.internal.CtxFinalizer
-
-import java.security.{MessageDigest, Provider}
 import java.security.DigestException
-
+import java.security.MessageDigest
+import java.security.Provider
 import scala.scalanative.meta.LinktimeInfo
 import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._

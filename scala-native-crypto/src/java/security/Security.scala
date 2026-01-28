@@ -1,11 +1,12 @@
 package java.security
 
-import java.util.{Collections, HashSet}
-import java.util.{Map => JMap, Set => JSet}
+import java.util.Collections
+import java.util.HashSet
 import java.util.Objects.requireNonNull
-
-import scala.collection.mutable.ListBuffer
+import java.util.{Map => JMap}
+import java.util.{Set => JSet}
 import scala.collection.mutable.HashMap
+import scala.collection.mutable.ListBuffer
 
 /**
  * Refs:
