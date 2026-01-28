@@ -1,10 +1,10 @@
 package javax.crypto
 
-import java.security.{Provider, Key}
-import java.security.NoSuchAlgorithmException
-
-import java.security.spec.AlgorithmParameterSpec
 import java.nio.ByteBuffer
+import java.security.Key
+import java.security.NoSuchAlgorithmException
+import java.security.Provider
+import java.security.spec.AlgorithmParameterSpec
 import java.util.Objects.requireNonNull
 
 abstract class MacSpi {}

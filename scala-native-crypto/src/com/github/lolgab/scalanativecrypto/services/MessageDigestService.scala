@@ -1,11 +1,13 @@
 package com.github.lolgab.scalanativecrypto.services
 
-import java.security.{Provider, MessageDigest}
-import java.util.{List => JList, Map => JMap}
-
-import com.github.lolgab.scalanativecrypto.internal.Utils
-import com.github.lolgab.scalanativecrypto.crypto.OpenSslMessageDigest
 import com.github.lolgab.scalanativecrypto.JcaService
+import com.github.lolgab.scalanativecrypto.crypto.OpenSslMessageDigest
+import com.github.lolgab.scalanativecrypto.internal.Utils
+
+import java.security.MessageDigest
+import java.security.Provider
+import java.util.{List => JList}
+import java.util.{Map => JMap}
 
 class OpenSslMessageDigestService private (
     private val provider: Provider,

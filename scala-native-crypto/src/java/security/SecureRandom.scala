@@ -1,9 +1,8 @@
 package java.security
 
-import java.util.Random
-
 import com.github.lolgab.scalanativecrypto.internal._
 
+import java.util.Random
 import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._
 

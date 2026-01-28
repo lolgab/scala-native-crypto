@@ -1,12 +1,14 @@
 package com.github.lolgab.scalanativecrypto
 
+import com.github.lolgab.scalanativecrypto.services._
+
 import java.security.Provider
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.{List => JList, Set => JSet, Map => JMap}
 import java.util.Objects.requireNonNull
 import java.util.concurrent.ConcurrentHashMap
-
-import com.github.lolgab.scalanativecrypto.services._
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.{List => JList}
+import java.util.{Map => JMap}
+import java.util.{Set => JSet}
 
 class OpenSslProvider(
     private val name: String = "scala-native-crypto",

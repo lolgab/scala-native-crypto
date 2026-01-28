@@ -2,7 +2,8 @@ package java.security.cert
 
 import java.io.ByteArrayInputStream
 import java.io.NotSerializableException
-import java.security.{Provider, PublicKey}
+import java.security.Provider
+import java.security.PublicKey
 
 // ref: https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/cert/Certificate.html
 abstract class Certificate protected (certType: String) extends Serializable {

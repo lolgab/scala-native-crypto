@@ -1,10 +1,9 @@
 package java.security.cert
 
 import java.math.BigInteger
+import java.util.Collection
 import java.util.Date
 import java.util.{List => JList}
-import java.util.Collection
-
 import javax.security.auth.x500.X500Principal
 
 /**

@@ -1,13 +1,17 @@
 package java.security
 
-import java.io.{InputStream, OutputStream, File}
+import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
-import java.util.{Arrays, Collections, Date, Enumeration}
-import java.util.{Set => JSet}
+import java.util.Arrays
+import java.util.Collections
+import java.util.Date
+import java.util.Enumeration
 import java.util.Objects.requireNonNull
 import java.util.concurrent.atomic.AtomicBoolean
-
+import java.util.{Set => JSet}
 import javax.crypto.SecretKey
 import javax.security.auth.Destroyable
 import javax.security.auth.callback.CallbackHandler

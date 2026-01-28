@@ -1,19 +1,25 @@
 package java.com.github.lolgab.scalanativecrypto.internal
 
-import java.lang.ref.WeakReference
-import java.lang.ref.WeakReferenceRegistry
+import com.github.lolgab.scalanativecrypto.internal.crypto
 
-final class CtxFinalizer[T](
-    weakRef: WeakReference[_],
-    private var ctx: T,
-    finalizationFunction: T => Unit
-) {
-  WeakReferenceRegistry.addHandler(weakRef, apply)
+import java.lang.ref.Cleaner
 
-  def apply(): Unit = {
-    if (ctx != null) {
-      finalizationFunction(ctx)
-      ctx = null.asInstanceOf[T]
-    }
+object CtxFinalizer {
+  private val cleaner: Cleaner = Cleaner.create()
+
+  private final class EVP_MD_CTX_State(ctx: crypto.EVP_MD_CTX_*)
+      extends Runnable {
+    override def run(): Unit = crypto.EVP_MD_CTX_free(ctx)
   }
+
+  def register_EVP_MD_CTX(owner: AnyRef, ctx: crypto.EVP_MD_CTX_*): Unit =
+    cleaner.register(owner, new EVP_MD_CTX_State(ctx))
+
+  private final class HMAC_CTX_State(ctx: crypto.HMAC_CTX_*) extends Runnable {
+    override def run(): Unit = crypto.HMAC_CTX_free(ctx)
+  }
+
+  def register_HMAC_CTX(owner: AnyRef, ctx: crypto.HMAC_CTX_*): Unit =
+    cleaner.register(owner, new HMAC_CTX_State(ctx))
+
 }

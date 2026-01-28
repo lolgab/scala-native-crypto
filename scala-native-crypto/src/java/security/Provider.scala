@@ -1,8 +1,11 @@
 package java.security
 
-import java.util.{Map => JMap, Set => JSet, List => JList}
-import java.util.{Collections, Properties}
+import java.util.Collections
 import java.util.Objects.requireNonNull
+import java.util.Properties
+import java.util.{List => JList}
+import java.util.{Map => JMap}
+import java.util.{Set => JSet}
 
 /**
  * Refs:

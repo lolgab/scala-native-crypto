@@ -28,13 +28,13 @@ object MacSuite extends TestSuite {
       assert(hmac == "88r11H48jN6js66Mh7ZNJH1NrPeDuNFxCDZ51TKRWcw=")
     }
     test("HmacSHA256 - update not initialized") {
-      val e = intercept[IllegalStateException](
+      val e = assertThrows[IllegalStateException](
         Mac.getInstance("HmacSHA256").update(Array[Byte]())
       )
       assert(e.getMessage == "MAC not initialized")
     }
     test("HmacSHA256 - doFinal not initialized") {
-      val e = intercept[IllegalStateException](
+      val e = assertThrows[IllegalStateException](
         Mac.getInstance("HmacSHA256").doFinal(Array[Byte]())
       )
       assert(e.getMessage == "MAC not initialized")
@@ -57,13 +57,13 @@ object MacSuite extends TestSuite {
       assert(hmac == "C08oqdn7+WWRctwSsXzfPfRFtawt9hJ6YJYyW9Aib0s=")
     }
     test("HmacSHA3-256 - update not initialized") {
-      val e = intercept[IllegalStateException](
+      val e = assertThrows[IllegalStateException](
         Mac.getInstance("HmacSHA3-256").update(Array[Byte]())
       )
       assert(e.getMessage == "MAC not initialized")
     }
     test("HmacSHA3-256 - doFinal not initialized") {
-      val e = intercept[IllegalStateException](
+      val e = assertThrows[IllegalStateException](
         Mac.getInstance("HmacSHA3-256").doFinal(Array[Byte]())
       )
       assert(e.getMessage == "MAC not initialized")
