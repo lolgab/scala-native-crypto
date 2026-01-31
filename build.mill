@@ -27,6 +27,8 @@ trait Shared
   def organization = "com.github.lolgab"
   def scalaNativeVersion = "0.5.10"
 
+  override def jvmVersion = Task { Task.env.getOrElse("JVM_VERSION", super.jvmVersion()) }
+
   def scalacOptions =
     super.scalacOptions() ++ (if (isScala3(crossScalaVersion)) Seq()
                               else Seq("-Ywarn-unused"))
@@ -105,7 +107,7 @@ def jwtScalaSources = Task {
     "git",
     "clone",
     "--branch",
-    "v10.0.2",
+    "v11.0.3",
     "--depth",
     "1",
     "https://github.com/jwt-scala/jwt-scala.git",
