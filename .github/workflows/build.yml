@@ -21,16 +21,14 @@ jobs:
           - "17"
           - "21"
           - "25"
+    env:
+      JVM_VERSION: ${{ matrix.java }}
     name: "Build and Test with Java ${{ matrix.java }}"
     steps:
       - uses: actions/checkout@v5
       - uses: coursier/cache-action@v7
       - name: Install Dependencies
         run: sudo apt-get update && sudo apt-get install -y libssl-dev
-      - uses: coursier/setup-action@v2
-        with:
-          jvm: "temurin:1.${{ matrix.java }}"
-          apps: mill
       - name: Check formatting
         run:
           ./mill --no-server mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
@@ -61,11 +59,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: coursier/cache-action@v7
       - name: Install Dependencies
-        run: sudo apt-get update && sudo apt-get install -y libssl-dev
-      - uses: coursier/setup-action@v2
-        with:
-          jvm: temurin:1.${{ matrix.java }}
-          apps: mill
+        run: sudo apt-get update && sudo apt-get install -y libssl-devf
       - name: Publish to Maven Central
         run: |
           if [[ $(git tag --points-at HEAD) != '' ]]; then

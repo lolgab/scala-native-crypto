@@ -27,6 +27,8 @@ trait Shared
   def organization = "com.github.lolgab"
   def scalaNativeVersion = "0.5.10"
 
+  override def jvmVersion = Task { Task.env.getOrElse("JVM_VERSION", super.jvmVersion()) }
+
   def scalacOptions =
     super.scalacOptions() ++ (if (isScala3(crossScalaVersion)) Seq()
                               else Seq("-Ywarn-unused"))
@@ -99,21 +101,6 @@ trait ScalaNativeCryptoModule extends Shared with Publish {
   }
 }
 
-def jwtScalaSources = Task {
-  val dest = Task.dest
-  os.proc(
-    "git",
-    "clone",
-    "--branch",
-    "v10.0.2",
-    "--depth",
-    "1",
-    "https://github.com/jwt-scala/jwt-scala.git",
-    dest
-  ).call()
-  PathRef(dest)
-}
-
 object tests extends Module {
   object jvm extends Cross[TestsJvmModule](scalaVersions)
   trait TestsJvmModule extends CrossScalaModule with Test {
@@ -134,19 +121,8 @@ object tests extends Module {
 
 object `jwt-scala-tests` extends Module {
   trait SharedJwtScalaTestsModule extends ScalaModule {
-    override def generatedSources = super.generatedSources() ++ Seq(
-      PathRef(
-        jwtScalaSources().path / "core" / "shared" / "src" / "main" / "scala"
-      ),
-      PathRef(
-        jwtScalaSources().path / "json" / "upickle" / "shared" / "src" / "main" / "scala"
-      ),
-      PathRef(
-        jwtScalaSources().path / "json" / "common" / "src" / "main" / "scala"
-      )
-    )
     override def mvnDeps = super.mvnDeps() ++ Seq(
-      mvn"com.lihaoyi::upickle::4.4.2"
+      mvn"com.github.jwt-scala::jwt-upickle::11.0.3"
     )
   }
 
