@@ -48,7 +48,7 @@ jobs:
         run: ./mill --no-server show __.publishArtifacts
 
   test-windows:
-    name: "Build and Test with Java ${{ matrix.java }} on Linux (Ubuntu)"
+    name: "Build and Test with Java ${{ matrix.java }} on Windows"
     runs-on: windows-latest
     needs:
       - test-linux
