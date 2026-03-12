@@ -20,16 +20,25 @@ def ivyDeps = super.ivyDeps() ++ Agg(ivy"com.github.lolgab::scala-native-crypto:
 
 You need also to install OpenSSL:
 
-On Ubuntu:
+On Debian/Ubuntu:
 
 ```
 sudo apt install libssl-dev
 ```
 
-On Mac OS X (with Homebrew):
+On macOS (with Homebrew):
 
 ```
 brew install openssl
+```
+
+On Windows (with vcpkg):
+
+```
+# Global `vcpkg`
+vcpkg install openssl
+# In workspace (we've added `openssl` to `vcpkg.json`)
+vcpkg install
 ```
 
 And you need to have `libcrypto.[so|dylib]` in your linking path.
@@ -54,6 +63,8 @@ def nativeLinkingOptions = super.nativeLinkingOptions() ++ Seq("-L/usr/local/opt
 ## Implemented classes
 
 According [JDK Security Algorithm Implementation Requirements](https://docs.oracle.com/en/java/javase/25/docs/specs/security/standard-names.html#security-algorithm-implementation-requirements), the following classes and algorithm checked are implemented and those unchecked are minimal requirements for interoperable JDK shims.
+
+**Welcome contributions to implement the missing algorithms/classes!**
 
 (The sequence is in the same order of the reference table)
 
@@ -148,5 +159,3 @@ According [JDK Security Algorithm Implementation Requirements](https://docs.orac
   - [ ] TLSv1.3
 - `javax.net.ssl.TrustManagerFactory`: See downstream project [lqhuang/scala-native-http](https://github.com/lqhuang/scala-native-http)
   - [ ] PKIX
-
-Welcome contributions to implement the missing algorithms/classes.
