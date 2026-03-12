@@ -12,8 +12,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-24.04
+  test-linux:
+    name: "Build and Test with Java ${{ matrix.java }} on Linux (Ubuntu)"
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         java:
@@ -23,12 +24,15 @@ jobs:
           - "25"
     env:
       JVM_VERSION: ${{ matrix.java }}
-    name: "Build and Test with Java ${{ matrix.java }}"
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: coursier/cache-action@v7
+      - uses: coursier/setup-action@v2
+        with:
+          apps: mill
       - name: Install Dependencies
         run: sudo apt-get update && sudo apt-get install -y libssl-dev
+
       - name: Check formatting
         run:
           ./mill --no-server mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
@@ -43,10 +47,46 @@ jobs:
       - name: Test publishArtifacts
         run: ./mill --no-server show __.publishArtifacts
 
+  test-windows:
+    runs-on: windows-latest
+    needs:
+      - test-linux
+    env:
+      VCPKG_DEFAULT_TRIPLET: x64-windows # x64-windows-static
+      VCPKG_ROOT: "${{ github.workspace }}\\vcpkg"
+      VCPKG_INSTALLED_DIR: "${{ github.workspace }}\\vcpkg\\installed"
+      VCPKG_COMMIT_ID: "66c0373dc7fca549e5803087b9487edfe3aca0a1" # vcpkg 2026.01.16 Release
+      JVM_VERSION: "25" # only test one JVM version on Windows for now
+    steps:
+      - uses: actions/checkout@v6
+      - uses: coursier/cache-action@v7
+      - uses: coursier/setup-action@v2
+        with:
+          apps: mill
+      - id: run-vcpkg
+        uses: lukka/run-vcpkg@v11.5
+        with:
+          vcpkgGitCommitId: "${{ env.VCPKG_COMMIT_ID }}"
+          runVcpkgInstall: true
+          doNotCache: false
+
+      - name: Compile
+        env:
+          SCALANATIVE_INCLUDE_DIRS: "${{ env.VCPKG_INSTALLED_DIR }}\\${{ env.VCPKG_DEFAULT_TRIPLET }}\\include"
+          SCALANATIVE_LIB_DIRS: "${{ env.VCPKG_INSTALLED_DIR }}\\${{ env.VCPKG_DEFAULT_TRIPLET }}\\lib"
+        run: .\mill --no-server __.compile
+      - name: Test
+        env:
+          SCALANATIVE_INCLUDE_DIRS: "${{ env.VCPKG_INSTALLED_DIR }}\\${{ env.VCPKG_DEFAULT_TRIPLET }}\\include"
+          SCALANATIVE_LIB_DIRS: "${{ env.VCPKG_INSTALLED_DIR }}\\${{ env.VCPKG_DEFAULT_TRIPLET }}\\lib"
+        run: .\mill --no-server __.test
+
   publish-sonatype:
     if: github.repository == 'lolgab/scala-native-crypto' && contains(github.ref, 'refs/tags/')
-    needs: build
-    runs-on: ubuntu-24.04
+    needs:
+      - test-linux
+      - test-windows
+    runs-on: ubuntu-latest
     env:
       SONATYPE_PGP_PRIVATE_KEY: ${{ secrets.SONATYPE_PGP_PRIVATE_KEY }}
       SONATYPE_PGP_PRIVATE_KEY_PASSWORD: ${{ secrets.SONATYPE_PGP_PRIVATE_KEY_PASSWORD }}
@@ -58,8 +98,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: coursier/cache-action@v7
+      - uses: coursier/setup-action@v2
+        with:
+          apps: mill
       - name: Install Dependencies
         run: sudo apt-get update && sudo apt-get install -y libssl-dev
+
       - name: Publish to Maven Central
         run: |
           if [[ $(git tag --points-at HEAD) != '' ]]; then
