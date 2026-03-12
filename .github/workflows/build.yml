@@ -48,15 +48,20 @@ jobs:
         run: ./mill --no-server show __.publishArtifacts
 
   test-windows:
+    name: "Build and Test with Java ${{ matrix.java }} on Linux (Ubuntu)"
     runs-on: windows-latest
     needs:
       - test-linux
+    strategy:
+      matrix:
+        java:
+          - "25" # only test one JVM version on Windows for now
     env:
       VCPKG_DEFAULT_TRIPLET: x64-windows # x64-windows-static
       VCPKG_ROOT: "${{ github.workspace }}\\vcpkg"
       VCPKG_INSTALLED_DIR: "${{ github.workspace }}\\vcpkg\\installed"
       VCPKG_COMMIT_ID: "66c0373dc7fca549e5803087b9487edfe3aca0a1" # vcpkg 2026.01.16 Release
-      JVM_VERSION: "25" # only test one JVM version on Windows for now
+      JVM_VERSION: ${{ matrix.java }}
     steps:
       - uses: actions/checkout@v6
       - uses: coursier/cache-action@v7
