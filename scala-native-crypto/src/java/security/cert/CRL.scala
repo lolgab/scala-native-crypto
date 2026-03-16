@@ -5,5 +5,4 @@ abstract class CRL protected (crlType: String) {
   final def getType(): String = crlType
 
   def isRevoked(cert: Certificate): Boolean
-
 }

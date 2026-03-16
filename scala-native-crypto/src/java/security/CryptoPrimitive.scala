@@ -37,6 +37,7 @@ object CryptoPrimitive {
   )
 
   def values(): Array[CryptoPrimitive] = _values.clone()
+
   def valueOf(name: String): CryptoPrimitive = {
     _values
       .find(_.name() == name)
