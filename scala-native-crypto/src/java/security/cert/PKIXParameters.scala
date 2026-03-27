@@ -102,4 +102,5 @@ class PKIXParameters protected[cert] (
   override def clone(): Object = ???
 
   override def toString(): String = ???
+
 }

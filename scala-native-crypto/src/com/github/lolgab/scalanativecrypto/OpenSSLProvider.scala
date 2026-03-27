@@ -1,16 +1,14 @@
 package com.github.lolgab.scalanativecrypto
 
-import com.github.lolgab.scalanativecrypto.services._
-
 import java.security.Provider
 import java.util.Objects.requireNonNull
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.{List => JList}
-import java.util.{Map => JMap}
-import java.util.{Set => JSet}
+import java.util.{List => JList, Map => JMap, Set => JSet}
 
-class OpenSslProvider(
+import services._
+
+class OpenSSLProvider(
     private val name: String = "scala-native-crypto",
     private val versionStr: String = "0.1",
     private val info: String =
@@ -20,7 +18,7 @@ class OpenSslProvider(
   private val initialized: AtomicBoolean = new AtomicBoolean(false)
 
   // private var _entrySet: JSet[JMap.Entry[Object, Object]] = ???
-  private val services: JMap[OpenSslProvider.ServiceKey, Provider.Service] =
+  private val services: JMap[OpenSSLProvider.ServiceKey, Provider.Service] =
     new ConcurrentHashMap()
 
   setup()
@@ -47,9 +45,7 @@ class OpenSslProvider(
         s"Unknown service: $svc, use one of ${JcaService.names.mkString(", ")}"
       )
 
-    services.get(
-      OpenSslProvider.ServiceKey(svc, algorithm)
-    )
+    services.get(OpenSSLProvider.ServiceKey(svc, algorithm))
   }
 
   override def getServices(): JSet[Provider.Service] =
@@ -59,20 +55,20 @@ class OpenSslProvider(
 
   override protected def putService(svc: Provider.Service): Unit =
     services.put(
-      OpenSslProvider.ServiceKey(svc.getType(), svc.getAlgorithm()),
+      OpenSSLProvider.ServiceKey(svc.getType(), svc.getAlgorithm()),
       svc
     )
 
   private def putAliasService(svc: Provider.Service, alias: String): Unit =
     services.put(
-      OpenSslProvider
+      OpenSSLProvider
         .ServiceKey(svc.getType(), alias, Some(svc.getAlgorithm())),
       svc
     )
 
   override protected def removeService(s: Provider.Service): Unit =
     services.remove(
-      OpenSslProvider.ServiceKey(s.getType(), s.getAlgorithm())
+      OpenSSLProvider.ServiceKey(s.getType(), s.getAlgorithm())
     )
 
   private def setup(): Unit = {
@@ -91,7 +87,8 @@ class OpenSslProvider(
           ("3-512", JList.of[String]())
         )
       ) {
-        val svc = OpenSslMacService(this, s"HmacSHA${len}", aliases, JMap.of())
+        val svc =
+          new OpenSSLMacService(this, s"HmacSHA${len}", aliases, JMap.of())
         putService(svc)
         aliases.forEach(alias => putAliasService(svc, alias))
       }
@@ -110,20 +107,45 @@ class OpenSslProvider(
           ("SHA3-512", JList.of[String]())
         )
       ) {
-        val svc = OpenSslMessageDigestService(this, algo, aliases, JMap.of())
+        val svc =
+          new OpenSSLMessageDigestService(this, algo, aliases, JMap.of())
         putService(svc)
         aliases.forEach(alias => putAliasService(svc, alias))
       }
+
+      val svcX509CertFactory = new OpenSSLCertificateFactoryService(
+        this,
+        "X.509",
+        JList.of[String](),
+        JMap.of()
+      )
+      putService(svcX509CertFactory)
+
+      val svcKeyStore = new OpenSSLKeyStoreService(
+        this,
+        "PKCS12",
+        JList.of[String](),
+        JMap.of()
+      )
+      putService(svcKeyStore)
+
+      val svcCertStore = new OpenSSLCertStoreService(
+        this,
+        "Collection",
+        JList.of[String](),
+        JMap.of()
+      )
+      putService(svcCertStore)
 
     }
   }
 }
 
-object OpenSslProvider {
+object OpenSSLProvider {
 
-  val defaultInstance = new OpenSslProvider()
+  val defaultInstance = new OpenSSLProvider()
 
-  def apply(): OpenSslProvider = new OpenSslProvider()
+  def apply(): OpenSSLProvider = new OpenSSLProvider()
 
   private case class ServiceKey(
       svc: String,
@@ -153,4 +175,5 @@ object OpenSslProvider {
       )
     }
   }
+
 }

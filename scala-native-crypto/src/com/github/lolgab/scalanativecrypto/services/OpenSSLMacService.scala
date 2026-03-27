@@ -1,15 +1,14 @@
 package com.github.lolgab.scalanativecrypto.services
 
 import com.github.lolgab.scalanativecrypto.JcaService
-import com.github.lolgab.scalanativecrypto.crypto.OpenSslMac
+import com.github.lolgab.scalanativecrypto.crypto.OpenSSLMac
 import com.github.lolgab.scalanativecrypto.internal.Utils
 
 import java.security.Provider
-import java.util.{List => JList}
-import java.util.{Map => JMap}
+import java.util.{List => JList, Map => JMap}
 import javax.crypto.Mac
 
-class OpenSslMacService private (
+class OpenSSLMacService protected[scalanativecrypto] (
     private val provider: Provider,
     private val algorithm: String,
     private val aliases: JList[String],
@@ -18,20 +17,19 @@ class OpenSslMacService private (
       provider,
       JcaService.Mac.name,
       algorithm,
-      "com.github.lolgab.scalanativecrypto.services.OpenSslMacService",
+      "com.github.lolgab.scalanativecrypto.services.OpenSSLMacService",
       aliases,
       attributes
     ) {
 
   override def supportsParameter(parameter: Object): Boolean =
-    if (parameter == null) true
-    else false
+    if (parameter == null) true else false
 
   override def newInstance(constructorParameter: Object): Mac = {
     val (name, length) =
       Utils.getAlgorithmNameAndLength(algorithm, prefix = "HMAC")
 
-    new OpenSslMac(
+    new OpenSSLMac(
       provider,
       algorithm,
       name,
@@ -39,18 +37,4 @@ class OpenSslMacService private (
     )
   }
 
-}
-
-object OpenSslMacService {
-  def apply(
-      provider: Provider,
-      algorithm: String,
-      aliases: JList[String],
-      attributes: JMap[String, String]
-  ): OpenSslMacService = new OpenSslMacService(
-    provider,
-    algorithm,
-    aliases,
-    attributes
-  )
 }

@@ -11,7 +11,7 @@ import javax.security.auth.x500.X500Principal
  *
  *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/X509CertSelector.html
  */
-class X509CertSelector() extends CertSelector {
+class X509CertSelector() extends CertSelector() {
 
   def setCertificate(cert: X509Certificate): Unit = ???
 
@@ -23,14 +23,17 @@ class X509CertSelector() extends CertSelector {
 
   def setIssuer(issuer: X500Principal): Unit = ???
 
-  @deprecated("Use setIssuer(X500Principal) or setIssuer(byte[]) instead", "16")
+  @deprecated(
+    "Use `setIssuer(X500Principal)` or `setIssuer(byte[])` instead",
+    "16"
+  )
   def setIssuer(issuerDN: String): Unit = ???
 
   def setIssuer(issuerDN: Array[Byte]): Unit = ???
 
   def getIssuer(): X500Principal = ???
 
-  @deprecated("Use getIssuer() or getIssuerAsBytes() instead", "16")
+  @deprecated("Use `getIssuer()` or `getIssuerAsBytes()` instead", "16")
   def getIssuerAsString(): String = ???
 
   def getIssuerAsBytes(): Array[Byte] = ???
@@ -38,7 +41,7 @@ class X509CertSelector() extends CertSelector {
   def setSubject(subject: X500Principal): Unit = ???
 
   @deprecated(
-    "Use setSubject(X500Principal) or setSubject(byte[]) instead",
+    "Use `setSubject(X500Principal)` or `setSubject(byte[])` instead",
     "16"
   )
   def setSubject(subjectDN: String): Unit = ???
@@ -47,7 +50,7 @@ class X509CertSelector() extends CertSelector {
 
   def getSubject(): X500Principal = ???
 
-  @deprecated("Use getSubject() or getSubjectAsBytes() instead", "16")
+  @deprecated("Use `getSubject()` or `getSubjectAsBytes()` instead", "16")
   def getSubjectAsString(): String = ???
 
   def getSubjectAsBytes(): Array[Byte] = ???

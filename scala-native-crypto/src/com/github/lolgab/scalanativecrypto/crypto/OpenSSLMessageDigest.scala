@@ -4,14 +4,14 @@ import com.github.lolgab.scalanativecrypto.internal._
 
 import java.com.github.lolgab.scalanativecrypto.internal.CtxFinalizer
 import java.security.DigestException
-import java.security.MessageDigest
+import java.security.{MessageDigest}
 import java.security.Provider
 import scala.scalanative.meta.LinktimeInfo
 import scala.scalanative.runtime.ByteArray
 import scala.scalanative.unsafe._
 import scala.scalanative.unsigned._
 
-final class OpenSslMessageDigest protected[scalanativecrypto] (
+final class OpenSSLMessageDigest protected[scalanativecrypto] (
     provider: Provider,
     algorithm: String,
     name: CString,

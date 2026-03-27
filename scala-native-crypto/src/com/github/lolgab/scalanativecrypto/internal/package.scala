@@ -3,15 +3,22 @@ package com.github.lolgab.scalanativecrypto.internal
 import java.security.NoSuchAlgorithmException
 import scala.scalanative.unsafe._
 
+import scala.scalanative.libc.stdio.FILE
+
 @link("crypto")
 @extern
 object crypto {
+
+  // EVP related types and functions
+
   type EVP_MD_* = CVoidPtr
   type EVP_MD_CTX_* = CVoidPtr
+  type EVP_PKEY_* = CVoidPtr
 
   def RAND_bytes(buf: Ptr[Byte], num: CInt): CInt = extern
 
   def EVP_get_digestbyname(name: CString): EVP_MD_* = extern
+
   def EVP_MD_CTX_new(): EVP_MD_CTX_* = extern
   def EVP_MD_CTX_free(ctx: EVP_MD_CTX_*): Unit = extern
   def EVP_MD_CTX_reset(ctx: EVP_MD_CTX_*): Unit = extern
@@ -22,6 +29,9 @@ object crypto {
   def EVP_DigestFinal(ctx: EVP_MD_CTX_*, md: Ptr[Byte], s: Ptr[Int]): CInt =
     extern
 
+  def EVP_sha256(): EVP_MD_* = extern // Function to get the SHA-256 algorithm
+
+  // HMAC related types and functions
   type HMAC_CTX_* = CVoidPtr
 
   def HMAC_CTX_new(): HMAC_CTX_* = extern
@@ -39,13 +49,27 @@ object crypto {
   def HMAC_Final(ctx: HMAC_CTX_*, md: Ptr[Byte], len: Ptr[Int]): CInt =
     extern
 
-  // Function to get the SHA-256 algorithm
-  def EVP_sha256(): EVP_MD_* = extern
+  // X509 related types and functions
+  type X509_* = CVoidPtr
+  type X509_NAME_* = CVoidPtr
+  type ASN1_INTEGER_* = CVoidPtr
+  type ASN1_TIME_* = CVoidPtr
+
+  def X509_new(): X509_* = extern
+  def X509_free(x: X509_*): Unit = extern
+  def X509_get0_serialNumber(x: X509_*): ASN1_INTEGER_* = extern
+  def X509_get0_notBefore(x: X509_*): ASN1_TIME_* = extern
+  def X509_get0_notAfter(x: X509_*): ASN1_TIME_* = extern
+  def X509_get0_pubkey(x: X509_*): EVP_PKEY_* = extern
+  def X509_get_subject_name(a: X509_*): X509_NAME_* = extern
+
+  def i2d_X509_NAME_fp(fp: Ptr[FILE], a: X509_NAME_*): CInt = extern
 }
 
 object Constants {
   val EVP_MAX_MD_SIZE: Int = 64
 }
+
 object Utils {
   def getAlgorithmNameAndLength(
       algorithm: String,

@@ -44,12 +44,10 @@ abstract class MessageDigest(
 }
 
 object MessageDigest {
-  import com.github.lolgab.scalanativecrypto.{OpenSslProvider, JcaService}
+  import com.github.lolgab.scalanativecrypto.{OpenSSLProvider, JcaService}
 
-  def getInstance(algorithm: String): MessageDigest = getInstance(
-    algorithm,
-    OpenSslProvider.defaultInstance
-  )
+  def getInstance(algorithm: String): MessageDigest =
+    getInstance(algorithm, OpenSSLProvider.defaultInstance)
 
   def getInstance(algorithm: String, provider: String): MessageDigest =
     throw new UnsupportedOperationException()

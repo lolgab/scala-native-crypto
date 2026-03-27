@@ -4,6 +4,7 @@ import java.math.BigInteger
 import java.util.Collection
 import java.util.Date
 import java.util.{List => JList}
+import java.security.Principal
 import javax.security.auth.x500.X500Principal
 
 /**
@@ -11,9 +12,10 @@ import javax.security.auth.x500.X500Principal
  *
  *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/X509Certificate.html
  */
-abstract class X509Certificate(certType: String)
-    extends Certificate(certType)
+abstract class X509Certificate()
+    extends Certificate("X.509")
     with X509Extension {
+
   def checkValidity(): Unit
 
   def checkValidity(date: Date): Unit
@@ -24,8 +26,8 @@ abstract class X509Certificate(certType: String)
 
   def getIssuerAlternativeNames(): Collection[JList[?]]
 
-  // @deprecated
-  // def getIssuerDN(): Principal
+  @deprecated()
+  def getIssuerDN(): Principal
 
   def getIssuerUniqueID(): Array[Boolean]
 
@@ -49,8 +51,8 @@ abstract class X509Certificate(certType: String)
 
   def getSubjectAlternativeNames(): Collection[JList[?]]
 
-  // @deprecated
-  // def getSubjectDN(): Principal
+  @deprecated()
+  def getSubjectDN(): Principal
 
   def getSubjectUniqueID(): Array[Boolean]
 
@@ -60,6 +62,4 @@ abstract class X509Certificate(certType: String)
 
   def getVersion(): Int
 
-  // declared in Certificate
-  // def verify(key: PublicKey, sigProvider: Provider): Unit
 }
