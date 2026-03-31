@@ -83,11 +83,8 @@ abstract class KeyStoreSpi {
 
 }
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyStore.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyStore.html
 abstract class KeyStore(
     spi: KeyStoreSpi,
     provider: Provider,

@@ -10,11 +10,8 @@ import java.util.Objects.requireNonNull
 
 abstract class CertStoreSpi {}
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertStore.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertStore
 abstract class CertStore protected (
     spi: CertStoreSpi,
     provider: Provider,

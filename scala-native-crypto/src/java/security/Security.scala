@@ -8,12 +8,9 @@ import java.util.{Set => JSet}
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.ListBuffer
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Security.html
- *   - https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Security.html
+// - https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html
 object Security {
 
   @deprecated

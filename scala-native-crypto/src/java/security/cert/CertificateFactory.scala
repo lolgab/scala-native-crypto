@@ -6,11 +6,8 @@ import java.util.{Collection, Iterator, List => JList}
 import java.util.Objects.requireNonNull
 import java.security.NoSuchAlgorithmException
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertificateFactorySpi.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertificateFactorySpi
 abstract class CertificateFactorySpi {
 
   def engineGenerateCertificate(is: InputStream): Certificate
@@ -31,11 +28,8 @@ abstract class CertificateFactorySpi {
 
 }
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertificateFactory.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertificateFactory
 abstract class CertificateFactory protected (
     spi: CertificateFactorySpi,
     provider: Provider,

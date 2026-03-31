@@ -3,11 +3,8 @@ package java.security.cert
 import java.security.PublicKey
 import javax.security.auth.x500.X500Principal
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/TrustAnchor.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/TrustAnchor
 class TrustAnchor protected (
     trustedCert: X509Certificate,
     nameConstraints: Array[Byte]

@@ -6,11 +6,8 @@ import java.security.PublicKey
 import java.util.{Collection, Date, List => JList, Set => JSet}
 import javax.security.auth.x500.X500Principal
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/X509CertSelector.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/X509CertSelector
 class X509CertSelector() extends CertSelector() {
 
   def setCertificate(cert: X509Certificate): Unit = ???

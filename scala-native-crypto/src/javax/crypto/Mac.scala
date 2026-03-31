@@ -9,11 +9,8 @@ import java.util.Objects.requireNonNull
 
 abstract class MacSpi {}
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Mac.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Mac
 abstract class Mac protected (
     spi: MacSpi,
     provider: Provider,

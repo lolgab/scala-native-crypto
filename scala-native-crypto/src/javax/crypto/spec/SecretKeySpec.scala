@@ -5,11 +5,8 @@ import java.util.Arrays
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.crypto.SecretKey
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/spec/SecretKeySpec.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/spec/SecretKeySpec
 class SecretKeySpec(
     private val key: Array[Byte],
     private val offset: Int,

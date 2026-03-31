@@ -8,11 +8,8 @@ import java.security.{
 import java.util.{Date, List => JList, Set => JSet}
 import java.util.Objects.requireNonNull
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/PKIXParameters.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/PKIXParameters
 class PKIXParameters protected[cert] (
     trustAnchors: JSet[TrustAnchor],
     keyStore: KeyStore

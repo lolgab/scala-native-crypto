@@ -4,11 +4,8 @@ import java.math.BigInteger
 import java.security.spec.AlgorithmParameterSpec
 import java.util.concurrent.ThreadLocalRandom
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/spec/DHParameterSpec.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/spec/DHParameterSpec
 class DHParameterSpec(p: BigInteger, g: BigInteger, l: Int)
     extends AlgorithmParameterSpec {
 
