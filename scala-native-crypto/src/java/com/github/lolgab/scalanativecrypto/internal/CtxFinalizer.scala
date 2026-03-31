@@ -22,4 +22,15 @@ object CtxFinalizer {
   def register_HMAC_CTX(owner: AnyRef, ctx: crypto.HMAC_CTX_*): Unit =
     cleaner.register(owner, new HMAC_CTX_State(ctx))
 
+  private final class EVP_CIPHER_CTX_State(ctx: crypto.EVP_CIPHER_CTX_*)
+      extends Runnable {
+    override def run(): Unit = crypto.EVP_CIPHER_CTX_free(ctx)
+  }
+
+  def register_EVP_CIPHER_CTX(
+      owner: AnyRef,
+      ctx: crypto.EVP_CIPHER_CTX_*
+  ): Unit =
+    cleaner.register(owner, new EVP_CIPHER_CTX_State(ctx))
+
 }

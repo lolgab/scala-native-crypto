@@ -1,6 +1,6 @@
 package com.github.lolgab.scalanativecrypto
 
-import com.github.lolgab.scalanativecrypto.services._
+import com.github.lolgab.scalanativecrypto.services.{OpenSslCipherService, _}
 
 import java.security.Provider
 import java.util.Objects.requireNonNull
@@ -111,6 +111,18 @@ class OpenSslProvider(
         )
       ) {
         val svc = OpenSslMessageDigestService(this, algo, aliases, JMap.of())
+        putService(svc)
+        aliases.forEach(alias => putAliasService(svc, alias))
+      }
+
+      // Register Cipher services
+      for (
+        (transformation, aliases) <- Seq(
+          ("AES/GCM/NoPadding", JList.of[String]()),
+          ("AES/CBC/PKCS5Padding", JList.of[String]("AES/CBC/PKCS7Padding"))
+        )
+      ) {
+        val svc = OpenSslCipherService(this, transformation, aliases, JMap.of())
         putService(svc)
         aliases.forEach(alias => putAliasService(svc, alias))
       }
