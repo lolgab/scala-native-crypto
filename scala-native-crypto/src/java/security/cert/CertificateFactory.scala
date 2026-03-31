@@ -2,12 +2,34 @@ package java.security.cert
 
 import java.io.InputStream
 import java.security.Provider
-import java.util.Collection
-import java.util.Iterator
+import java.util.{Collection, Iterator, List => JList}
 import java.util.Objects.requireNonNull
-import java.util.{List => JList}
+import java.security.NoSuchAlgorithmException
 
-abstract class CertificateFactorySpi {}
+/**
+ * Refs:
+ *
+ *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/CertificateFactorySpi.html
+ */
+abstract class CertificateFactorySpi {
+
+  def engineGenerateCertificate(is: InputStream): Certificate
+
+  def engineGetCertPathEncodings(): Iterator[String]
+
+  def engineGenerateCertPath(is: InputStream): CertPath
+
+  def engineGenerateCertPath(is: InputStream, encoding: String): CertPath
+
+  def engineGenerateCertPath(certificates: JList[? <: Certificate]): CertPath
+
+  def engineGenerateCertificates(is: InputStream): Collection[? <: Certificate]
+
+  def engineGenerateCRL(is: InputStream): CRL
+
+  def engineGenerateCRLs(is: InputStream): Collection[? <: CRL]
+
+}
 
 /**
  * Refs:
@@ -19,51 +41,69 @@ abstract class CertificateFactory protected (
     provider: Provider,
     certType: String
 ) {
-  final def getProvider(): Provider = provider
 
-  final def getType(): String = certType
+  final def getProvider(): Provider =
+    provider
 
-  def generateCertificate(is: InputStream): Certificate
+  final def getType(): String =
+    certType
 
-  def getCertPathEncodings(): Iterator[String]
+  final def generateCertificate(is: InputStream): Certificate =
+    spi.engineGenerateCertificate(is)
 
-  def generateCertPath(is: InputStream): CertPath
+  final def getCertPathEncodings(): Iterator[String] =
+    spi.engineGetCertPathEncodings()
 
-  def generateCertPath(is: InputStream, encoding: String): CertPath
+  final def generateCertPath(is: InputStream): CertPath =
+    spi.engineGenerateCertPath(is)
 
-  def generateCertPath(
-      certificates: JList[? <: Certificate]
-  ): CertPath
+  final def generateCertPath(is: InputStream, encoding: String): CertPath =
+    spi.engineGenerateCertPath(is, encoding)
 
-  def generateCertificates(
+  final def generateCertPath(certificates: JList[? <: Certificate]): CertPath =
+    spi.engineGenerateCertPath(certificates)
+
+  final def generateCertificates(
       is: InputStream
-  ): Collection[? <: Certificate]
+  ): Collection[? <: Certificate] =
+    spi.engineGenerateCertificates(is)
 
-  def generateCRL(is: InputStream): CRL
+  final def generateCRL(is: InputStream): CRL =
+    spi.engineGenerateCRL(is)
 
-  def generateCRLs(is: InputStream): Collection[? <: CRL]
+  final def generateCRLs(is: InputStream): Collection[? <: CRL] =
+    spi.engineGenerateCRLs(is)
 
 }
 
 object CertificateFactory {
-  def getInstance(certType: String): CertificateFactory = {
-    requireNonNull(certType, "null type name")
-    ???
-  }
+
+  import com.github.lolgab.scalanativecrypto.{OpenSSLProvider, JcaService}
+
+  def getInstance(certType: String): CertificateFactory =
+    getInstance(certType, OpenSSLProvider.defaultInstance)
 
   def getInstance(
       certType: String,
       provider: String
-  ): CertificateFactory = {
-    requireNonNull(certType, "null type name")
-    ???
-  }
+  ): CertificateFactory =
+    throw new UnsupportedOperationException()
 
   def getInstance(
       certType: String,
       provider: Provider
   ): CertificateFactory = {
-    requireNonNull(certType, "null type name")
-    ???
+    requireNonNull(certType, "type name must be not null")
+    requireNonNull(provider, "provider must be not null")
+    require(certType.nonEmpty, "empty type name")
+
+    val service =
+      provider.getService(JcaService.CertificateFactory.name, certType)
+    if (service == null)
+      throw new NoSuchAlgorithmException(
+        s"Algorithm ${certType} not found in provider ${provider.getName()}"
+      )
+    service.newInstance(null).asInstanceOf[CertificateFactory]
   }
+
 }

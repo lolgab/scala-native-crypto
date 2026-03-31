@@ -26,7 +26,10 @@ abstract class X509Certificate()
 
   def getIssuerAlternativeNames(): Collection[JList[?]]
 
-  @deprecated()
+  @deprecated(
+    "Use `getIssuerX500Principal()` instead. This method returns the `issuer` as an implementation specific `Principal` object, which should not be relied upon by portable code.",
+    since = "16"
+  )
   def getIssuerDN(): Principal
 
   def getIssuerUniqueID(): Array[Boolean]
@@ -51,7 +54,10 @@ abstract class X509Certificate()
 
   def getSubjectAlternativeNames(): Collection[JList[?]]
 
-  @deprecated()
+  @deprecated(
+    "Use `getSubjectX500Principal()` instead. This method returns the `subject` as an implementation specific `Principal` object, which should not be relied upon by portable code.",
+    since = "16"
+  )
   def getSubjectDN(): Principal
 
   def getSubjectUniqueID(): Array[Boolean]

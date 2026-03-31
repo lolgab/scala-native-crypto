@@ -1,22 +1,87 @@
 package java.security
 
-import java.io.File
-import java.io.InputStream
-import java.io.OutputStream
-import java.security.cert.Certificate
+import java.io.{File, InputStream, OutputStream}
 import java.security.spec.AlgorithmParameterSpec
-import java.util.Arrays
-import java.util.Collections
-import java.util.Date
-import java.util.Enumeration
+import java.security.cert.Certificate
+import java.util.{Arrays, Collections, Date, Enumeration, Set => JSet}
 import java.util.Objects.requireNonNull
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.{Set => JSet}
 import javax.crypto.SecretKey
 import javax.security.auth.Destroyable
 import javax.security.auth.callback.CallbackHandler
 
-abstract class KeyStoreSpi {}
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyStoreSpi.html
+abstract class KeyStoreSpi {
+
+  def engineGetKey(alias: String, password: Array[Char]): Key
+
+  def engineGetCertificateChain(alias: String): Array[Certificate]
+
+  def engineGetCertificate(alias: String): Certificate
+
+  def engineGetCreationDate(alias: String): Date
+
+  def engineSetKeyEntry(
+      alias: String,
+      key: Key,
+      password: Array[Char],
+      chain: Array[Certificate]
+  ): Unit
+
+  def engineSetKeyEntry(
+      alias: String,
+      key: Array[Byte],
+      chain: Array[Certificate]
+  ): Unit
+
+  def engineSetCertificateEntry(alias: String, cert: Certificate): Unit
+
+  def engineDeleteEntry(alias: String): Unit
+
+  def engineAliases(): Enumeration[String]
+
+  def engineContainsAlias(alias: String): Boolean
+
+  def engineSize(): Int
+
+  def engineIsKeyEntry(alias: String): Boolean
+
+  def engineIsCertificateEntry(alias: String): Boolean
+
+  def engineGetCertificateAlias(cert: Certificate): String
+
+  def engineStore(stream: OutputStream, password: Array[Char]): Unit
+
+  def engineStore(param: KeyStore.LoadStoreParameter): Unit
+
+  def engineLoad(stream: InputStream, password: Array[Char]): Unit
+
+  def engineLoad(param: KeyStore.LoadStoreParameter): Unit
+
+  // @since JDK 18
+  def engineGetAttributes(alias: String): JSet[KeyStore.Entry.Attribute]
+
+  def engineGetEntry(
+      alias: String,
+      protParam: KeyStore.ProtectionParameter
+  ): KeyStore.Entry
+
+  def engineSetEntry(
+      alias: String,
+      entry: KeyStore.Entry,
+      protParam: KeyStore.ProtectionParameter
+  ): Unit
+
+  def engineEntryInstanceOf(
+      alias: String,
+      entryClass: Class[_ <: KeyStore.Entry]
+  ): Boolean
+
+  // @since JDK 9
+  def engineProbe(stream: InputStream): Boolean
+
+}
 
 /**
  * Refs:
@@ -34,103 +99,124 @@ abstract class KeyStore(
   final def getType(): String = ksType
 
   // @since JDK 18
-  def getAttributes(alias: String): JSet[KeyStore.Entry.Attribute]
+  final def getAttributes(alias: String): JSet[KeyStore.Entry.Attribute] =
+    spi.engineGetAttributes(alias)
 
-  def getKey(alias: String, password: Array[Char]): Key
+  final def getKey(alias: String, password: Array[Char]): Key =
+    spi.engineGetKey(alias, password)
 
-  def getCertificateChain(alias: String): Array[Certificate]
+  final def getCertificateChain(alias: String): Array[Certificate] =
+    spi.engineGetCertificateChain(alias)
 
-  def getCertificate(alias: String): Certificate
+  final def getCertificate(alias: String): Certificate =
+    spi.engineGetCertificate(alias)
 
-  def getCreationDate(alias: String): Date
+  final def getCreationDate(alias: String): Date =
+    spi.engineGetCreationDate(alias)
 
-  def setKeyEntry(
+  final def setKeyEntry(
       alias: String,
       key: Key,
       password: Array[Char],
       chain: Array[Certificate]
-  ): Unit
+  ): Unit =
+    spi.engineSetKeyEntry(alias, key, password, chain)
 
-  def setKeyEntry(
+  final def setKeyEntry(
       alias: String,
       key: Array[Byte],
       chain: Array[Certificate]
-  ): Unit
+  ): Unit =
+    spi.engineSetKeyEntry(alias, key, chain)
 
-  def setCertificateEntry(alias: String, cert: Certificate): Unit
+  final def setCertificateEntry(alias: String, cert: Certificate): Unit =
+    spi.engineSetCertificateEntry(alias, cert)
 
-  def deleteEntry(alias: String): Unit
+  final def deleteEntry(alias: String): Unit =
+    spi.engineDeleteEntry(alias)
 
-  def aliases(): Enumeration[String]
+  final def aliases(): Enumeration[String] =
+    spi.engineAliases()
 
-  def containsAlias(alias: String): Boolean
+  final def containsAlias(alias: String): Boolean =
+    spi.engineContainsAlias(alias)
 
-  def size(): Int
+  final def size(): Int =
+    spi.engineSize()
 
-  def isKeyEntry(alias: String): Boolean
+  final def isKeyEntry(alias: String): Boolean =
+    spi.engineIsKeyEntry(alias)
 
-  def isCertificateEntry(alias: String): Boolean
+  final def isCertificateEntry(alias: String): Boolean =
+    spi.engineIsCertificateEntry(alias)
 
-  def getCertificateAlias(cert: Certificate): String
+  final def getCertificateAlias(cert: Certificate): String =
+    spi.engineGetCertificateAlias(cert)
 
-  def store(stream: OutputStream, password: Array[Char]): Unit
+  final def store(stream: OutputStream, password: Array[Char]): Unit =
+    spi.engineStore(stream, password)
 
-  def store(param: KeyStore.LoadStoreParameter): Unit
+  final def store(param: KeyStore.LoadStoreParameter): Unit =
+    spi.engineStore(param)
 
-  def load(stream: InputStream, password: Array[Char]): Unit
+  final def load(stream: InputStream, password: Array[Char]): Unit =
+    spi.engineLoad(stream, password)
 
-  def load(param: KeyStore.LoadStoreParameter): Unit
+  final def load(param: KeyStore.LoadStoreParameter): Unit =
+    spi.engineLoad(param)
 
-  def getEntry(
+  final def getEntry(
       alias: String,
       protParam: KeyStore.ProtectionParameter
-  ): KeyStore.Entry
+  ): KeyStore.Entry =
+    spi.engineGetEntry(alias, protParam)
 
-  def setEntry(
+  final def setEntry(
       alias: String,
       entry: KeyStore.Entry,
       protParam: KeyStore.ProtectionParameter
-  ): Unit
+  ): Unit =
+    spi.engineSetEntry(alias, entry, protParam)
 
-  def entryInstanceOf(
+  final def entryInstanceOf(
       alias: String,
       entryClass: Class[_ <: KeyStore.Entry]
-  ): Boolean
+  ): Boolean =
+    spi.engineEntryInstanceOf(alias, entryClass)
 
 }
 
 object KeyStore {
 
-  def getInstance(ksType: String): KeyStore = {
-    requireNonNull(ksType)
+  import com.github.lolgab.scalanativecrypto.{OpenSSLProvider, JcaService}
 
-    ???
-  }
+  def getInstance(ksType: String): KeyStore =
+    getInstance(ksType, OpenSSLProvider.defaultInstance)
 
-  def getInstance(ksType: String, provider: String): KeyStore = {
-    requireNonNull(ksType)
-    requireNonNull(provider)
-    require(provider.nonEmpty)
-
-    ???
-  }
+  def getInstance(ksType: String, provider: String): KeyStore =
+    throw new UnsupportedOperationException()
 
   def getInstance(ksType: String, provider: Provider): KeyStore = {
     requireNonNull(ksType)
     requireNonNull(provider)
+    require(!ksType.isEmpty())
 
-    ???
+    val service = provider.getService(JcaService.KeyStore.name, ksType)
+    if (service == null)
+      throw new NoSuchAlgorithmException(
+        s"Algorithm ${ksType} not found in provider ${provider.getName()}"
+      )
+    service.newInstance(null).asInstanceOf[KeyStore]
   }
 
-  def getDefaultType(): String = {
-    // val kstype = Security.getProperty(KEYSTORE_TYPE)
-    // if (kstype == null) "pkcs12" else kstype
+  def getDefaultType(): String =
+    "PKCS12"
+
+  def getInstance(file: File, password: Array[Char]): KeyStore =
     ???
-  }
 
-  def getInstance(file: File, password: Array[Char]): KeyStore = ???
-
-  def getInstance(file: File, param: LoadStoreParameter): KeyStore = ???
+  def getInstance(file: File, param: LoadStoreParameter): KeyStore =
+    ???
 
   //
   // Nested class Builder
