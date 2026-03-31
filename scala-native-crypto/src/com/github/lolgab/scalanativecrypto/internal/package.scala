@@ -41,10 +41,76 @@ object crypto {
 
   // Function to get the SHA-256 algorithm
   def EVP_sha256(): EVP_MD_* = extern
+
+  // -- EVP Cipher API --
+
+  type EVP_CIPHER_* = CVoidPtr
+  type EVP_CIPHER_CTX_* = CVoidPtr
+
+  def EVP_CIPHER_CTX_new(): EVP_CIPHER_CTX_* = extern
+  def EVP_CIPHER_CTX_free(ctx: EVP_CIPHER_CTX_*): Unit = extern
+  def EVP_CIPHER_CTX_reset(ctx: EVP_CIPHER_CTX_*): CInt = extern
+  def EVP_CIPHER_CTX_ctrl(
+      ctx: EVP_CIPHER_CTX_*,
+      `type`: CInt,
+      arg: CInt,
+      ptr: CVoidPtr
+  ): CInt = extern
+  def EVP_CIPHER_CTX_block_size(ctx: EVP_CIPHER_CTX_*): CInt = extern
+
+  def EVP_aes_128_gcm(): EVP_CIPHER_* = extern
+  def EVP_aes_256_gcm(): EVP_CIPHER_* = extern
+  def EVP_aes_128_cbc(): EVP_CIPHER_* = extern
+  def EVP_aes_256_cbc(): EVP_CIPHER_* = extern
+
+  def EVP_EncryptInit_ex(
+      ctx: EVP_CIPHER_CTX_*,
+      cipher: EVP_CIPHER_*,
+      impl: CVoidPtr,
+      key: Ptr[Byte],
+      iv: Ptr[Byte]
+  ): CInt = extern
+  def EVP_EncryptUpdate(
+      ctx: EVP_CIPHER_CTX_*,
+      out: Ptr[Byte],
+      outl: Ptr[CInt],
+      in: Ptr[Byte],
+      inl: CInt
+  ): CInt = extern
+  def EVP_EncryptFinal_ex(
+      ctx: EVP_CIPHER_CTX_*,
+      out: Ptr[Byte],
+      outl: Ptr[CInt]
+  ): CInt = extern
+
+  def EVP_DecryptInit_ex(
+      ctx: EVP_CIPHER_CTX_*,
+      cipher: EVP_CIPHER_*,
+      impl: CVoidPtr,
+      key: Ptr[Byte],
+      iv: Ptr[Byte]
+  ): CInt = extern
+  def EVP_DecryptUpdate(
+      ctx: EVP_CIPHER_CTX_*,
+      out: Ptr[Byte],
+      outl: Ptr[CInt],
+      in: Ptr[Byte],
+      inl: CInt
+  ): CInt = extern
+  def EVP_DecryptFinal_ex(
+      ctx: EVP_CIPHER_CTX_*,
+      out: Ptr[Byte],
+      outl: Ptr[CInt]
+  ): CInt = extern
 }
 
 object Constants {
   val EVP_MAX_MD_SIZE: Int = 64
+
+  // EVP_CIPHER_CTX_ctrl types
+  val EVP_CTRL_AEAD_SET_IVLEN: Int = 0x9
+  val EVP_CTRL_AEAD_GET_TAG: Int = 0x10
+  val EVP_CTRL_AEAD_SET_TAG: Int = 0x11
 }
 object Utils {
   def getAlgorithmNameAndLength(

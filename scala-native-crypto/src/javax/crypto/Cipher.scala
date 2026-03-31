@@ -132,6 +132,10 @@ abstract class Cipher protected (
 }
 
 object Cipher {
+  import com.github.lolgab.scalanativecrypto.{OpenSslProvider, JcaService}
+  import java.security.NoSuchAlgorithmException
+  import java.util.Objects.requireNonNull
+
   // magic numbers come from
   // https://docs.oracle.com/en/java/javase/25/docs/api/constant-values.html
   final val ENCRYPT_MODE: Int = 1
@@ -142,15 +146,32 @@ object Cipher {
   final val PRIVATE_KEY: Int = 2
   final val SECRET_KEY: Int = 3
 
-  def getInstance(transformation: String): Cipher = ???
+  def getInstance(transformation: String): Cipher =
+    getInstance(transformation, OpenSslProvider.defaultInstance)
 
-  def getInstance(transformation: String, provider: String): Cipher = ???
+  def getInstance(transformation: String, provider: String): Cipher =
+    throw new UnsupportedOperationException()
 
-  def getInstance(transformation: String, provider: Provider): Cipher = ???
+  def getInstance(transformation: String, provider: Provider): Cipher = {
+    requireNonNull(transformation)
+    requireNonNull(provider)
+    require(transformation.nonEmpty)
 
-  def getMaxAllowedKeyLength(transformation: String): Int = ???
+    val service = provider
+      .getService(JcaService.Cipher.name, transformation)
+    if (service == null)
+      throw new NoSuchAlgorithmException(
+        s"Cipher $transformation not found in provider ${provider.getName()}"
+      )
+
+    service
+      .newInstance(null)
+      .asInstanceOf[Cipher]
+  }
+
+  def getMaxAllowedKeyLength(transformation: String): Int = Int.MaxValue
 
   def getMaxAllowedParameterSpec(
       transformation: String
-  ): AlgorithmParameterSpec = ???
+  ): AlgorithmParameterSpec = null
 }
