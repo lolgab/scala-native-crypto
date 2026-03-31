@@ -11,7 +11,7 @@ import javax.crypto.spec.SecretKeySpec
 import scala.scalanative.meta.LinktimeInfo
 import scala.scalanative.unsafe._
 
-final class OpenSslMac protected[scalanativecrypto] (
+final class OpenSSLMac protected[scalanativecrypto] (
     provider: Provider,
     algorithm: String,
     name: CString,

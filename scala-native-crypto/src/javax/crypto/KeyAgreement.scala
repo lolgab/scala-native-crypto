@@ -7,11 +7,8 @@ import java.security.spec.AlgorithmParameterSpec
 
 abstract class KeyAgreementSpi {}
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/KeyAgreement.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/KeyAgreement
 class KeyAgreement protected (
     spi: KeyAgreementSpi,
     provider: Provider,

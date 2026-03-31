@@ -1,15 +1,13 @@
 package com.github.lolgab.scalanativecrypto.services
 
 import com.github.lolgab.scalanativecrypto.JcaService
-import com.github.lolgab.scalanativecrypto.crypto.OpenSslMessageDigest
+import com.github.lolgab.scalanativecrypto.crypto.OpenSSLMessageDigest
 import com.github.lolgab.scalanativecrypto.internal.Utils
 
-import java.security.MessageDigest
-import java.security.Provider
-import java.util.{List => JList}
-import java.util.{Map => JMap}
+import java.security.{MessageDigest, Provider}
+import java.util.{List => JList, Map => JMap}
 
-class OpenSslMessageDigestService private (
+class OpenSSLMessageDigestService protected[scalanativecrypto] (
     private val provider: Provider,
     private val algorithm: String,
     private val aliases: JList[String],
@@ -18,7 +16,7 @@ class OpenSslMessageDigestService private (
       provider,
       JcaService.MessageDigest.name,
       algorithm,
-      "com.github.lolgab.scalanativecrypto.services.OpenSslMessageDigest",
+      "com.github.lolgab.scalanativecrypto.services.OpenSSLMessageDigestService",
       aliases,
       attributes
     ) {
@@ -30,7 +28,7 @@ class OpenSslMessageDigestService private (
     val (name, length) =
       Utils.getAlgorithmNameAndLength(algorithm, prefix = "")
 
-    new OpenSslMessageDigest(
+    new OpenSSLMessageDigest(
       provider,
       algorithm,
       name,
@@ -38,18 +36,4 @@ class OpenSslMessageDigestService private (
     )
   }
 
-}
-
-object OpenSslMessageDigestService {
-  def apply(
-      provider: Provider,
-      algorithm: String,
-      aliases: JList[String],
-      attributes: JMap[String, String]
-  ): OpenSslMessageDigestService = new OpenSslMessageDigestService(
-    provider,
-    algorithm,
-    aliases,
-    attributes
-  )
 }

@@ -9,11 +9,8 @@ import java.util.Objects.requireNonNull
 
 abstract class MacSpi {}
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Mac.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Mac
 abstract class Mac protected (
     spi: MacSpi,
     provider: Provider,
@@ -46,13 +43,15 @@ abstract class Mac protected (
   def doFinal(data: Array[Byte]): Array[Byte]
 
   def reset(): Unit
+
 }
 
 object Mac {
-  import com.github.lolgab.scalanativecrypto.{OpenSslProvider, JcaService}
+
+  import com.github.lolgab.scalanativecrypto.{OpenSSLProvider, JcaService}
 
   def getInstance(algorithm: String): Mac =
-    getInstance(algorithm, OpenSslProvider.defaultInstance)
+    getInstance(algorithm, OpenSSLProvider.defaultInstance)
 
   def getInstance(algorithm: String, provider: String): Mac =
     throw new UnsupportedOperationException()
@@ -69,8 +68,7 @@ object Mac {
         s"Mac $algorithm not found in provider ${provider.getName()}"
       )
 
-    service
-      .newInstance(null)
-      .asInstanceOf[Mac]
+    service.newInstance(null).asInstanceOf[Mac]
   }
+
 }

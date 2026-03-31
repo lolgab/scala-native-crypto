@@ -2,11 +2,8 @@ package java.security
 
 import java.util.{Set => JSet}
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/AlgorithmConstraints.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/AlgorithmConstraints
 trait AlgorithmConstraints {
   def permits(
       primitives: JSet[CryptoPrimitive],

@@ -1,8 +1,6 @@
 package scalanativecrypto
 
-import utest.TestSuite
-import utest.Tests
-import utest.test
+import utest.{TestSuite, Tests, test, assert}
 
 import java.security.CryptoPrimitive
 

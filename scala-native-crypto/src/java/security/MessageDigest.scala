@@ -5,11 +5,8 @@ import java.util.Objects.requireNonNull
 
 abstract class MessageDigestSpi {}
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/MessageDigest.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/MessageDigest
 abstract class MessageDigest(
     spi: MessageDigestSpi,
     provider: Provider,
@@ -44,12 +41,10 @@ abstract class MessageDigest(
 }
 
 object MessageDigest {
-  import com.github.lolgab.scalanativecrypto.{OpenSslProvider, JcaService}
+  import com.github.lolgab.scalanativecrypto.{OpenSSLProvider, JcaService}
 
-  def getInstance(algorithm: String): MessageDigest = getInstance(
-    algorithm,
-    OpenSslProvider.defaultInstance
-  )
+  def getInstance(algorithm: String): MessageDigest =
+    getInstance(algorithm, OpenSSLProvider.defaultInstance)
 
   def getInstance(algorithm: String, provider: String): MessageDigest =
     throw new UnsupportedOperationException()
