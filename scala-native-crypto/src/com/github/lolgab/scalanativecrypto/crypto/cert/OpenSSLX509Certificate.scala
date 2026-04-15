@@ -45,6 +45,8 @@ class OpenSSLX509Certificate protected[scalanativecrypto] (val ptr: X509_*)
 
   override def getSerialNumber(): BigInteger = {
     crypto.X509_get0_serialNumber(ptr)
+    // ASN1_INTEGER_to_BN
+    // BN_bn2dec
     ???
   }
 
@@ -58,7 +60,10 @@ class OpenSSLX509Certificate protected[scalanativecrypto] (val ptr: X509_*)
 
   override def getTBSCertificate(): Array[Byte] = ???
 
-  override def getVersion(): Int = ???
+  override def getVersion(): Int = {
+    // X509_get_version(ptr) + 1
+    ???
+  }
 
   override def getEncoded(): Array[Byte] = ???
 

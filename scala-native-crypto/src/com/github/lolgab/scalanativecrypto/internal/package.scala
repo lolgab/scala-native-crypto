@@ -71,6 +71,8 @@ object crypto {
 
   // X509 related types and functions
   type X509_* = CVoidPtr
+  type stack_st_X509 = CVoidPtr
+
   type ASN1_INTEGER_* = CVoidPtr
   type ASN1_TIME_* = CVoidPtr
 
@@ -81,6 +83,7 @@ object crypto {
   def X509_get0_notAfter(x: X509_*): ASN1_TIME_* = extern
   def X509_get0_pubkey(x: X509_*): EVP_PKEY_* = extern
   def X509_get_subject_name(a: X509_*): X509_NAME_* = extern
+  def X509_check_ca(cert: X509_*): CInt = extern
 
   def PEM_read_bio_X509(
       bp: BIO_*,
@@ -100,6 +103,24 @@ object crypto {
       flags: CUnsignedLong
   ): CInt =
     extern
+
+  // PKCS12 related types and functions
+  type PKCS12_* = CVoidPtr
+
+  def d2i_PKCS12_bio(bp: BIO_*, p12: Ptr[PKCS12_*]): PKCS12_* = extern
+
+  def PKCS12_verify_mac(
+      p12: PKCS12_*,
+      pass: CString,
+      passlen: CInt
+  ): CInt = extern
+  def PKCS12_parse(
+      p12: PKCS12_*,
+      pass: CString,
+      pkey: Ptr[EVP_PKEY_*],
+      cert: Ptr[X509_*],
+      ca: Ptr[Ptr[stack_st_X509]]
+  ): CInt = extern
 
   // Other types and functions
   type pem_password_cb = CFuncPtr4[CString, CInt, CInt, Ptr[Byte], CInt]

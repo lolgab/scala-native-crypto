@@ -8,6 +8,7 @@ import java.security.Key
 import java.security.Provider
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
+
 import scala.scalanative.meta.LinktimeInfo
 import scala.scalanative.unsafe._
 
