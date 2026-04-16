@@ -46,4 +46,4 @@ badssl pkcs12 now has to enable the `-legacy` option to be extracted by OpenSSL 
 
 ## pkcs12-chain-case-1
 
-Including a chain of certificates in the PKCS#12 file with an empty password.
+Including a root CA cert with its private key and a chain of certificates in the PKCS#12 file with an empty password (only the last one has private key included).

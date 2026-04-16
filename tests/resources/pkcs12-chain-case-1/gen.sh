@@ -55,11 +55,13 @@ for i in $(seq 1 ${CHAIN_SIZE}); do
       -key "${CHAIN_CERT_PREFIX}-${i}.pkey.pem" \
       -outform PEM -out "${CHAIN_CERT_PREFIX}-${i}.cert.pem"
   fi
-
 done
 
-cat "${CHAIN_CERT_PREFIX}"-*.cert.pem > "${CHAIN_BUNDLE_CERT_FILE}"
-cat "${CHAIN_CERT_PREFIX}"-*.pkey.pem > "${CHAIN_BUNDLE_PKEY_FILE}"
+cat "${CHAIN_CERT_PREFIX}-${CHAIN_SIZE}.cert.pem" > "${CHAIN_BUNDLE_CERT_FILE}"
+for i in $(seq "$((CHAIN_SIZE - 1))" -1 1); do
+  cat "${CHAIN_CERT_PREFIX}-${i}.cert.pem" >> "${CHAIN_BUNDLE_CERT_FILE}"
+done
+cat "${CHAIN_CERT_PREFIX}-${CHAIN_SIZE}.pkey.pem" > "${CHAIN_BUNDLE_PKEY_FILE}"
 
 openssl pkcs12 \
   -export \
