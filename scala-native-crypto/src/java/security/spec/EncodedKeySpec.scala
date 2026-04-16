@@ -1,10 +1,7 @@
 package java.security.spec
 
-/**
- * Refs
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/spec/EncodedKeySpec.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/spec/EncodedKeySpec
 abstract class EncodedKeySpec protected (
     encodedKey: Array[Byte],
     algorithm: String

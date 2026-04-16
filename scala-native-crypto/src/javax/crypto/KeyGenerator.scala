@@ -6,11 +6,8 @@ import java.security.spec.AlgorithmParameterSpec
 
 abstract class KeyGeneratorSpi {}
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/KeyGenerator.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/KeyGenerator
 class KeyGenerator protected (
     spi: KeyGeneratorSpi,
     provider: Provider,

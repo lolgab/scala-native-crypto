@@ -8,12 +8,9 @@ import java.util.{Set => JSet}
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.ListBuffer
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Security.html
- *   - https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Security.html
+// - https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html
 object Security {
 
   @deprecated
@@ -27,7 +24,7 @@ object Security {
 
     if (
       _providers
-        .find(p => p.equals(provider) || p.getName() == provider.getName())
+        .find(p => p.eq(provider) || p.getName() == provider.getName())
         .isDefined
     )
       return -1
@@ -49,7 +46,7 @@ object Security {
     requireNonNull(provider, "provider must not be null")
     if (
       _providers
-        .find(p => p.equals(provider))
+        .find(p => p.eq(provider))
         .isDefined
     )
       return -1
