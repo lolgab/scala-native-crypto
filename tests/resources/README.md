@@ -16,7 +16,7 @@ Using Makefile to generate or update all the data in one command:
 make all
 ```
 
-# Data description
+# Description of test data
 
 ## x509-cert-pem-noenc
 

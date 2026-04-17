@@ -29,8 +29,7 @@ openssl req \
 for i in $(seq 1 ${CHAIN_SIZE}); do
   # generate private key and CSR for each certificate in the chain
   openssl req \
-    -new \
-    -newkey rsa:1024 -noenc \
+    -new -newkey rsa:1024 -noenc \
     -subj "/CN=Hey${i}/O=Scala Native" \
     -keyform PEM -keyout "${CHAIN_CERT_PREFIX}-${i}.pkey.pem" \
     -outform PEM -out "${CHAIN_CERT_PREFIX}-${i}.csr.pem"
