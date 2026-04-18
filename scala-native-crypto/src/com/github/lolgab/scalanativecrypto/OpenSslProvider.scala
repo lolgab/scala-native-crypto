@@ -115,6 +115,20 @@ class OpenSslProvider(
         aliases.forEach(alias => putAliasService(svc, alias))
       }
 
+      // Ed25519 Signature
+      {
+        val svc = OpenSslSignatureService(this, "Ed25519", JList.of("EdDSA"), JMap.of())
+        putService(svc)
+        putAliasService(svc, "EdDSA")
+      }
+
+      // Ed25519 KeyPairGenerator
+      {
+        val svc = OpenSslKeyPairGeneratorService(this, "Ed25519", JList.of("EdDSA"), JMap.of())
+        putService(svc)
+        putAliasService(svc, "EdDSA")
+      }
+
     }
   }
 }

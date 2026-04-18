@@ -22,4 +22,11 @@ object CtxFinalizer {
   def register_HMAC_CTX(owner: AnyRef, ctx: crypto.HMAC_CTX_*): Unit =
     cleaner.register(owner, new HMAC_CTX_State(ctx))
 
+  private final class EVP_PKEY_State(pkey: crypto.EVP_PKEY_*) extends Runnable {
+    override def run(): Unit = crypto.EVP_PKEY_free(pkey)
+  }
+
+  def register_EVP_PKEY(owner: AnyRef, pkey: crypto.EVP_PKEY_*): Unit =
+    cleaner.register(owner, new EVP_PKEY_State(pkey))
+
 }

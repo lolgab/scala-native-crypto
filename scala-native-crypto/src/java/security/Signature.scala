@@ -6,6 +6,8 @@ import java.security.cert.Certificate
 import java.security.spec.AlgorithmParameterSpec
 import java.util.Objects.requireNonNull
 
+import com.github.lolgab.scalanativecrypto.OpenSslProvider
+
 abstract class SignatureSpi {}
 
 /**
@@ -82,10 +84,14 @@ object Signature {
     requireNonNull(algorithm)
     require(algorithm.nonEmpty)
 
-    ???
+    val provider = OpenSslProvider.defaultInstance
+    val service = provider.getService("Signature", algorithm)
+    if (service == null)
+      throw new NoSuchAlgorithmException(s"$algorithm Signature not available")
+    service.newInstance(null).asInstanceOf[Signature]
   }
 
-  def getInstance(algorithm: String, provider: String): Signature =
+  def getInstance(algorithm: String, providerName: String): Signature =
     throw new UnsupportedOperationException()
 
   def getInstance(algorithm: String, provider: Provider): Signature = {
@@ -93,7 +99,10 @@ object Signature {
     requireNonNull(provider)
     require(algorithm.nonEmpty)
 
-    ???
+    val service = provider.getService("Signature", algorithm)
+    if (service == null)
+      throw new NoSuchAlgorithmException(s"$algorithm Signature not available")
+    service.newInstance(null).asInstanceOf[Signature]
   }
 
 }
