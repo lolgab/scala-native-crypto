@@ -41,6 +41,31 @@ object crypto {
 
   // Function to get the SHA-256 algorithm
   def EVP_sha256(): EVP_MD_* = extern
+
+  // --- EVP_PKEY for Ed25519 ---
+  type EVP_PKEY_* = CVoidPtr
+  type EVP_PKEY_CTX_* = CVoidPtr
+  type ENGINE_* = CVoidPtr
+
+  def EVP_PKEY_new(): EVP_PKEY_* = extern
+  def EVP_PKEY_free(pkey: EVP_PKEY_*): Unit = extern
+
+  def EVP_PKEY_CTX_new_id(id: CInt, e: ENGINE_*): EVP_PKEY_CTX_* = extern
+  def EVP_PKEY_CTX_free(ctx: EVP_PKEY_CTX_*): Unit = extern
+  def EVP_PKEY_keygen_init(ctx: EVP_PKEY_CTX_*): CInt = extern
+  def EVP_PKEY_keygen(ctx: EVP_PKEY_CTX_*, ppkey: Ptr[EVP_PKEY_*]): CInt = extern
+
+  // Signing/verification via DigestSign API (used for Ed25519)
+  def EVP_DigestSignInit(ctx: EVP_MD_CTX_*, pctx: Ptr[EVP_PKEY_CTX_*], tpe: EVP_MD_*, e: ENGINE_*, pkey: EVP_PKEY_*): CInt = extern
+  def EVP_DigestSign(ctx: EVP_MD_CTX_*, sig: Ptr[Byte], siglen: Ptr[CSize], tbs: Ptr[Byte], tbslen: CSize): CInt = extern
+  def EVP_DigestVerifyInit(ctx: EVP_MD_CTX_*, pctx: Ptr[EVP_PKEY_CTX_*], tpe: EVP_MD_*, e: ENGINE_*, pkey: EVP_PKEY_*): CInt = extern
+  def EVP_DigestVerify(ctx: EVP_MD_CTX_*, sig: Ptr[Byte], siglen: CSize, tbs: Ptr[Byte], tbslen: CSize): CInt = extern
+
+  // Key import/export (raw format for Ed25519: 32 bytes pub, 64 bytes priv)
+  def EVP_PKEY_new_raw_public_key(tpe: CInt, e: ENGINE_*, key: Ptr[Byte], keylen: CSize): EVP_PKEY_* = extern
+  def EVP_PKEY_new_raw_private_key(tpe: CInt, e: ENGINE_*, key: Ptr[Byte], keylen: CSize): EVP_PKEY_* = extern
+  def EVP_PKEY_get_raw_public_key(pkey: EVP_PKEY_*, pub: Ptr[Byte], len: Ptr[CSize]): CInt = extern
+  def EVP_PKEY_get_raw_private_key(pkey: EVP_PKEY_*, priv: Ptr[Byte], len: Ptr[CSize]): CInt = extern
 }
 
 object Constants {

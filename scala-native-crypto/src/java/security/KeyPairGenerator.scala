@@ -4,6 +4,8 @@ import java.security.Provider
 import java.security.SecureRandom
 import java.security.spec.AlgorithmParameterSpec
 
+import com.github.lolgab.scalanativecrypto.OpenSslProvider
+
 abstract class KeyPairGeneratorSpi {}
 
 /**
@@ -40,11 +42,22 @@ abstract class KeyPairGenerator(
 
 object KeyPairGenerator {
 
-  def getInstance(algorithm: String): KeyPairGenerator = ???
+  def getInstance(algorithm: String): KeyPairGenerator = {
+    val provider = OpenSslProvider.defaultInstance
+    val service = provider.getService("KeyPairGenerator", algorithm)
+    if (service == null)
+      throw new NoSuchAlgorithmException(s"$algorithm KeyPairGenerator not available")
+    service.newInstance(null).asInstanceOf[KeyPairGenerator]
+  }
 
-  def getInstance(algorithm: String, provider: String): KeyPairGenerator =
+  def getInstance(algorithm: String, providerName: String): KeyPairGenerator =
     throw new UnsupportedOperationException()
 
-  def getInstance(algorithm: String, provider: Provider): KeyPairGenerator = ???
+  def getInstance(algorithm: String, provider: Provider): KeyPairGenerator = {
+    val service = provider.getService("KeyPairGenerator", algorithm)
+    if (service == null)
+      throw new NoSuchAlgorithmException(s"$algorithm KeyPairGenerator not available")
+    service.newInstance(null).asInstanceOf[KeyPairGenerator]
+  }
 
 }
