@@ -77,16 +77,10 @@ object CertificateFactory {
   def getInstance(certType: String): CertificateFactory =
     getInstance(certType, OpenSSLProvider.defaultInstance)
 
-  def getInstance(
-      certType: String,
-      provider: String
-  ): CertificateFactory =
+  def getInstance(certType: String, provider: String): CertificateFactory =
     throw new UnsupportedOperationException()
 
-  def getInstance(
-      certType: String,
-      provider: Provider
-  ): CertificateFactory = {
+  def getInstance(certType: String, provider: Provider): CertificateFactory = {
     requireNonNull(certType, "type name must be not null")
     requireNonNull(provider, "provider must be not null")
     require(certType.nonEmpty, "empty type name")

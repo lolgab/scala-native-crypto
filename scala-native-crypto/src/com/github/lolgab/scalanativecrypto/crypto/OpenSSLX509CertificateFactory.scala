@@ -68,30 +68,36 @@ class OpenSSLX509CertificateFactorySpi extends CertificateFactorySpi {
     }
   }
 
-  override def engineGetCertPathEncodings(): Iterator[String] = ???
+  override def engineGetCertPathEncodings(): Iterator[String] =
+    ???
 
-  override def engineGenerateCertPath(is: InputStream): CertPath = ???
+  override def engineGenerateCertPath(is: InputStream): CertPath =
+    ???
 
   override def engineGenerateCertPath(
       is: InputStream,
       encoding: String
-  ): CertPath = ???
+  ): CertPath =
+    ???
 
   override def engineGenerateCertPath(
       certificates: JList[_ <: Certificate]
-  ): CertPath = ???
+  ): CertPath =
+    ???
 
   def engineGenerateCertificates(
       is: InputStream
-  ): Collection[? <: Certificate] =
+  ): Collection[? <: Certificate] = {
+    requireNonNull(is, "input stream must not be null")
+
     ???
+  }
 
   def engineGenerateCRL(is: InputStream): CRL =
     ???
 
   def engineGenerateCRLs(is: InputStream): Collection[? <: CRL] =
     ???
-
 }
 
 final class OpenSSLX509CertificateFactory protected[scalanativecrypto] (

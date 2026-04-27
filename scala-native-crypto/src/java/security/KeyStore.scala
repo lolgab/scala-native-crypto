@@ -2,7 +2,9 @@ package java.security
 
 import java.io.{File, InputStream, OutputStream}
 import java.security.spec.AlgorithmParameterSpec
-import java.security.cert.Certificate
+// To avoid name conflict with `java.security.Certificate`
+// or else the compiler will warn or even error for name hiding issue
+import java.security.cert.{Certificate => CertCertificate}
 import java.util.{Arrays, Collections, Date, Enumeration, Set => JSet}
 import java.util.Objects.requireNonNull
 import java.util.concurrent.atomic.AtomicBoolean
@@ -16,9 +18,9 @@ abstract class KeyStoreSpi {
 
   def engineGetKey(alias: String, password: Array[Char]): Key
 
-  def engineGetCertificateChain(alias: String): Array[Certificate]
+  def engineGetCertificateChain(alias: String): Array[CertCertificate]
 
-  def engineGetCertificate(alias: String): Certificate
+  def engineGetCertificate(alias: String): CertCertificate
 
   def engineGetCreationDate(alias: String): Date
 
@@ -26,16 +28,16 @@ abstract class KeyStoreSpi {
       alias: String,
       key: Key,
       password: Array[Char],
-      chain: Array[Certificate]
+      chain: Array[CertCertificate]
   ): Unit
 
   def engineSetKeyEntry(
       alias: String,
       key: Array[Byte],
-      chain: Array[Certificate]
+      chain: Array[CertCertificate]
   ): Unit
 
-  def engineSetCertificateEntry(alias: String, cert: Certificate): Unit
+  def engineSetCertificateEntry(alias: String, cert: CertCertificate): Unit
 
   def engineDeleteEntry(alias: String): Unit
 
@@ -49,7 +51,7 @@ abstract class KeyStoreSpi {
 
   def engineIsCertificateEntry(alias: String): Boolean
 
-  def engineGetCertificateAlias(cert: Certificate): String
+  def engineGetCertificateAlias(cert: CertCertificate): String
 
   def engineStore(stream: OutputStream, password: Array[Char]): Unit
 
@@ -102,10 +104,10 @@ abstract class KeyStore(
   final def getKey(alias: String, password: Array[Char]): Key =
     spi.engineGetKey(alias, password)
 
-  final def getCertificateChain(alias: String): Array[Certificate] =
+  final def getCertificateChain(alias: String): Array[CertCertificate] =
     spi.engineGetCertificateChain(alias)
 
-  final def getCertificate(alias: String): Certificate =
+  final def getCertificate(alias: String): CertCertificate =
     spi.engineGetCertificate(alias)
 
   final def getCreationDate(alias: String): Date =
@@ -115,18 +117,18 @@ abstract class KeyStore(
       alias: String,
       key: Key,
       password: Array[Char],
-      chain: Array[Certificate]
+      chain: Array[CertCertificate]
   ): Unit =
     spi.engineSetKeyEntry(alias, key, password, chain)
 
   final def setKeyEntry(
       alias: String,
       key: Array[Byte],
-      chain: Array[Certificate]
+      chain: Array[CertCertificate]
   ): Unit =
     spi.engineSetKeyEntry(alias, key, chain)
 
-  final def setCertificateEntry(alias: String, cert: Certificate): Unit =
+  final def setCertificateEntry(alias: String, cert: CertCertificate): Unit =
     spi.engineSetCertificateEntry(alias, cert)
 
   final def deleteEntry(alias: String): Unit =
@@ -147,7 +149,7 @@ abstract class KeyStore(
   final def isCertificateEntry(alias: String): Boolean =
     spi.engineIsCertificateEntry(alias)
 
-  final def getCertificateAlias(cert: Certificate): String =
+  final def getCertificateAlias(cert: CertCertificate): String =
     spi.engineGetCertificateAlias(cert)
 
   final def store(stream: OutputStream, password: Array[Char]): Unit =
@@ -273,8 +275,10 @@ object KeyStore {
         provider: Provider,
         protection: ProtectionParameter
     ): Builder = {
+      requireNonNull(ksType)
       requireNonNull(protection)
       requireNonNull(provider)
+      require(!ksType.isEmpty())
       require(
         protection.isInstanceOf[PasswordProtection] || protection
           .isInstanceOf[CallbackHandlerProtection],
@@ -356,7 +360,7 @@ object KeyStore {
 
   final class PrivateKeyEntry(
       private val privateKey: PrivateKey,
-      private val chain: Array[Certificate],
+      private val chain: Array[CertCertificate],
       private val attributes: JSet[Entry.Attribute]
   ) extends Entry {
 
@@ -365,18 +369,18 @@ object KeyStore {
     requireNonNull(attributes)
     require(chain.length > 0)
 
-    private lazy val _chain: Array[Certificate] = chain.clone()
+    private lazy val _chain: Array[CertCertificate] = chain.clone()
     private lazy val _attributes: JSet[Entry.Attribute] =
       Collections.unmodifiableSet(attributes)
 
-    def this(privateKey: PrivateKey, chain: Array[Certificate]) =
+    def this(privateKey: PrivateKey, chain: Array[CertCertificate]) =
       this(privateKey, chain, JSet.of())
 
     def getPrivateKey(): PrivateKey = privateKey
 
-    def getCertificateChain(): Array[Certificate] = _chain
+    def getCertificateChain(): Array[CertCertificate] = _chain
 
-    def getCertificate(): Certificate = _chain(0)
+    def getCertificate(): CertCertificate = _chain(0)
 
     def getAttributes(): JSet[Entry.Attribute] = _attributes
 
@@ -408,7 +412,7 @@ object KeyStore {
   }
 
   final class TrustedCertificateEntry(
-      trustedCert: Certificate,
+      trustedCert: CertCertificate,
       attributes: JSet[Entry.Attribute]
   ) extends Entry {
 
@@ -418,9 +422,9 @@ object KeyStore {
     private lazy val _attributes: JSet[Entry.Attribute] =
       Collections.unmodifiableSet(attributes)
 
-    def this(trustedCert: Certificate) = this(trustedCert, JSet.of())
+    def this(trustedCert: CertCertificate) = this(trustedCert, JSet.of())
 
-    def getTrustedCertificate(): Certificate = trustedCert
+    def getTrustedCertificate(): CertCertificate = trustedCert
 
     def getAttributes(): JSet[Entry.Attribute] = _attributes
 

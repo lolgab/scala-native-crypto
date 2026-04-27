@@ -104,6 +104,17 @@ object crypto {
   ): CInt =
     extern
 
+  // PKCS7 related types and functions
+  type PKCS7_* = CVoidPtr
+
+  def PEM_read_bio_PKCS7(
+      bp: BIO_*,
+      x: Ptr[PKCS7_*],
+      cb: Ptr[pem_password_cb],
+      u: CVoidPtr
+  ): PKCS7_* =
+    extern
+
   // PKCS12 related types and functions
   type PKCS12_* = CVoidPtr
 
