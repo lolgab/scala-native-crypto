@@ -9,8 +9,11 @@ import java.security.cert.CertificateException
 import java.util.{Date, Enumeration, Set => JSet}
 import java.util.Objects.requireNonNull
 import java.util.concurrent.atomic.AtomicBoolean
+import java.com.github.lolgab.scalanativecrypto.internal.CtxFinalizer
 
 import scala.scalanative.unsafe.{Ptr, Zone, toCString, alloc, stackalloc}
+import scala.scalanative.meta.LinktimeInfo
+import scala.scalanative.annotation.alwaysinline
 
 import com.github.lolgab.scalanativecrypto.internal.crypto
 import com.github.lolgab.scalanativecrypto.internal.crypto.{
@@ -19,6 +22,7 @@ import com.github.lolgab.scalanativecrypto.internal.crypto.{
   EVP_PKEY_*,
   stack_st_X509
 }
+import java.security.KeyStoreException
 
 final class OpenSSLKeyStore(provider: Provider, ksType: String)
     extends KeyStore(new OpenSSLKeyStoreSpi(), provider, ksType)
@@ -28,22 +32,41 @@ final class OpenSSLKeyStoreSpi protected[scalanativecrypto]
 
   val isLoaded = new AtomicBoolean(false)
 
+  var pkey: EVP_PKEY_* = null
   var pkcs: PKCS12_* = null
   var x509: X509_* = null
-  var pkey: EVP_PKEY_* = null
   var stackOfX509: Ptr[stack_st_X509] = null
 
-  override def engineGetKey(alias: String, password: Array[Char]): Key =
-    ???
+  if (LinktimeInfo.isWeakReferenceSupported) {
+    CtxFinalizer.register_EVP_PKEY(this, pkey)
+    CtxFinalizer.register_PKCS12(this, pkcs)
+    CtxFinalizer.register_X509(this, x509)
+    CtxFinalizer.register_StackOfX509(this, stackOfX509)
+  } else {
+    System.err.println(
+      "[java.security.KeyStore] OpenSSL context finalization is not supported. Consider using immix or commix GC, otherwise this will leak memory."
+    )
+  }
 
-  override def engineGetCertificateChain(alias: String): Array[Certificate] =
+  override def engineGetKey(alias: String, password: Array[Char]): Key = {
+    throwIfNotLoaded()
     ???
+  }
 
-  override def engineGetCertificate(alias: String): Certificate =
+  override def engineGetCertificateChain(alias: String): Array[Certificate] = {
+    throwIfNotLoaded()
     ???
+  }
 
-  override def engineGetCreationDate(alias: String): Date =
+  override def engineGetCertificate(alias: String): Certificate = {
+    throwIfNotLoaded()
     ???
+  }
+
+  override def engineGetCreationDate(alias: String): Date = {
+    throwIfNotLoaded()
+    ???
+  }
 
   override def engineSetKeyEntry(
       alias: String,
@@ -66,32 +89,54 @@ final class OpenSSLKeyStoreSpi protected[scalanativecrypto]
   ): Unit =
     ???
 
-  override def engineDeleteEntry(alias: String): Unit =
+  override def engineDeleteEntry(alias: String): Unit = {
+    throwIfNotLoaded()
     ???
+  }
 
-  override def engineAliases(): Enumeration[String] =
+  override def engineAliases(): Enumeration[String] = {
+    throwIfNotLoaded()
     ???
+  }
 
-  override def engineContainsAlias(alias: String): Boolean =
+  override def engineContainsAlias(alias: String): Boolean = {
+    throwIfNotLoaded()
     ???
+  }
 
-  override def engineSize(): Int =
-    ???
+  override def engineSize(): Int = {
+    throwIfNotLoaded()
+    val n = crypto.sncrypto_ossl_sk_X509_num(stackOfX509)
+    if (n < 0) 0 else n
+  }
 
-  override def engineIsKeyEntry(alias: String): Boolean =
+  override def engineIsKeyEntry(alias: String): Boolean = {
+    throwIfNotLoaded()
     ???
+  }
 
-  override def engineIsCertificateEntry(alias: String): Boolean =
+  override def engineIsCertificateEntry(alias: String): Boolean = {
+    throwIfNotLoaded()
     ???
+  }
 
-  override def engineGetCertificateAlias(cert: Certificate): String =
+  override def engineGetCertificateAlias(cert: Certificate): String = {
+    throwIfNotLoaded()
     ???
+  }
 
-  override def engineStore(stream: OutputStream, password: Array[Char]): Unit =
+  override def engineStore(
+      stream: OutputStream,
+      password: Array[Char]
+  ): Unit = {
+    throwIfNotLoaded()
     ???
+  }
 
-  override def engineStore(param: KeyStore.LoadStoreParameter): Unit =
+  override def engineStore(param: KeyStore.LoadStoreParameter): Unit = {
+    throwIfNotLoaded()
     ???
+  }
 
   override def engineLoad(stream: InputStream, password: Array[Char]): Unit = {
     requireNonNull(stream, "the InputStream must be non-null")
@@ -171,30 +216,53 @@ final class OpenSSLKeyStoreSpi protected[scalanativecrypto]
   // @since JDK 18
   override def engineGetAttributes(
       alias: String
-  ): JSet[KeyStore.Entry.Attribute] =
+  ): JSet[KeyStore.Entry.Attribute] = {
+    requireNonNull(alias, "the alias must be non-null")
+    throwIfNotLoaded()
     ???
+  }
 
   override def engineGetEntry(
       alias: String,
       protParam: KeyStore.ProtectionParameter
-  ): KeyStore.Entry =
+  ): KeyStore.Entry = {
+    requireNonNull(alias, "the alias must be non-null")
+    throwIfNotLoaded()
     ???
+  }
 
   override def engineSetEntry(
       alias: String,
       entry: KeyStore.Entry,
       protParam: KeyStore.ProtectionParameter
-  ): Unit =
+  ): Unit = {
+    requireNonNull(alias, "the alias must be non-null")
+    throwIfNotLoaded()
     ???
+  }
 
   override def engineEntryInstanceOf(
       alias: String,
       entryClass: Class[_ <: KeyStore.Entry]
-  ): Boolean =
+  ): Boolean = {
+    requireNonNull(alias, "the alias must be non-null")
+    throwIfNotLoaded()
     ???
+  }
 
   // @since JDK 9
   override def engineProbe(stream: InputStream): Boolean =
     ???
+
+  /*
+   * Private helper methods
+   */
+
+  @alwaysinline
+  def throwIfNotLoaded(): Unit =
+    if (!isLoaded.getOpaque())
+      throw new KeyStoreException(
+        "the keystore has not been initialized (loaded)."
+      )
 
 }

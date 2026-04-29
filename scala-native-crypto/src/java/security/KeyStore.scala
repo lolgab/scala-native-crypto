@@ -5,7 +5,8 @@ import java.security.spec.AlgorithmParameterSpec
 // To avoid name conflict with `java.security.Certificate`
 // or else the compiler will warn or even error for name hiding issue
 import java.security.cert.{Certificate => CertCertificate}
-import java.util.{Arrays, Collections, Date, Enumeration, Set => JSet}
+import java.util.{Arrays, Collections, Date, Enumeration, HashSet, Optional}
+import java.util.{Set => JSet}
 import java.util.Objects.requireNonNull
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.crypto.SecretKey
@@ -197,29 +198,33 @@ object KeyStore {
 
   def getInstance(ksType: String, provider: Provider): KeyStore = {
     requireNonNull(ksType)
-    requireNonNull(provider)
-    require(!ksType.isEmpty())
+    if (provider == null)
+      throw new IllegalArgumentException("provider must not be null")
+    if (ksType.isEmpty())
+      throw new KeyStoreException("unknown keystore type")
 
     val service = provider.getService(JcaService.KeyStore.name, ksType)
     if (service == null)
-      throw new NoSuchAlgorithmException(
-        s"Algorithm ${ksType} not found in provider ${provider.getName()}"
+      throw new KeyStoreException(
+        s"KeyStore type ${ksType} not found in provider ${provider.getName()}"
       )
     service.newInstance(null).asInstanceOf[KeyStore]
   }
 
   def getDefaultType(): String =
-    "PKCS12"
+    Optional.ofNullable(Security.getProperty("keystore.type")).orElse("pkcs12")
 
+  // @since Java 9
   def getInstance(file: File, password: Array[Char]): KeyStore =
     ???
 
+  // @since Java 9
   def getInstance(file: File, param: LoadStoreParameter): KeyStore =
     ???
 
-  //
-  // Nested class Builder
-  //
+  /*
+   * Nested class Builder
+   */
 
   abstract class Builder protected (ks: KeyStore, pp: ProtectionParameter) {
     final def getKeyStore(): KeyStore = ks
@@ -280,8 +285,8 @@ object KeyStore {
       requireNonNull(provider)
       require(!ksType.isEmpty())
       require(
-        protection.isInstanceOf[PasswordProtection] || protection
-          .isInstanceOf[CallbackHandlerProtection],
+        protection.isInstanceOf[PasswordProtection] ||
+          protection.isInstanceOf[CallbackHandlerProtection],
         "protection must be PasswordProtection or CallbackHandlerProtection"
       )
 
@@ -289,18 +294,18 @@ object KeyStore {
     }
   }
 
-  //
-  // Nested class LoadStoreParameter
-  //
+  /*
+   * Nested class LoadStoreParameter
+   */
 
   abstract class LoadStoreParameter {
     def getProtectionParameter(): ProtectionParameter
   }
 
-  //
-  // Nested class `ProtectionParameter`
-  // and its subclasses `CallbackHandlerProtection`, `PasswordProtection`
-  //
+  /*
+   * Nested class `ProtectionParameter`
+   * and its subclasses `CallbackHandlerProtection`, `PasswordProtection`
+   */
 
   abstract class ProtectionParameter
 
@@ -310,47 +315,58 @@ object KeyStore {
     def getCallbackHandler(): CallbackHandler = handler
   }
 
-  class PasswordProtection(
+  class PasswordProtection private (
       password: Array[Char],
+      encrypted: Boolean,
       protectionAlgorithm: String,
       protectionParameters: AlgorithmParameterSpec
   ) extends ProtectionParameter
       with Destroyable {
 
-    requireNonNull(password)
-    require(
-      protectionAlgorithm == null || protectionAlgorithm.nonEmpty,
-      "protectionAlgorithm could be null otherwise cannot be empty if not null"
-    )
-
-    private lazy val _password: Array[Char] = password.clone()
+    private val _password: Array[Char] =
+      if (password == null) null else password.clone()
     private val destroyed: AtomicBoolean = new AtomicBoolean(false)
 
-    def this(password: Array[Char]) = this(password, null, null)
+    if (encrypted) requireNonNull(protectionAlgorithm)
 
-    def getProtectionAlgorithm(): String = protectionAlgorithm
+    def this(password: Array[Char]) =
+      this(password, false, null, null)
 
-    def getProtectionParameters(): AlgorithmParameterSpec = protectionParameters
+    def this(
+        password: Array[Char],
+        protectionAlgorithm: String,
+        protectionParameters: AlgorithmParameterSpec
+    ) =
+      this(password, true, protectionAlgorithm, protectionParameters)
+
+    def getProtectionAlgorithm(): String =
+      protectionAlgorithm
+
+    def getProtectionParameters(): AlgorithmParameterSpec =
+      protectionParameters
 
     def getPassword(): Array[Char] = {
       if (destroyed.getOpaque())
-        throw new IllegalStateException("password has been cleared")
+        throw new IllegalStateException("password has been destroyed")
       _password
     }
 
     override def destroy(): Unit =
-      if (destroyed.compareAndSet(false, true))
+      if (!destroyed.compareAndExchange(false, true) && _password != null)
         Arrays.fill(_password, ' ')
 
-    override def isDestroyed(): Boolean = destroyed.getOpaque()
+    override def isDestroyed(): Boolean =
+      destroyed.getOpaque()
   }
 
-  //
-  // Nested class `Entry`
-  // and its subclasses `PrivateKeyEntry`, `SecretKeyEntry`, `TrustedCertificateEntry`
-  //
+  /*
+   * Nested class `Entry`
+   * and its subclasses `PrivateKeyEntry`, `SecretKeyEntry`, `TrustedCertificateEntry`
+   */
 
-  abstract class Entry { def getAttributes(): JSet[Entry.Attribute] }
+  abstract class Entry {
+    def getAttributes(): JSet[Entry.Attribute]
+  }
   object Entry {
     abstract class Attribute {
       def getName(): String
@@ -368,17 +384,28 @@ object KeyStore {
     requireNonNull(chain)
     requireNonNull(attributes)
     require(chain.length > 0)
+    require(
+      chain.forall(_.getType() == chain(0).getType()),
+      "chain must contain certificates of the same type"
+    )
+    require(
+      chain(0)
+        .getPublicKey()
+        .getAlgorithm()
+        .equalsIgnoreCase(privateKey.getAlgorithm()),
+      "private key algorithm does not match the certificate public key algorithm"
+    )
 
-    private lazy val _chain: Array[CertCertificate] = chain.clone()
-    private lazy val _attributes: JSet[Entry.Attribute] =
-      Collections.unmodifiableSet(attributes)
+    private val _chain: Array[CertCertificate] = chain.clone()
+    private val _attributes: JSet[Entry.Attribute] =
+      Collections.unmodifiableSet(new HashSet[Entry.Attribute](attributes))
 
     def this(privateKey: PrivateKey, chain: Array[CertCertificate]) =
       this(privateKey, chain, JSet.of())
 
     def getPrivateKey(): PrivateKey = privateKey
 
-    def getCertificateChain(): Array[CertCertificate] = _chain
+    def getCertificateChain(): Array[CertCertificate] = _chain.clone()
 
     def getCertificate(): CertCertificate = _chain(0)
 
@@ -398,14 +425,17 @@ object KeyStore {
     requireNonNull(secretKey)
     requireNonNull(attributes)
 
-    private lazy val _attributes: JSet[Entry.Attribute] =
-      Collections.unmodifiableSet(attributes)
+    private val _attributes: JSet[Entry.Attribute] =
+      Collections.unmodifiableSet(new HashSet[Entry.Attribute](attributes))
 
-    def this(secretKey: SecretKey) = this(secretKey, JSet.of())
+    def this(secretKey: SecretKey) =
+      this(secretKey, JSet.of())
 
-    def getSecretKey(): SecretKey = secretKey
+    def getSecretKey(): SecretKey =
+      secretKey
 
-    def getAttributes(): JSet[Entry.Attribute] = _attributes
+    def getAttributes(): JSet[Entry.Attribute] =
+      _attributes
 
     override def toString(): String =
       s"Secret key entry with algorithm ${secretKey.getAlgorithm()}"
@@ -419,14 +449,17 @@ object KeyStore {
     requireNonNull(trustedCert)
     requireNonNull(attributes)
 
-    private lazy val _attributes: JSet[Entry.Attribute] =
-      Collections.unmodifiableSet(attributes)
+    private val _attributes: JSet[Entry.Attribute] =
+      Collections.unmodifiableSet(new HashSet[Entry.Attribute](attributes))
 
-    def this(trustedCert: CertCertificate) = this(trustedCert, JSet.of())
+    def this(trustedCert: CertCertificate) =
+      this(trustedCert, JSet.of())
 
-    def getTrustedCertificate(): CertCertificate = trustedCert
+    def getTrustedCertificate(): CertCertificate =
+      trustedCert
 
-    def getAttributes(): JSet[Entry.Attribute] = _attributes
+    def getAttributes(): JSet[Entry.Attribute] =
+      _attributes
 
     override def toString(): String =
       s"Trusted certificate entry:\n${trustedCert.toString()}"

@@ -35,6 +35,8 @@ object crypto {
   type EVP_MD_CTX_* = CVoidPtr
   type EVP_PKEY_* = CVoidPtr
 
+  def EVP_PKEY_free(pkey: EVP_PKEY_*): Unit = extern
+
   def RAND_bytes(buf: Ptr[Byte], num: CInt): CInt = extern
 
   def EVP_get_digestbyname(name: CString): EVP_MD_* = extern
@@ -85,6 +87,12 @@ object crypto {
   def X509_get_subject_name(a: X509_*): X509_NAME_* = extern
   def X509_check_ca(cert: X509_*): CInt = extern
 
+  // Count size of stack_st_X509
+  def sncrypto_ossl_sk_X509_num(stack: Ptr[stack_st_X509]): CInt = extern
+  def sncrypto_ossl_sk_X509_value(stack: Ptr[stack_st_X509], i: Int): X509_* =
+    extern
+  def sncrypto_ossl_sk_X509_free(stack: Ptr[stack_st_X509]): Unit = extern
+
   def PEM_read_bio_X509(
       bp: BIO_*,
       x: Ptr[X509_*],
@@ -118,8 +126,7 @@ object crypto {
   // PKCS12 related types and functions
   type PKCS12_* = CVoidPtr
 
-  def d2i_PKCS12_bio(bp: BIO_*, p12: Ptr[PKCS12_*]): PKCS12_* = extern
-
+  def PKCS12_free(p12: PKCS12_*): Unit = extern
   def PKCS12_verify_mac(
       p12: PKCS12_*,
       pass: CString,
@@ -132,6 +139,8 @@ object crypto {
       cert: Ptr[X509_*],
       ca: Ptr[Ptr[stack_st_X509]]
   ): CInt = extern
+
+  def d2i_PKCS12_bio(bp: BIO_*, p12: Ptr[PKCS12_*]): PKCS12_* = extern
 
   // Other types and functions
   type pem_password_cb = CFuncPtr4[CString, CInt, CInt, Ptr[Byte], CInt]
