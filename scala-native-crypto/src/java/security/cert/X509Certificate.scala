@@ -4,16 +4,15 @@ import java.math.BigInteger
 import java.util.Collection
 import java.util.Date
 import java.util.{List => JList}
+import java.security.Principal
 import javax.security.auth.x500.X500Principal
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/X509Certificate.html
- */
-abstract class X509Certificate(certType: String)
-    extends Certificate(certType)
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/cert/X509Certificate
+abstract class X509Certificate()
+    extends Certificate("X.509")
     with X509Extension {
+
   def checkValidity(): Unit
 
   def checkValidity(date: Date): Unit
@@ -24,8 +23,11 @@ abstract class X509Certificate(certType: String)
 
   def getIssuerAlternativeNames(): Collection[JList[?]]
 
-  // @deprecated
-  // def getIssuerDN(): Principal
+  @deprecated(
+    "Use `getIssuerX500Principal()` instead. This method returns the `issuer` as an implementation specific `Principal` object, which should not be relied upon by portable code.",
+    since = "16"
+  )
+  def getIssuerDN(): Principal
 
   def getIssuerUniqueID(): Array[Boolean]
 
@@ -49,8 +51,11 @@ abstract class X509Certificate(certType: String)
 
   def getSubjectAlternativeNames(): Collection[JList[?]]
 
-  // @deprecated
-  // def getSubjectDN(): Principal
+  @deprecated(
+    "Use `getSubjectX500Principal()` instead. This method returns the `subject` as an implementation specific `Principal` object, which should not be relied upon by portable code.",
+    since = "16"
+  )
+  def getSubjectDN(): Principal
 
   def getSubjectUniqueID(): Array[Boolean]
 
@@ -60,6 +65,4 @@ abstract class X509Certificate(certType: String)
 
   def getVersion(): Int
 
-  // declared in Certificate
-  // def verify(key: PublicKey, sigProvider: Provider): Unit
 }

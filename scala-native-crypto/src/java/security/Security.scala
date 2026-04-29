@@ -8,12 +8,9 @@ import java.util.{Set => JSet}
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.ListBuffer
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Security.html
- *   - https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Security.html
+// - https://docs.oracle.com/en/java/javase/25/security/howtoimplaprovider.html
 object Security {
 
   @deprecated
@@ -27,7 +24,7 @@ object Security {
 
     if (
       _providers
-        .find(p => p.equals(provider) || p.getName() == provider.getName())
+        .find(p => p.eq(provider) || p.getName() == provider.getName())
         .isDefined
     )
       return -1
@@ -47,11 +44,7 @@ object Security {
 
   def addProvider(provider: Provider): Int = {
     requireNonNull(provider, "provider must not be null")
-    if (
-      _providers
-        .find(p => p.equals(provider))
-        .isDefined
-    )
+    if (_providers.find(p => p.eq(provider)).isDefined)
       return -1
     _providers.append(provider)
     _providers.length
@@ -69,7 +62,7 @@ object Security {
   def getProvider(name: String): Provider =
     _providers.find(_.getName() == name).orNull
 
-  /**
+  /*
    * According to JDK doc:
    *
    * The selection criterion must be specified in one of the following two
@@ -107,7 +100,7 @@ object Security {
       throw new InvalidParameterException(s"Invalid filter format: '${filter}'")
   }
 
-  /**
+  /*
    * Notes: (from JDK doc)
    *
    * The selection criteria are represented by a map. Each map entry represents
@@ -141,7 +134,6 @@ object Security {
   def getProperty(key: String): String = {
     requireNonNull(key)
     require(key.nonEmpty && !ReservedKeys.contains(key))
-
     _props.get(key.trim()).map(_.trim()).orNull
   }
 
@@ -173,9 +165,9 @@ object Security {
     Collections.unmodifiableSet(result)
   }
 
-  //
-  // Private implementation details
-  //
+  /*
+   * Private implementation details
+   */
 
   private val ReservedKeys = JSet.of[String]("include")
   private val _providers: ListBuffer[Provider] = ListBuffer()
@@ -235,25 +227,13 @@ object Security {
       val algorithmName = keyParts(1).trim()
 
       if (value.isEmpty) {
-        Criterion(
-          serviceName,
-          algorithmName,
-          "",
-          ""
-        )
+        Criterion(serviceName, algorithmName, "", "")
       } else {
-
         val colonIdx = value.indexOf(':')
-
         if (colonIdx <= 0 || colonIdx >= value.length - 1) {
           // in case the format
           // is <crypto_service>.<algorithm_or_type> <attribute_name>
-          Criterion(
-            serviceName,
-            algorithmName,
-            value,
-            ""
-          )
+          Criterion(serviceName, algorithmName, value, "")
         } else {
           val atrrName = value.substring(0, colonIdx).trim()
           val attrValue = value.substring(colonIdx + 1).trim()
@@ -262,12 +242,7 @@ object Security {
               s"Invalid filter attribute: '${value}'"
             )
 
-          Criterion(
-            serviceName,
-            algorithmName,
-            atrrName,
-            attrValue
-          )
+          Criterion(serviceName, algorithmName, atrrName, attrValue)
         }
       }
     }

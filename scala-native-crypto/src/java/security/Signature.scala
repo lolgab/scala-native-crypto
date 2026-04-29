@@ -1,18 +1,16 @@
 package java.security
 
 import java.nio.ByteBuffer
-import java.security.Provider
-import java.security.cert.Certificate
+// To avoid name conflict with `java.security.Certificate`
+// or else the compiler will warn or even error for name hiding issue
+import java.security.cert.{Certificate => CertCertificate}
 import java.security.spec.AlgorithmParameterSpec
 import java.util.Objects.requireNonNull
 
 abstract class SignatureSpi {}
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Signature.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/Signature.html
 abstract class Signature(
     spi: SignatureSpi,
     provider: Provider,
@@ -31,7 +29,7 @@ abstract class Signature(
 
   def initVerify(publicKey: PublicKey): Unit
 
-  def initVerify(certificate: Certificate): Unit
+  def initVerify(certificate: CertCertificate): Unit
 
   def initSign(privateKey: PrivateKey): Unit
 

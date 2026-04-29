@@ -1,16 +1,12 @@
 package java.security
 
-import java.security.Provider
-import java.security.SecureRandom
+import java.security.{Provider, SecureRandom}
 import java.security.spec.AlgorithmParameterSpec
 
 abstract class KeyPairGeneratorSpi {}
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyPairGenerator.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyPairGenerator.html
 abstract class KeyPairGenerator(
     spi: KeyPairGeneratorSpi,
     provider: Provider,

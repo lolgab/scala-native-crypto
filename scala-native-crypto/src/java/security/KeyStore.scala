@@ -1,28 +1,93 @@
 package java.security
 
-import java.io.File
-import java.io.InputStream
-import java.io.OutputStream
-import java.security.cert.Certificate
+import java.io.{File, InputStream, OutputStream}
 import java.security.spec.AlgorithmParameterSpec
-import java.util.Arrays
-import java.util.Collections
-import java.util.Date
-import java.util.Enumeration
+// To avoid name conflict with `java.security.Certificate`
+// or else the compiler will warn or even error for name hiding issue
+import java.security.cert.{Certificate => CertCertificate}
+import java.util.{Arrays, Collections, Date, Enumeration, HashSet, Optional}
+import java.util.{Set => JSet}
 import java.util.Objects.requireNonNull
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.{Set => JSet}
 import javax.crypto.SecretKey
 import javax.security.auth.Destroyable
 import javax.security.auth.callback.CallbackHandler
 
-abstract class KeyStoreSpi {}
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyStoreSpi.html
+abstract class KeyStoreSpi {
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/KeyStore.html
- */
+  def engineGetKey(alias: String, password: Array[Char]): Key
+
+  def engineGetCertificateChain(alias: String): Array[CertCertificate]
+
+  def engineGetCertificate(alias: String): CertCertificate
+
+  def engineGetCreationDate(alias: String): Date
+
+  def engineSetKeyEntry(
+      alias: String,
+      key: Key,
+      password: Array[Char],
+      chain: Array[CertCertificate]
+  ): Unit
+
+  def engineSetKeyEntry(
+      alias: String,
+      key: Array[Byte],
+      chain: Array[CertCertificate]
+  ): Unit
+
+  def engineSetCertificateEntry(alias: String, cert: CertCertificate): Unit
+
+  def engineDeleteEntry(alias: String): Unit
+
+  def engineAliases(): Enumeration[String]
+
+  def engineContainsAlias(alias: String): Boolean
+
+  def engineSize(): Int
+
+  def engineIsKeyEntry(alias: String): Boolean
+
+  def engineIsCertificateEntry(alias: String): Boolean
+
+  def engineGetCertificateAlias(cert: CertCertificate): String
+
+  def engineStore(stream: OutputStream, password: Array[Char]): Unit
+
+  def engineStore(param: KeyStore.LoadStoreParameter): Unit
+
+  def engineLoad(stream: InputStream, password: Array[Char]): Unit
+
+  def engineLoad(param: KeyStore.LoadStoreParameter): Unit
+
+  // @since JDK 18
+  def engineGetAttributes(alias: String): JSet[KeyStore.Entry.Attribute]
+
+  def engineGetEntry(
+      alias: String,
+      protParam: KeyStore.ProtectionParameter
+  ): KeyStore.Entry
+
+  def engineSetEntry(
+      alias: String,
+      entry: KeyStore.Entry,
+      protParam: KeyStore.ProtectionParameter
+  ): Unit
+
+  def engineEntryInstanceOf(
+      alias: String,
+      entryClass: Class[_ <: KeyStore.Entry]
+  ): Boolean
+
+  // @since JDK 9
+  def engineProbe(stream: InputStream): Boolean
+
+}
+
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/KeyStore.html
 abstract class KeyStore(
     spi: KeyStoreSpi,
     provider: Provider,
@@ -34,107 +99,132 @@ abstract class KeyStore(
   final def getType(): String = ksType
 
   // @since JDK 18
-  def getAttributes(alias: String): JSet[KeyStore.Entry.Attribute]
+  final def getAttributes(alias: String): JSet[KeyStore.Entry.Attribute] =
+    spi.engineGetAttributes(alias)
 
-  def getKey(alias: String, password: Array[Char]): Key
+  final def getKey(alias: String, password: Array[Char]): Key =
+    spi.engineGetKey(alias, password)
 
-  def getCertificateChain(alias: String): Array[Certificate]
+  final def getCertificateChain(alias: String): Array[CertCertificate] =
+    spi.engineGetCertificateChain(alias)
 
-  def getCertificate(alias: String): Certificate
+  final def getCertificate(alias: String): CertCertificate =
+    spi.engineGetCertificate(alias)
 
-  def getCreationDate(alias: String): Date
+  final def getCreationDate(alias: String): Date =
+    spi.engineGetCreationDate(alias)
 
-  def setKeyEntry(
+  final def setKeyEntry(
       alias: String,
       key: Key,
       password: Array[Char],
-      chain: Array[Certificate]
-  ): Unit
+      chain: Array[CertCertificate]
+  ): Unit =
+    spi.engineSetKeyEntry(alias, key, password, chain)
 
-  def setKeyEntry(
+  final def setKeyEntry(
       alias: String,
       key: Array[Byte],
-      chain: Array[Certificate]
-  ): Unit
+      chain: Array[CertCertificate]
+  ): Unit =
+    spi.engineSetKeyEntry(alias, key, chain)
 
-  def setCertificateEntry(alias: String, cert: Certificate): Unit
+  final def setCertificateEntry(alias: String, cert: CertCertificate): Unit =
+    spi.engineSetCertificateEntry(alias, cert)
 
-  def deleteEntry(alias: String): Unit
+  final def deleteEntry(alias: String): Unit =
+    spi.engineDeleteEntry(alias)
 
-  def aliases(): Enumeration[String]
+  final def aliases(): Enumeration[String] =
+    spi.engineAliases()
 
-  def containsAlias(alias: String): Boolean
+  final def containsAlias(alias: String): Boolean =
+    spi.engineContainsAlias(alias)
 
-  def size(): Int
+  final def size(): Int =
+    spi.engineSize()
 
-  def isKeyEntry(alias: String): Boolean
+  final def isKeyEntry(alias: String): Boolean =
+    spi.engineIsKeyEntry(alias)
 
-  def isCertificateEntry(alias: String): Boolean
+  final def isCertificateEntry(alias: String): Boolean =
+    spi.engineIsCertificateEntry(alias)
 
-  def getCertificateAlias(cert: Certificate): String
+  final def getCertificateAlias(cert: CertCertificate): String =
+    spi.engineGetCertificateAlias(cert)
 
-  def store(stream: OutputStream, password: Array[Char]): Unit
+  final def store(stream: OutputStream, password: Array[Char]): Unit =
+    spi.engineStore(stream, password)
 
-  def store(param: KeyStore.LoadStoreParameter): Unit
+  final def store(param: KeyStore.LoadStoreParameter): Unit =
+    spi.engineStore(param)
 
-  def load(stream: InputStream, password: Array[Char]): Unit
+  final def load(stream: InputStream, password: Array[Char]): Unit =
+    spi.engineLoad(stream, password)
 
-  def load(param: KeyStore.LoadStoreParameter): Unit
+  final def load(param: KeyStore.LoadStoreParameter): Unit =
+    spi.engineLoad(param)
 
-  def getEntry(
+  final def getEntry(
       alias: String,
       protParam: KeyStore.ProtectionParameter
-  ): KeyStore.Entry
+  ): KeyStore.Entry =
+    spi.engineGetEntry(alias, protParam)
 
-  def setEntry(
+  final def setEntry(
       alias: String,
       entry: KeyStore.Entry,
       protParam: KeyStore.ProtectionParameter
-  ): Unit
+  ): Unit =
+    spi.engineSetEntry(alias, entry, protParam)
 
-  def entryInstanceOf(
+  final def entryInstanceOf(
       alias: String,
       entryClass: Class[_ <: KeyStore.Entry]
-  ): Boolean
+  ): Boolean =
+    spi.engineEntryInstanceOf(alias, entryClass)
 
 }
 
 object KeyStore {
 
-  def getInstance(ksType: String): KeyStore = {
-    requireNonNull(ksType)
+  import com.github.lolgab.scalanativecrypto.{OpenSSLProvider, JcaService}
 
-    ???
-  }
+  def getInstance(ksType: String): KeyStore =
+    getInstance(ksType, OpenSSLProvider.defaultInstance)
 
-  def getInstance(ksType: String, provider: String): KeyStore = {
-    requireNonNull(ksType)
-    requireNonNull(provider)
-    require(provider.nonEmpty)
-
-    ???
-  }
+  def getInstance(ksType: String, provider: String): KeyStore =
+    throw new UnsupportedOperationException()
 
   def getInstance(ksType: String, provider: Provider): KeyStore = {
     requireNonNull(ksType)
-    requireNonNull(provider)
+    if (provider == null)
+      throw new IllegalArgumentException("provider must not be null")
+    if (ksType.isEmpty())
+      throw new KeyStoreException("unknown keystore type")
 
-    ???
+    val service = provider.getService(JcaService.KeyStore.name, ksType)
+    if (service == null)
+      throw new KeyStoreException(
+        s"KeyStore type ${ksType} not found in provider ${provider.getName()}"
+      )
+    service.newInstance(null).asInstanceOf[KeyStore]
   }
 
-  def getDefaultType(): String = {
-    // val kstype = Security.getProperty(KEYSTORE_TYPE)
-    // if (kstype == null) "pkcs12" else kstype
+  def getDefaultType(): String =
+    Optional.ofNullable(Security.getProperty("keystore.type")).orElse("pkcs12")
+
+  // @since Java 9
+  def getInstance(file: File, password: Array[Char]): KeyStore =
     ???
-  }
 
-  def getInstance(file: File, password: Array[Char]): KeyStore = ???
+  // @since Java 9
+  def getInstance(file: File, param: LoadStoreParameter): KeyStore =
+    ???
 
-  def getInstance(file: File, param: LoadStoreParameter): KeyStore = ???
-
-  //
-  // Nested class Builder
-  //
+  /*
+   * Nested class Builder
+   */
 
   abstract class Builder protected (ks: KeyStore, pp: ProtectionParameter) {
     final def getKeyStore(): KeyStore = ks
@@ -190,11 +280,13 @@ object KeyStore {
         provider: Provider,
         protection: ProtectionParameter
     ): Builder = {
+      requireNonNull(ksType)
       requireNonNull(protection)
       requireNonNull(provider)
+      require(!ksType.isEmpty())
       require(
-        protection.isInstanceOf[PasswordProtection] || protection
-          .isInstanceOf[CallbackHandlerProtection],
+        protection.isInstanceOf[PasswordProtection] ||
+          protection.isInstanceOf[CallbackHandlerProtection],
         "protection must be PasswordProtection or CallbackHandlerProtection"
       )
 
@@ -202,18 +294,18 @@ object KeyStore {
     }
   }
 
-  //
-  // Nested class LoadStoreParameter
-  //
+  /*
+   * Nested class LoadStoreParameter
+   */
 
   abstract class LoadStoreParameter {
     def getProtectionParameter(): ProtectionParameter
   }
 
-  //
-  // Nested class `ProtectionParameter`
-  // and its subclasses `CallbackHandlerProtection`, `PasswordProtection`
-  //
+  /*
+   * Nested class `ProtectionParameter`
+   * and its subclasses `CallbackHandlerProtection`, `PasswordProtection`
+   */
 
   abstract class ProtectionParameter
 
@@ -223,47 +315,58 @@ object KeyStore {
     def getCallbackHandler(): CallbackHandler = handler
   }
 
-  class PasswordProtection(
+  class PasswordProtection private (
       password: Array[Char],
+      encrypted: Boolean,
       protectionAlgorithm: String,
       protectionParameters: AlgorithmParameterSpec
   ) extends ProtectionParameter
       with Destroyable {
 
-    requireNonNull(password)
-    require(
-      protectionAlgorithm == null || protectionAlgorithm.nonEmpty,
-      "protectionAlgorithm could be null otherwise cannot be empty if not null"
-    )
-
-    private lazy val _password: Array[Char] = password.clone()
+    private val _password: Array[Char] =
+      if (password == null) null else password.clone()
     private val destroyed: AtomicBoolean = new AtomicBoolean(false)
 
-    def this(password: Array[Char]) = this(password, null, null)
+    if (encrypted) requireNonNull(protectionAlgorithm)
 
-    def getProtectionAlgorithm(): String = protectionAlgorithm
+    def this(password: Array[Char]) =
+      this(password, false, null, null)
 
-    def getProtectionParameters(): AlgorithmParameterSpec = protectionParameters
+    def this(
+        password: Array[Char],
+        protectionAlgorithm: String,
+        protectionParameters: AlgorithmParameterSpec
+    ) =
+      this(password, true, protectionAlgorithm, protectionParameters)
+
+    def getProtectionAlgorithm(): String =
+      protectionAlgorithm
+
+    def getProtectionParameters(): AlgorithmParameterSpec =
+      protectionParameters
 
     def getPassword(): Array[Char] = {
       if (destroyed.getOpaque())
-        throw new IllegalStateException("password has been cleared")
+        throw new IllegalStateException("password has been destroyed")
       _password
     }
 
     override def destroy(): Unit =
-      if (destroyed.compareAndSet(false, true))
+      if (!destroyed.compareAndExchange(false, true) && _password != null)
         Arrays.fill(_password, ' ')
 
-    override def isDestroyed(): Boolean = destroyed.getOpaque()
+    override def isDestroyed(): Boolean =
+      destroyed.getOpaque()
   }
 
-  //
-  // Nested class `Entry`
-  // and its subclasses `PrivateKeyEntry`, `SecretKeyEntry`, `TrustedCertificateEntry`
-  //
+  /*
+   * Nested class `Entry`
+   * and its subclasses `PrivateKeyEntry`, `SecretKeyEntry`, `TrustedCertificateEntry`
+   */
 
-  abstract class Entry { def getAttributes(): JSet[Entry.Attribute] }
+  abstract class Entry {
+    def getAttributes(): JSet[Entry.Attribute]
+  }
   object Entry {
     abstract class Attribute {
       def getName(): String
@@ -273,7 +376,7 @@ object KeyStore {
 
   final class PrivateKeyEntry(
       private val privateKey: PrivateKey,
-      private val chain: Array[Certificate],
+      private val chain: Array[CertCertificate],
       private val attributes: JSet[Entry.Attribute]
   ) extends Entry {
 
@@ -281,19 +384,30 @@ object KeyStore {
     requireNonNull(chain)
     requireNonNull(attributes)
     require(chain.length > 0)
+    require(
+      chain.forall(_.getType() == chain(0).getType()),
+      "chain must contain certificates of the same type"
+    )
+    require(
+      chain(0)
+        .getPublicKey()
+        .getAlgorithm()
+        .equalsIgnoreCase(privateKey.getAlgorithm()),
+      "private key algorithm does not match the certificate public key algorithm"
+    )
 
-    private lazy val _chain: Array[Certificate] = chain.clone()
-    private lazy val _attributes: JSet[Entry.Attribute] =
-      Collections.unmodifiableSet(attributes)
+    private val _chain: Array[CertCertificate] = chain.clone()
+    private val _attributes: JSet[Entry.Attribute] =
+      Collections.unmodifiableSet(new HashSet[Entry.Attribute](attributes))
 
-    def this(privateKey: PrivateKey, chain: Array[Certificate]) =
+    def this(privateKey: PrivateKey, chain: Array[CertCertificate]) =
       this(privateKey, chain, JSet.of())
 
     def getPrivateKey(): PrivateKey = privateKey
 
-    def getCertificateChain(): Array[Certificate] = _chain
+    def getCertificateChain(): Array[CertCertificate] = _chain.clone()
 
-    def getCertificate(): Certificate = _chain(0)
+    def getCertificate(): CertCertificate = _chain(0)
 
     def getAttributes(): JSet[Entry.Attribute] = _attributes
 
@@ -311,35 +425,41 @@ object KeyStore {
     requireNonNull(secretKey)
     requireNonNull(attributes)
 
-    private lazy val _attributes: JSet[Entry.Attribute] =
-      Collections.unmodifiableSet(attributes)
+    private val _attributes: JSet[Entry.Attribute] =
+      Collections.unmodifiableSet(new HashSet[Entry.Attribute](attributes))
 
-    def this(secretKey: SecretKey) = this(secretKey, JSet.of())
+    def this(secretKey: SecretKey) =
+      this(secretKey, JSet.of())
 
-    def getSecretKey(): SecretKey = secretKey
+    def getSecretKey(): SecretKey =
+      secretKey
 
-    def getAttributes(): JSet[Entry.Attribute] = _attributes
+    def getAttributes(): JSet[Entry.Attribute] =
+      _attributes
 
     override def toString(): String =
       s"Secret key entry with algorithm ${secretKey.getAlgorithm()}"
   }
 
   final class TrustedCertificateEntry(
-      trustedCert: Certificate,
+      trustedCert: CertCertificate,
       attributes: JSet[Entry.Attribute]
   ) extends Entry {
 
     requireNonNull(trustedCert)
     requireNonNull(attributes)
 
-    private lazy val _attributes: JSet[Entry.Attribute] =
-      Collections.unmodifiableSet(attributes)
+    private val _attributes: JSet[Entry.Attribute] =
+      Collections.unmodifiableSet(new HashSet[Entry.Attribute](attributes))
 
-    def this(trustedCert: Certificate) = this(trustedCert, JSet.of())
+    def this(trustedCert: CertCertificate) =
+      this(trustedCert, JSet.of())
 
-    def getTrustedCertificate(): Certificate = trustedCert
+    def getTrustedCertificate(): CertCertificate =
+      trustedCert
 
-    def getAttributes(): JSet[Entry.Attribute] = _attributes
+    def getAttributes(): JSet[Entry.Attribute] =
+      _attributes
 
     override def toString(): String =
       s"Trusted certificate entry:\n${trustedCert.toString()}"
