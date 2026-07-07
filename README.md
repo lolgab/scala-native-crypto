@@ -41,7 +41,7 @@ vcpkg install openssl
 vcpkg install
 ```
 
-And you need to have `libcrypto.[so|dylib]` in your linking path.
+And you need to have `libcrypto` in your linking path (e.g., `libcrypto.so` on Linux, `libcrypto.dylib` on macOS, and `libcrypto*.dll` + `libcrypto.lib` on Windows).
 
 In Ubuntu it works out of the box since openssl is installed in the main
 lib directory.

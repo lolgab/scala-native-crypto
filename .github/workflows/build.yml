@@ -79,12 +79,12 @@ jobs:
         env:
           SCALANATIVE_INCLUDE_DIRS: "${{ env.VCPKG_INSTALLED_DIR }}\\${{ env.VCPKG_DEFAULT_TRIPLET }}\\include"
           SCALANATIVE_LIB_DIRS: "${{ env.VCPKG_INSTALLED_DIR }}\\${{ env.VCPKG_DEFAULT_TRIPLET }}\\lib"
-        run: .\mill --no-server __.compile
+        run: .\mill.bat --no-server __.compile
       - name: Test
         env:
           SCALANATIVE_INCLUDE_DIRS: "${{ env.VCPKG_INSTALLED_DIR }}\\${{ env.VCPKG_DEFAULT_TRIPLET }}\\include"
           SCALANATIVE_LIB_DIRS: "${{ env.VCPKG_INSTALLED_DIR }}\\${{ env.VCPKG_DEFAULT_TRIPLET }}\\lib"
-        run: .\mill --no-server __.test
+        run: .\mill.bat --no-server __.test
 
   publish-sonatype:
     if: github.repository == 'lolgab/scala-native-crypto' && contains(github.ref, 'refs/tags/')
