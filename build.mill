@@ -83,22 +83,6 @@ trait ScalaNativeCryptoModule extends Shared with Publish {
   }
 
   def nativeCompileOptions = super.nativeCompileOptions() ++ Seq(openSslIncludePath)
-
-  // // Remove class and tasty files
-  // override def jar = Task {
-  //   val jar = Task.dest / "out.jar"
-  //   Jvm.createJar(
-  //     jar,
-  //     localClasspath().map(_.path).filter(os.exists),
-  //     manifest(),
-  //     (_, file) =>
-  //       file.ext match {
-  //         case "class" | "tasty" => false
-  //         case _                 => true
-  //       }
-  //   )
-  //   PathRef(jar)
-  // }
 }
 
 object tests extends Module {
