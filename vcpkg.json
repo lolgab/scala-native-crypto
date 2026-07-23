@@ -1,0 +1,6 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "scala-native-crypto",
+  "version-string": "0.3.1",
+  "dependencies": ["openssl"]
+}
