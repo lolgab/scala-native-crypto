@@ -2,9 +2,7 @@ package com.github.lolgab.scalanativecrypto
 
 // Java Cryptography Architecture (JCA) Service identifier
 // for better type safety
-class JcaService(
-    val name: String
-) extends AnyVal
+class JcaService private (val name: String) extends AnyVal
 
 object JcaService {
   val AlgorithmParameterGenerator = new JcaService(

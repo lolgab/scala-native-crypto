@@ -43,21 +43,18 @@ vcpkg install
 
 And you need to have `libcrypto` in your linking path (e.g., `libcrypto.so` on Linux, `libcrypto.dylib` on macOS, and `libcrypto*.dll` + `libcrypto.lib` on Windows).
 
-In Ubuntu it works out of the box since openssl is installed in the main
-lib directory.
-
-In Mac OS X you will need to add the path via `nativeLinkingOptions`.
+For custom openssl build, you will need to add the path via `nativeLinkingOptions`.
 
 On SBT:
 
 ```scala
-nativeConfig ~= { c => c.withLinkingOptions(c.nativeLinkingOptions :+ "-L/usr/local/opt/openssl@3/lib") }
+nativeConfig ~= { c => c.withLinkingOptions(c.nativeLinkingOptions :+ "-L/opt/custom/openssl@3/lib") }
 ```
 
 On Mill:
 
 ```scala
-def nativeLinkingOptions = super.nativeLinkingOptions() ++ Seq("-L/usr/local/opt/openssl@3/lib")
+def nativeLinkingOptions = super.nativeLinkingOptions() ++ Seq("-L/opt/custom/openssl@3/lib")
 ```
 
 ## Implemented classes
@@ -80,7 +77,8 @@ According [JDK Security Algorithm Implementation Requirements](https://docs.orac
   - [ ] EC (secp256r1, secp384r1)
   - [ ] RSASSA-PSS (MGF1 mask generation function and SHA-256 or SHA-384 hash algorithms)
 - `java.security.cert.CertificateFactory`
-  - [ ] X.509
+  - [x] X.509
+    - with [known issues](#known-issues)
 - `java.security.cert.CertPath` Encoding
   - [ ] PKCS7
   - [ ] PkiPath
@@ -89,7 +87,7 @@ According [JDK Security Algorithm Implementation Requirements](https://docs.orac
 - `java.security.cert.CertPathValidator`
   - [ ] PKIX
 - `java.security.cert.CertStore`
-  - [ ] Collection
+  - [x] Collection
 - `javax.crypto.Cipher`
   - [ ] AES/CBC/NoPadding (128)
   - [ ] AES/CBC/PKCS5Padding (128)
@@ -129,7 +127,8 @@ According [JDK Security Algorithm Implementation Requirements](https://docs.orac
   - [ ] RSASSA-PSS (2048, 3072, 4096)
   - [ ] X25519
 - `java.security.KeyStore`
-  - [ ] PKCS12
+  - [x] PKCS12
+    - Partially implemented, only supports loading and reading, but not writing for now.
 - `javax.crypto.Mac`
   - [x] HmacSHA1
   - [x] HmacSHA256
@@ -153,9 +152,18 @@ According [JDK Security Algorithm Implementation Requirements](https://docs.orac
 - `javax.crypto.SecretKeyFactory`
   - [ ] DESede
 - [x] `java.security.SecureRandom`
-- `java.security.Signature`
+- [ ] `java.security.Signature`
 - `javax.net.ssl.SSLContext`: See downstream project [lqhuang/scala-native-http](https://github.com/lqhuang/scala-native-http)
-  - [ ] TLSv1.2
-  - [ ] TLSv1.3
+  - [x] TLSv1.2
+  - [x] TLSv1.3
+- `javax.net.ssl.KeyManagerFactory`: See downstream project [lqhuang/scala-native-http](https://github.com/lqhuang/scala-native-http)
+  - [x] PKIX
 - `javax.net.ssl.TrustManagerFactory`: See downstream project [lqhuang/scala-native-http](https://github.com/lqhuang/scala-native-http)
-  - [ ] PKIX
+  - [x] PKIX
+
+## Known issues
+
+1. Create a `X500Principal` instance from string / bytes dones't support verification for now
+   - Since OpenSSL doesn't expose individual verification and constructor for ASN1 Distinguished Name. There might have some workaround to hack the verification, for example try to create a fake X509 cert first, but it's not implemented yet.
+   - The current implementation of `X500Principal` constructor just convert the input string to bytes and store it in RFC standards, without any verification. Basically, we majorly used `getSubjectX500Principal()` method of `X509Certificate` to get well formed `X500Principal` internally.
+   - Through the `X500Principal` constructor is documented as a public API and can be used to create an instance, **WE DON'T RECOMMEND TO USE THE CONSTRUCTOR DIRECTLY UNTIL THE VERIFICATION IS IMPLEMENTED**.

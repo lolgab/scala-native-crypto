@@ -6,9 +6,9 @@ import java.security.spec.KeySpec
 abstract class SecretKeyFactorySpi {}
 
 abstract class SecretKeyFactory protected (
-    spi: SecretKeyFactorySpi,
-    provider: Provider,
-    algorithm: String
+    protected val spi: SecretKeyFactorySpi,
+    protected val provider: Provider,
+    protected val algorithm: String
 ) {
 
   final def getProvider(): Provider = provider

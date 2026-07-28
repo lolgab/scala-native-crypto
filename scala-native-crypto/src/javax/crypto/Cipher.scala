@@ -10,70 +10,65 @@ import java.security.spec.AlgorithmParameterSpec
 
 abstract class CipherSpi {}
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Cipher.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/Cipher.html
 abstract class Cipher protected (
-    spi: CipherSpi,
-    provider: Provider,
-    transformation: String
+    protected val spi: CipherSpi,
+    protected val provider: Provider,
+    protected val transformation: String
 ) {
 
   final def getProvider(): Provider = provider
 
   final def getAlgorithm(): String = transformation
 
-  def getBlockSize(): Int = ???
+  def getBlockSize(): Int
 
-  def getOutputSize(inputLen: Int): Int = ???
+  def getOutputSize(inputLen: Int): Int
 
-  def getIV(): Array[Byte] = ???
+  def getIV(): Array[Byte]
 
-  def getParameters(): AlgorithmParameters = ???
+  def getParameters(): AlgorithmParameters
 
   // not supported yet
-  // def getExemptionMechanism(): ExemptionMechanism = ???
+  // def getExemptionMechanism(): ExemptionMechanism
 
-  def init(opmode: Int, key: Key): Unit = ???
+  def init(opmode: Int, key: Key): Unit
 
-  def init(opmode: Int, key: Key, random: SecureRandom): Unit = ???
+  def init(opmode: Int, key: Key, random: SecureRandom): Unit
 
-  def init(opmode: Int, key: Key, params: AlgorithmParameterSpec): Unit = ???
+  def init(opmode: Int, key: Key, params: AlgorithmParameterSpec): Unit
 
   def init(
       opmode: Int,
       key: Key,
       params: AlgorithmParameterSpec,
       random: SecureRandom
-  ): Unit = ???
+  ): Unit
 
-  def init(opmode: Int, key: Key, params: AlgorithmParameters): Unit = ???
+  def init(opmode: Int, key: Key, params: AlgorithmParameters): Unit
 
   def init(
       opmode: Int,
       key: Key,
       params: AlgorithmParameters,
       random: SecureRandom
-  ): Unit = ???
+  ): Unit
 
-  def init(opmode: Int, certificate: Certificate): Unit = ???
+  def init(opmode: Int, certificate: Certificate): Unit
 
-  def init(opmode: Int, certificate: Certificate, random: SecureRandom): Unit =
-    ???
+  def init(opmode: Int, certificate: Certificate, random: SecureRandom): Unit
 
-  def update(input: Array[Byte]): Array[Byte] = ???
+  def update(input: Array[Byte]): Array[Byte]
 
-  def update(input: Array[Byte], inputOffset: Int, inputLen: Int): Array[Byte] =
-    ???
+  def update(input: Array[Byte], inputOffset: Int, inputLen: Int): Array[Byte]
 
   def update(
       input: Array[Byte],
       inputOffset: Int,
       inputLen: Int,
       output: Array[Byte]
-  ): Int = ???
+  ): Int
 
   def update(
       input: Array[Byte],
@@ -81,28 +76,28 @@ abstract class Cipher protected (
       inputLen: Int,
       output: Array[Byte],
       outputOffset: Int
-  ): Int = ???
+  ): Int
 
-  def update(input: ByteBuffer, output: ByteBuffer): Int = ???
+  def update(input: ByteBuffer, output: ByteBuffer): Int
 
-  def doFinal(): Array[Byte] = ???
+  def doFinal(): Array[Byte]
 
-  def doFinal(output: Array[Byte], outputOffset: Int): Int = ???
+  def doFinal(output: Array[Byte], outputOffset: Int): Int
 
-  def doFinal(input: Array[Byte]): Array[Byte] = ???
+  def doFinal(input: Array[Byte]): Array[Byte]
 
   def doFinal(
       input: Array[Byte],
       inputOffset: Int,
       inputLen: Int
-  ): Array[Byte] = ???
+  ): Array[Byte]
 
   def doFinal(
       input: Array[Byte],
       inputOffset: Int,
       inputLen: Int,
       output: Array[Byte]
-  ): Int = ???
+  ): Int
 
   def doFinal(
       input: Array[Byte],
@@ -110,23 +105,23 @@ abstract class Cipher protected (
       inputLen: Int,
       output: Array[Byte],
       outputOffset: Int
-  ): Int = ???
+  ): Int
 
-  def doFinal(input: ByteBuffer, output: ByteBuffer): Int = ???
+  def doFinal(input: ByteBuffer, output: ByteBuffer): Int
 
-  def wrap(key: Key): Array[Byte] = ???
+  def wrap(key: Key): Array[Byte]
 
   def unwrap(
       wrappedKey: Array[Byte],
       wrappedKeyAlgorithm: String,
       wrappedKeyType: Int
-  ): Key = ???
+  ): Key
 
-  def updateAAD(src: Array[Byte]): Unit = ???
+  def updateAAD(src: Array[Byte]): Unit
 
-  def updateAAD(src: Array[Byte], offset: Int, len: Int): Unit = ???
+  def updateAAD(src: Array[Byte], offset: Int, len: Int): Unit
 
-  def updateAAD(src: ByteBuffer): Unit = ???
+  def updateAAD(src: ByteBuffer): Unit
 
   override def toString(): String = ???
 }

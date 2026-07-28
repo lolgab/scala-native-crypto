@@ -7,19 +7,16 @@ import java.security.spec.AlgorithmParameterSpec
 
 abstract class KeyAgreementSpi {}
 
-/**
- * Refs:
- *
- *   - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/KeyAgreement.html
- */
+// Refs:
+// - https://docs.oracle.com/en/java/javase/25/docs/api/java.base/javax/crypto/KeyAgreement.html
 class KeyAgreement protected (
-    spi: KeyAgreementSpi,
-    provider: Provider,
-    algorithm: String
+    protected val spi: KeyAgreementSpi,
+    protected val provider: Provider,
+    protected val algorithm: String
 ) {
   def getAlgorithm(): String = algorithm
 
-  def getProvider(): Provider = ???
+  def getProvider(): Provider = provider
 
   def init(key: Key): Unit = ???
 

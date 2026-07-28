@@ -14,7 +14,7 @@ abstract class Certificate protected (certType: String) extends Serializable {
 
   def getPublicKey(): PublicKey
 
-  final def getType: String = certType
+  final def getType(): String = certType
 
   override def hashCode(): Int = ???
 
