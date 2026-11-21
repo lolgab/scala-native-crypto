@@ -12,7 +12,8 @@ class SecureRandom() extends Random(0L) {
 
   override def nextBytes(bytes: Array[Byte]): Unit = {
     val len = bytes.length
-    nextBytes(bytes.asInstanceOf[ByteArray].at(0), len)
+    if (len > 0)
+      nextBytes(bytes.asInstanceOf[ByteArray].at(0), len)
   }
 
   // Adapted from Scala.js
@@ -29,7 +30,7 @@ class SecureRandom() extends Random(0L) {
   }
 
   private def nextBytes(bytes: Ptr[Byte], len: Int): Unit = {
-    if (crypto.RAND_bytes(bytes, len) < 0)
+    if (crypto.RAND_bytes(bytes, len) != 1)
       throw new GeneralSecurityException("Failed to generate random bytes")
   }
 

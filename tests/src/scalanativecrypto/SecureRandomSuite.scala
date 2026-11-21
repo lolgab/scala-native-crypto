@@ -18,6 +18,12 @@ object SecureRandomSuite extends TestSuite {
       assert(bytes.exists(_ != 0))
     }
 
+    test("nextBytes on an empty array") {
+      val bytes = new Array[Byte](0)
+      new SecureRandom().nextBytes(bytes)
+      assert(bytes.isEmpty)
+    }
+
     test("basicRandomUUIDTest") {
       val uuid1 = UUID.randomUUID()
       assert(uuid1.variant() == 2)
