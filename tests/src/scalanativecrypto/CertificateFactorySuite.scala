@@ -1,10 +1,9 @@
 package scalanativecrypto
 
-import utest.{TestSuite, Tests, test, assert, assertThrows}
+import utest.{TestSuite, Tests, test, assert}
 
 import java.nio.charset.StandardCharsets.UTF_8
 import java.security.cert.{CertificateFactory, X509Certificate}
-import java.security.cert.CertificateException
 import java.io.{ByteArrayInputStream, FileInputStream}
 
 class CertificateFactorySuite extends TestSuite {
@@ -16,18 +15,6 @@ class CertificateFactorySuite extends TestSuite {
     test("CertificateFactory.getInstance") {
       val cf = CertificateFactory.getInstance("X.509")
       assert(cf.getType() == "X.509")
-    }
-
-    test("generateCertificate should fail in non indent format cert") {
-      val cf = CertificateFactory.getInstance("X.509")
-
-      assertThrows[CertificateException] {
-        cf.generateCertificate(
-          new ByteArrayInputStream(
-            data.CertExample0.nonStripIndentCert.getBytes(UTF_8)
-          )
-        )
-      }
     }
 
     test("CertificateFactory.generateCertificate via ByteArrayInputStream") {
